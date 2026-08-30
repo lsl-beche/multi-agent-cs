@@ -1,12 +1,22 @@
 """库存服务：查询/调整/预警 + 流水记录 + 原子扣减（防超卖）"""
 from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.core.pagination import paginate
 from app.models.tables import Inventory, InventoryLog, Product, Sku
+from app.repositories import InventoryRepository
 
 
 class InventoryService:
+
+    @staticmethod
+    async def deduct_atomic_async(db: AsyncSession, sku_id: int, quantity: int, reason: str, ref_id: str | None = None) -> None:
+        await InventoryRepository(db).deduct_atomic(sku_id, quantity, reason, ref_id)
+
+    @staticmethod
+    async def release_atomic_async(db: AsyncSession, sku_id: int, quantity: int, reason: str, ref_id: str | None = None) -> None:
+        await InventoryRepository(db).release_atomic(sku_id, quantity, reason, ref_id)
 
     @staticmethod
     def list_inventory(db: Session, page: int = 1, page_size: int = 20,

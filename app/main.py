@@ -10,6 +10,7 @@ from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +19,7 @@ from app.api.middleware.access_log import AccessLogMiddleware
 from app.api.middleware.metrics import MetricsMiddleware
 from app.api.middleware.rate_limit import RateLimitMiddleware
 from app.api.middleware.trace import TraceMiddleware
+from app.api.response import BusinessError
 from app.api.routes import (
     admin_inventory,
     admin_logs,
@@ -193,6 +195,11 @@ async def lifespan(app: FastAPI):
     from app.core.events import register_builtin_consumers
     register_builtin_consumers()
 
+    # Outbox 后台 worker：事务内事件最终投递
+    from app.events.outbox import run_outbox_worker
+    _outbox_stop = asyncio.Event()
+    _outbox_task = asyncio.create_task(run_outbox_worker(interval_seconds=2, stop_event=_outbox_stop))
+
     async def _order_timeout_loop() -> None:
         from app.tasks.order_tasks import close_expired_orders
         while not _task_stop.is_set():
@@ -205,6 +212,13 @@ async def lifespan(app: FastAPI):
     _order_task = asyncio.create_task(_order_timeout_loop())
 
     yield
+
+    _outbox_stop.set()
+    _outbox_task.cancel()
+    try:
+        await _outbox_task
+    except (asyncio.CancelledError, Exception):
+        pass
 
     _task_stop.set()
     _order_task.cancel()
@@ -293,15 +307,33 @@ def create_app() -> FastAPI:
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
     # 全局异常处理：生产不泄漏堆栈/内部细节，完整审计日志
+    @app.exception_handler(BusinessError)
+    async def business_exception_handler(request: Request, exc: BusinessError):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"code": exc.code, "data": exc.data, "message": exc.message, "detail": exc.message},
+        )
+
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(request: Request, exc: HTTPException):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"code": exc.status_code, "data": None, "message": str(exc.detail), "detail": exc.detail},
+        )
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        return JSONResponse(
+            status_code=422,
+            content={"code": 422, "data": exc.errors(), "message": "请求参数校验失败", "detail": exc.errors()},
+        )
+
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception):
         from app.config.logging import logger
         logger.exception("unhandled error: %s %s", request.method, request.url.path)
-        if isinstance(exc, HTTPException):
-            return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
-        if settings.app_env == "production":
-            return JSONResponse(status_code=500, content={"detail": "服务器内部错误，请稍后再试"})
-        return JSONResponse(status_code=500, content={"detail": str(exc)})
+        message = "服务器内部错误，请稍后再试" if settings.app_env == "production" else str(exc)
+        return JSONResponse(status_code=500, content={"code": 500, "data": None, "message": message, "detail": message})
 
     return app
 

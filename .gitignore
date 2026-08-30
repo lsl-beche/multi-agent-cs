@@ -19,7 +19,9 @@ env/
 !.env.example
 
 # ===== Models / Data / Runtime =====
-models/
+# 仅忽略项目根目录下的模型文件（LLM 权重等），保留 app/models 源码
+/models/
+!app/models/
 data/vectordb/
 data/raw/*
 !data/raw/.gitkeep

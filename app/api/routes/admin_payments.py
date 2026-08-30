@@ -36,7 +36,7 @@ async def list_refunds(
 @router.post("/refunds/{refund_id}/approve", summary="通过退款")
 async def approve_refund(refund_id: int, user: dict = Depends(require_permission("payments", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, PaymentService.approve_refund, refund_id, True, int(user["sub"]))
+        result = await PaymentService.approve_refund_async(db, refund_id, True, int(user["sub"]))
         return {"code": 0, "data": result, "message": "退款已通过"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -45,7 +45,20 @@ async def approve_refund(refund_id: int, user: dict = Depends(require_permission
 @router.post("/refunds/{refund_id}/reject", summary="拒绝退款")
 async def reject_refund(refund_id: int, user: dict = Depends(require_permission("payments", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, PaymentService.approve_refund, refund_id, False, int(user["sub"]))
+        result = await PaymentService.approve_refund_async(db, refund_id, False, int(user["sub"]))
         return {"code": 0, "data": result, "message": "退款已拒绝"}
+    except ValueError as e:
+        raise HTTPException(400, detail=str(e))
+
+
+@router.post("/refunds/{refund_id}/complete", summary="退款到账")
+async def complete_refund(
+    refund_id: int,
+    user: dict = Depends(require_permission("payments", "update")),
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        result = await PaymentService.complete_refund_async(db, refund_id)
+        return {"code": 0, "data": result, "message": "退款到账成功"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))

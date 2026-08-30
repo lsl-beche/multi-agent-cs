@@ -1,9 +1,11 @@
 """用户服务：CRUD + 地址管理 + 封禁"""
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password
 from app.models.tables import Address, Role, User, UserRole
+from app.repositories import AddressRepository, UserRepository
 
 
 class UserService:
@@ -125,3 +127,90 @@ class UserService:
             "province": a.province, "city": a.city, "district": a.district,
             "detail": a.detail, "is_default": a.is_default,
         } for a in rows]
+
+    @staticmethod
+    async def get_addresses_async(db: AsyncSession, user_id: int) -> list[dict]:
+        rows = await AddressRepository(db).list_by_user(user_id)
+        return [{
+            "id": a.id, "receiver": a.receiver, "phone": a.phone,
+            "province": a.province, "city": a.city, "district": a.district,
+            "detail": a.detail, "is_default": a.is_default,
+        } for a in rows]
+
+    @staticmethod
+    async def create_address_async(db: AsyncSession, user_id: int, data: dict) -> dict:
+        repo = AddressRepository(db)
+        if data.get("is_default"):
+            await repo.clear_default(user_id)
+        addr = Address(
+            user_id=user_id,
+            receiver=data.get("receiver_name", ""),
+            phone=data.get("receiver_phone", ""),
+            province=data.get("province", ""),
+            city=data.get("city", ""),
+            district=data.get("district", ""),
+            detail=data.get("detail", ""),
+            is_default=bool(data.get("is_default")),
+        )
+        await repo.add(addr)
+        await repo.commit()
+        await db.refresh(addr)
+        return {
+            "id": addr.id, "receiver": addr.receiver, "phone": addr.phone,
+            "province": addr.province, "city": addr.city, "district": addr.district,
+            "detail": addr.detail, "is_default": addr.is_default,
+        }
+
+    @staticmethod
+    async def update_address_async(db: AsyncSession, user_id: int, address_id: int, data: dict) -> dict:
+        repo = AddressRepository(db)
+        addr = await repo.get_by_id(address_id, user_id)
+        if not addr:
+            raise ValueError("地址不存在")
+        if data.get("is_default"):
+            await repo.clear_default(user_id)
+        addr.receiver = data.get("receiver_name", addr.receiver)
+        addr.phone = data.get("receiver_phone", addr.phone)
+        addr.province = data.get("province", addr.province)
+        addr.city = data.get("city", addr.city)
+        addr.district = data.get("district", addr.district)
+        addr.detail = data.get("detail", addr.detail)
+        addr.is_default = bool(data.get("is_default", addr.is_default))
+        await repo.commit()
+        return {"id": addr.id, "receiver": addr.receiver, "phone": addr.phone, "is_default": addr.is_default}
+
+    @staticmethod
+    async def delete_address_async(db: AsyncSession, user_id: int, address_id: int) -> None:
+        repo = AddressRepository(db)
+        addr = await repo.get_by_id(address_id, user_id)
+        if not addr:
+            raise ValueError("地址不存在")
+        await repo.delete(addr)
+        await repo.commit()
+
+    @staticmethod
+    async def update_profile_async(db: AsyncSession, user_id: int, data: dict) -> None:
+        repo = UserRepository(db)
+        user = await repo.get_by_id(user_id)
+        if not user:
+            raise ValueError("用户不存在")
+        if "phone" in data:
+            user.phone = data["phone"]
+        if "email" in data:
+            user.email = data["email"]
+        await repo.commit()
+
+    @staticmethod
+    async def change_password_async(db: AsyncSession, user_id: int, old_pwd: str, new_pwd: str) -> None:
+        from app.core.security import verify_password
+
+        repo = UserRepository(db)
+        user = await repo.get_by_id(user_id)
+        if not user:
+            raise ValueError("用户不存在")
+        if not verify_password(old_pwd, user.password_hash):
+            raise ValueError("原密码错误")
+        if len(new_pwd) < 6:
+            raise ValueError("新密码至少6位")
+        user.password_hash = hash_password(new_pwd)
+        await repo.commit()

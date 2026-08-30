@@ -117,3 +117,18 @@ async def test_order_state_transition(async_db):
     assert cancelled["order_status"] == "cancelled"
     inv = (await async_db.execute(select(Inventory).where(Inventory.sku_id == sku.id))).scalar_one()
     assert inv.quantity == 10
+
+
+async def test_create_order_async_with_outbox(async_db):
+    user, address, _product, sku, inventory = await _seed_order_data(async_db)
+    result = await OrderService.create_order_async(
+        async_db,
+        user.id,
+        [{"sku_id": sku.id, "quantity": 3}],
+        address.id,
+        idempotency_key="order-test-001",
+    )
+    assert result["order_no"]
+    assert result["pay_amount"] == 297.0
+    inv = (await async_db.execute(select(Inventory).where(Inventory.id == inventory.id))).scalar_one()
+    assert inv.quantity == 7

@@ -2,12 +2,32 @@
 from datetime import datetime
 
 from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.models.tables import Coupon, Promotion, User, UserCoupon
 
 
 class CouponService:
+
+    @staticmethod
+    async def get_user_coupons_async(db: AsyncSession, user_id: int) -> list[dict]:
+        rows = (await db.execute(
+            select(UserCoupon, Coupon)
+            .join(Coupon, UserCoupon.coupon_id == Coupon.id)
+            .where(UserCoupon.user_id == user_id, UserCoupon.status == "unused")
+            .order_by(UserCoupon.id.desc())
+        )).all()
+        return [{
+            "id": uc.id,
+            "coupon_id": c.id,
+            "name": c.name,
+            "coupon_type": c.coupon_type,
+            "threshold": float(c.threshold),
+            "value": float(c.value),
+            "status": uc.status,
+            "end_time": c.end_time.isoformat() if c.end_time else None,
+        } for uc, c in rows]
 
     @staticmethod
     def get_my_coupons(db: Session, user_id: int, status: str = "unused") -> list[dict]:
@@ -211,6 +231,53 @@ class CouponService:
                 "threshold": float(c.threshold),
                 "value": float(c.value),
             },
+            "message": "优惠券可用",
+        }
+
+    @staticmethod
+    async def validate_coupon_async(
+        db: AsyncSession,
+        user_id: int,
+        user_coupon_id: int,
+        order_amount: float,
+    ) -> dict:
+        """异步优惠券校验（原生异步路径）"""
+        now = datetime.utcnow()
+        row = (await db.execute(
+            select(UserCoupon, Coupon)
+            .join(Coupon, UserCoupon.coupon_id == Coupon.id)
+            .where(UserCoupon.id == user_coupon_id)
+        )).one_or_none()
+
+        if not row:
+            return {"valid": False, "discount": 0, "message": "优惠券不存在"}
+        uc, c = row
+        if uc.user_id != user_id:
+            return {"valid": False, "discount": 0, "message": "优惠券不属于当前用户"}
+        if uc.status != "unused":
+            return {"valid": False, "discount": 0, "message": "优惠券已使用或已过期"}
+        if c.status != "active":
+            return {"valid": False, "discount": 0, "message": "优惠券已停用"}
+        if now < c.start_time:
+            return {"valid": False, "discount": 0, "message": "优惠券尚未生效"}
+        if now > c.end_time:
+            return {"valid": False, "discount": 0, "message": "优惠券已过期"}
+        if c.used_count >= c.total_count:
+            return {"valid": False, "discount": 0, "message": "优惠券已领完"}
+        if float(order_amount) < float(c.threshold):
+            return {"valid": False, "discount": 0, "message": "订单金额未满足使用条件"}
+
+        if c.coupon_type == "fixed":
+            discount = float(c.value)
+        elif c.coupon_type == "percent":
+            discount = round(float(order_amount) * float(c.value) / 100, 2)
+        else:
+            discount = 0
+        discount = min(discount, float(order_amount))
+        return {
+            "valid": True,
+            "discount": discount,
+            "coupon": {"id": c.id, "name": c.name},
             "message": "优惠券可用",
         }
 

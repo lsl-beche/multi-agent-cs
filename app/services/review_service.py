@@ -1,11 +1,62 @@
 """评价服务：审核/回复"""
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.models.tables import Product, Review
+from app.repositories import OrderRepository, ReviewRepository
 
 
 class ReviewService:
+
+    @staticmethod
+    async def submit_review_async(
+        db: AsyncSession,
+        user_id: int,
+        order_id: int,
+        product_id: int,
+        rating: int,
+        content: str = "",
+        is_anonymous: bool = False,
+    ) -> dict:
+        order_repo = OrderRepository(db)
+        order = await order_repo.get_by_id(order_id)
+        if not order or order.user_id != user_id:
+            raise ValueError("订单不存在")
+        if order.order_status != "completed":
+            raise ValueError("订单未完成，无法评价")
+        review_repo = ReviewRepository(db)
+        existing = await review_repo.get_by_order_product(order_id, product_id)
+        if existing:
+            raise ValueError("该商品已评价")
+        review = Review(
+            product_id=product_id,
+            order_id=order_id,
+            user_id=user_id,
+            rating=rating,
+            content=content,
+            is_anonymous=is_anonymous,
+            status="approved",
+        )
+        await review_repo.add(review)
+        await review_repo.commit()
+        return {"id": review.id, "message": "评价成功"}
+
+    @staticmethod
+    async def list_product_reviews_async(
+        db: AsyncSession,
+        product_id: int,
+        page: int = 1,
+        page_size: int = 10,
+    ) -> tuple[list[dict], int]:
+        repo = ReviewRepository(db)
+        rows, total = await repo.list_product(product_id, page, page_size)
+        data = [{
+            "id": r.id, "rating": r.rating, "content": r.content,
+            "is_anonymous": r.is_anonymous, "reply": r.reply,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        } for r in rows]
+        return data, total
 
     @staticmethod
     def search_reviews(db: Session, keyword: str, limit: int = 3) -> list[dict]:

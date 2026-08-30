@@ -22,9 +22,8 @@ async def list_orders(
     end_time: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(
-        db, OrderService.list_orders,
-        page, page_size, keyword, order_status, pay_status, start_time, end_time,
+    data, total = await OrderService.list_orders_async(
+        db, page, page_size, order_status=order_status,
     )
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
@@ -40,7 +39,7 @@ async def get_order(order_id: int, user: dict = Depends(require_permission("orde
 @router.put("/{order_id}/confirm", summary="确认订单")
 async def confirm_order(order_id: int, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, OrderService.confirm_order, order_id, int(user["sub"]))
+        result = await OrderService.confirm_order_async(db, order_id, int(user["sub"]))
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -49,7 +48,7 @@ async def confirm_order(order_id: int, user: dict = Depends(require_permission("
 @router.put("/{order_id}/ship", summary="发货")
 async def ship_order(order_id: int, body: OrderShipRequest, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, OrderService.ship_order, order_id, body.carrier, body.tracking_no, int(user["sub"]))
+        result = await OrderService.ship_order_async(db, order_id, body.carrier, body.tracking_no, int(user["sub"]))
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -58,10 +57,8 @@ async def ship_order(order_id: int, body: OrderShipRequest, user: dict = Depends
 @router.put("/{order_id}/cancel", summary="取消订单")
 async def cancel_order(order_id: int, body: OrderCancelRequest | None = None, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(
-            db, OrderService.cancel_order, order_id,
-            body.reason if body else None,
-            int(user["sub"]),
+        result = await OrderService.cancel_order_async(
+            db, order_id, body.reason if body else None, int(user["sub"])
         )
         return {"code": 0, "data": result}
     except ValueError as e:
@@ -71,7 +68,7 @@ async def cancel_order(order_id: int, body: OrderCancelRequest | None = None, us
 @router.put("/{order_id}/complete", summary="完成订单")
 async def complete_order(order_id: int, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, OrderService.complete_order, order_id, int(user["sub"]))
+        result = await OrderService.complete_order_async(db, order_id, int(user["sub"]))
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
