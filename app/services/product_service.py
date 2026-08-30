@@ -1,5 +1,5 @@
 """商品服务：CRUD + 全文搜索 + 级联创建（含SKU+库存）"""
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.tables import Category, Inventory, Product, ProductImage, Sku

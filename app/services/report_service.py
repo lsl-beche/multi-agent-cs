@@ -4,9 +4,8 @@ from datetime import datetime, timedelta
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models.tables import (Conversation, CsatScore, MessageRecord, Order,
-                                Payment, Ticket)
 from app.config.settings import settings
+from app.models.tables import Conversation, CsatScore, MessageRecord, Order, Payment, Ticket
 
 
 class ReportService:

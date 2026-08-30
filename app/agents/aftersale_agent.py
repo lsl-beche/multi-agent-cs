@@ -8,18 +8,16 @@ import time
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
+from loguru import logger
 
 from app.agents.base import BaseAgent, _strip_think_tags
 from app.agents.graphs.state import AgentState
 from app.agents.order_agent import extract_order_id
 from app.config.settings import settings
-from app.dialogue.slots import SlotFiller
 from app.tools.action_tools import propose_apply_refund
 from app.tools.aftersale_tools import get_refund_status, get_ticket_status
 from app.tools.policy_tools import check_return_policy
 from app.tools.ticket_tools import create_ticket
-
-from loguru import logger
 
 perf_logger = logger.bind(name="perf")
 

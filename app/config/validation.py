@@ -1,7 +1,6 @@
 """配置校验：生产环境缺关键配置即拒绝启动（开发环境仅告警）"""
 from app.config.settings import settings
 
-
 PLACEHOLDERS = ("change-me", "password")
 
 

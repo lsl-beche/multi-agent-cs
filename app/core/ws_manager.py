@@ -11,11 +11,11 @@
   {"type": "new_ticket", "ticket": {...}}                            — 系统推送给全部管理员
 """
 import asyncio
-import json
 import logging
-from app.core import metrics
 
 from fastapi import WebSocket
+
+from app.core import metrics
 
 logger = logging.getLogger(__name__)
 

@@ -1,12 +1,14 @@
 """C 端订单路由：下单/列表/详情/取消/确认收货"""
 from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy import select
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import current_user, get_db
+from app.api.deps import current_user, get_db, run_sync
 from app.models.tables import (
-    Address, Order,
+    Address,
+    Order,
+    OrderItem,
 )
 from app.services.order_service import OrderService
 
@@ -18,9 +20,12 @@ async def _uid(request: Request) -> int:
     return int(payload["sub"])
 
 
-def _order_to_dict(order: Order, db: Session) -> dict:
+async def _order_to_dict(order: Order, db: AsyncSession) -> dict:
     items = []
-    for oi in order.items:
+    order_items = (await db.execute(
+        select(OrderItem).where(OrderItem.order_id == order.id)
+    )).scalars().all()
+    for oi in order_items:
         items.append({
             "id": oi.id,
             "product_id": oi.product_id,
@@ -33,7 +38,7 @@ def _order_to_dict(order: Order, db: Session) -> dict:
 
     addr = None
     if order.address_id:
-        a = db.execute(select(Address).where(Address.id == order.address_id)).scalar_one_or_none()
+        a = (await db.execute(select(Address).where(Address.id == order.address_id))).scalar_one_or_none()
         if a:
             addr = {
                 "receiver_name": a.receiver,
@@ -59,6 +64,16 @@ def _order_to_dict(order: Order, db: Session) -> dict:
     }
 
 
+def _list_orders_sync(db, uid: int, page: int, page_size: int, status: str | None):
+    from app.core.pagination import paginate
+
+    query = select(Order).where(Order.user_id == uid)
+    if status:
+        query = query.where(Order.order_status == status)
+    orders, total = paginate(db, query, page, page_size, order_by=Order.id.desc())
+    return orders, total
+
+
 # ── 下单 ──
 
 class CreateOrderItem(BaseModel):
@@ -74,12 +89,12 @@ class CreateOrderBody(BaseModel):
 
 
 @router.post("", summary="创建订单")
-async def create_order(body: CreateOrderBody, request: Request, db: Session = Depends(get_db)):
+async def create_order(body: CreateOrderBody, request: Request, db: AsyncSession = Depends(get_db)):
     """从购物车/立即购买创建订单"""
     uid = await _uid(request)
     try:
-        result = OrderService.create_order(
-            db,
+        result = await run_sync(
+            db, OrderService.create_order,
             uid,
             [item.model_dump() for item in body.items],
             body.address_id,
@@ -102,7 +117,7 @@ async def create_order(body: CreateOrderBody, request: Request, db: Session = De
     try:
         from app.services.behavior_service import record
         for item in result["items"]:
-            record(db, uid, item["product_id"], "order")
+            await run_sync(db, record, uid, item["product_id"], "order")
     except Exception:
         pass
 
@@ -117,65 +132,58 @@ async def list_orders(
     page: int = 1,
     page_size: int = 10,
     status: str | None = None,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     """查询当前用户的订单列表"""
     uid = await _uid(request)
-    query = select(Order).where(Order.user_id == uid)
-    if status:
-        query = query.where(Order.order_status == status)
-
-    total = len(list(db.execute(query).scalars().all()))
-    offset = (page - 1) * page_size
-    orders = db.execute(query.order_by(Order.id.desc()).offset(offset).limit(page_size)).scalars().all()
-
-    result = [_order_to_dict(o, db) for o in orders]
+    orders, total = await run_sync(db, _list_orders_sync, uid, page, page_size, status)
+    result = [await _order_to_dict(o, db) for o in orders]
     return {"code": 0, "data": {"items": result, "total": total}}
 
 
 @router.get("/{order_id}", summary="订单详情")
-async def order_detail(order_id: int, request: Request, db: Session = Depends(get_db)):
+async def order_detail(order_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     """查询订单详情"""
     uid = await _uid(request)
-    order = db.execute(
+    order = (await db.execute(
         select(Order).where(Order.id == order_id, Order.user_id == uid)
-    ).scalar_one_or_none()
+    )).scalar_one_or_none()
     if not order:
         raise HTTPException(status_code=404, detail="订单不存在")
-    return {"code": 0, "data": _order_to_dict(order, db)}
+    return {"code": 0, "data": await _order_to_dict(order, db)}
 
 
 # ── 操作 ──
 
 @router.put("/{order_id}/cancel", summary="取消订单")
-async def cancel_order(order_id: int, request: Request, db: Session = Depends(get_db)):
+async def cancel_order(order_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     """取消订单并释放库存"""
     uid = await _uid(request)
-    order = db.execute(
+    order = (await db.execute(
         select(Order).where(Order.id == order_id, Order.user_id == uid)
-    ).scalar_one_or_none()
+    )).scalar_one_or_none()
     if not order:
         raise HTTPException(status_code=404, detail="订单不存在")
     if order.order_status not in ("pending", "confirmed"):
         raise HTTPException(status_code=400, detail="当前状态不可取消")
     try:
-        OrderService.cancel_order(db, order.id, reason="用户取消", operator_id=uid)
+        await run_sync(db, OrderService.cancel_order, order.id, reason="用户取消", operator_id=uid)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"code": 0, "message": "订单已取消"}
 
 
 @router.put("/{order_id}/confirm", summary="确认收货")
-async def confirm_order(order_id: int, request: Request, db: Session = Depends(get_db)):
+async def confirm_order(order_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     """确认收货"""
     uid = await _uid(request)
-    order = db.execute(
+    order = (await db.execute(
         select(Order).where(Order.id == order_id, Order.user_id == uid)
-    ).scalar_one_or_none()
+    )).scalar_one_or_none()
     if not order:
         raise HTTPException(status_code=404, detail="订单不存在")
     try:
-        OrderService.confirm_receipt(db, order.id, operator_id=uid)
+        await run_sync(db, OrderService.confirm_receipt, order.id, operator_id=uid)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"code": 0, "message": "已确认收货"}

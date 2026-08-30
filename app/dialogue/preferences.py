@@ -14,12 +14,11 @@
 """
 import json
 import logging
-import time
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from app.core.db import SessionLocal
 from app.config.settings import settings
+from app.core.db import SessionLocal
 from app.core.llm import get_llm
 from app.core.redis_client import get_redis
 from app.dialogue.memory import SessionMemory

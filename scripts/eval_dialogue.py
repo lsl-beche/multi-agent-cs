@@ -9,7 +9,6 @@ import argparse
 import json
 import sys
 import time
-from collections import Counter
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -50,6 +49,7 @@ def eval_intent(cases: list[dict]) -> dict:
 
 def eval_full(cases: list[dict], limit: int) -> dict:
     import asyncio
+
     from langchain_core.messages import HumanMessage
 
     from app.agents.graphs.workflow import build_workflow

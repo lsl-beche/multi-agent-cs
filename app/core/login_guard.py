@@ -1,9 +1,6 @@
 """登录防爆破：Redis计数 + 账户锁定"""
-import time
 
 from loguru import logger
-
-from app.config.settings import settings
 
 MAX_ATTEMPTS = 5
 LOCK_DURATION = 900  # 15分钟

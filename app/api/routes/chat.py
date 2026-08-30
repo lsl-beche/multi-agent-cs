@@ -31,10 +31,11 @@ from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisco
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from loguru import logger as _loguru
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import current_user, get_db
 from app.config.settings import settings
+from app.core.db import AsyncSessionLocal
 from app.core.redis_client import cache_answer, get_cached_answer
 from app.core.ws_manager import manager as ws_manager
 from app.dialogue.intent import IntentClassifier
@@ -92,7 +93,7 @@ def _llm_reachable() -> bool:
         s = socket.create_connection((host, port), timeout=0.5)
         s.close()
         return True
-    except (socket.timeout, ConnectionRefusedError, OSError):
+    except (TimeoutError, ConnectionRefusedError, OSError):
         return False
 
 
@@ -324,7 +325,7 @@ async def _run_agent(session_id: str, user_id: str, message: str) -> dict:
                 timeout=2.0,
             )
         except asyncio.TimeoutError:
-            perf_logger.warning(f"[_run_agent] build_messages TIMEOUT, using minimal context")
+            perf_logger.warning("[_run_agent] build_messages TIMEOUT, using minimal context")
             messages = [HumanMessage(content=message)]
         perf_logger.info(f"[_run_agent] build_messages({len(messages)}条): {(time.perf_counter() - t0) * 1000:.0f}ms")
 
@@ -445,22 +446,22 @@ async def _fallback_reply(message: str) -> dict:
 async def get_chat_history(
     session_id: str,
     user: dict = Depends(current_user),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ) -> dict:
     """获取指定 session 的对话历史
 
     优先 Redis（快）；为空时回退 PostgreSQL（跨天恢复）。
     """
-    conv = db.execute(
+    conv = (await db.execute(
         select(Conversation).where(Conversation.session_id == session_id)
-    ).scalar_one_or_none()
+    )).scalar_one_or_none()
     if conv and conv.user_id and conv.user_id != str(user.get("sub", "")):
         raise HTTPException(status_code=403, detail="无权访问该会话")
-    history = memory.load(session_id)
+    history = await asyncio.to_thread(memory.load, session_id)
     if not history:
         try:
             from app.dialogue.persistence import load_history
-            history = load_history(session_id)
+            history = await asyncio.to_thread(load_history, session_id)
         except Exception:
             pass
     return {
@@ -480,15 +481,14 @@ async def submit_csat(
     rating: int,
     comment: str = "",
     user: dict = Depends(current_user),
+    db: AsyncSession = Depends(get_db),
 ) -> dict:
     """提交对话满意度评价（1-5分）"""
     if not 1 <= rating <= 5:
         return {"code": 400, "detail": "评分须在 1-5 之间"}
 
-    from app.core.db import SessionLocal
     from app.models.tables import CsatScore
 
-    db = SessionLocal()
     try:
         score = CsatScore(
             session_id=session_id,
@@ -498,12 +498,10 @@ async def submit_csat(
             agent_type="ai",
         )
         db.add(score)
-        db.commit()
+        await db.commit()
         return {"code": 0, "data": {"session_id": session_id, "rating": rating}}
     except Exception as e:
         return {"code": 500, "detail": str(e)}
-    finally:
-        db.close()
 
 
 async def _safe_ws_send(ws: WebSocket, data: dict) -> bool:
@@ -523,15 +521,19 @@ def _strip_think_buf(text: str) -> str:
 
 
 @router.post("", response_model=ChatResponse)
-async def chat(req: ChatRequest, user: dict = Depends(current_user)) -> ChatResponse:
+async def chat(
+    req: ChatRequest,
+    user: dict = Depends(current_user),
+    db: AsyncSession = Depends(get_db),
+) -> ChatResponse:
     """HTTP对话接口（WebSocket不可用时的兜底通道）"""
     err = _validate_input(req.message)
     if err:
         return ChatResponse(session_id=req.session_id, answer=err, intent="", need_human=False)
     user_id = str(user.get("sub", ""))
-    conv = db.execute(
+    conv = (await db.execute(
         select(Conversation).where(Conversation.session_id == req.session_id)
-    ).scalar_one_or_none()
+    )).scalar_one_or_none()
     if conv and conv.user_id and conv.user_id != user_id:
         return ChatResponse(session_id=req.session_id, answer="无权访问该会话", intent="", need_human=True)
     if not _chat_rate_ok(user_id):
@@ -578,17 +580,13 @@ async def chat_ws(ws: WebSocket, token: str = "") -> None:
 
                 # 会话归属校验：已绑定用户的会话禁止跨用户读写
                 try:
-                    from app.core.db import SessionLocal
-                    db = SessionLocal()
-                    try:
-                        conv = db.execute(
+                    async with AsyncSessionLocal() as db:
+                        conv = (await db.execute(
                             select(Conversation).where(Conversation.session_id == session_id)
-                        ).scalar_one_or_none()
+                        )).scalar_one_or_none()
                         if conv and conv.user_id and conv.user_id != user_id:
                             await _safe_ws_send(ws, {"type": "error", "detail": "无权访问该会话"})
                             continue
-                    finally:
-                        db.close()
                 except Exception:
                     pass
 

@@ -1,5 +1,5 @@
 """用户服务：CRUD + 地址管理 + 封禁"""
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password

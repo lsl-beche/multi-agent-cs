@@ -25,10 +25,9 @@ import time
 
 from langchain_core.messages import AIMessage
 from langgraph.graph import END, StateGraph
+from loguru import logger
 
 from app.agents.graphs.state import AgentState
-
-from loguru import logger
 
 perf_logger = logger.bind(name="perf")
 
@@ -173,6 +172,7 @@ async def human_handoff_node(state: AgentState) -> dict:
 
     # 异步触发转接（不阻塞主流程）
     import asyncio
+
     from app.dialogue.handoff import HandoffManager
 
     handoff = HandoffManager()

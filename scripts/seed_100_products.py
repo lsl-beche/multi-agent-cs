@@ -4,15 +4,16 @@
     python scripts/seed_100_products.py           # 生成100个商品（不重复已存在的SPU）
     python scripts/seed_100_products.py --reset   # 清空后重新生成（⚠ 删除所有商品）
 """
-import sys
 import random
+import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from sqlalchemy import text
+
 from app.core.db import SessionLocal
-from app.models.tables import Category, Product, ProductImage, Sku, Inventory
+from app.models.tables import Category, Inventory, Product, ProductImage, Sku
 
 # ══════════════════════════════════════════════════
 # 茶叶品牌
@@ -293,7 +294,7 @@ def main():
         print("开始生成 100 个虚拟茶叶商品...")
         created = generate_products(db, category_map, name_to_top, count=100)
         print(f"\n✅ 完成！共生成 {created} 个商品")
-        print(f"  访问管理后台查看: http://localhost:3000")
+        print("  访问管理后台查看: http://localhost:3000")
     finally:
         db.close()
 

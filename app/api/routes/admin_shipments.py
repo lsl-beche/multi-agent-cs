@@ -1,9 +1,9 @@
 """物流管理路由"""
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_db, run_sync
 from app.api.middleware.auth import require_permission
 from app.services.shipment_service import ShipmentService
 
@@ -22,9 +22,9 @@ async def list_shipments(
     page_size: int = Query(20, ge=1, le=100),
     order_id: int | None = None,
     status: str | None = None,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    data, total = ShipmentService.list_shipments(db, page, page_size, order_id, status)
+    data, total = await run_sync(db, ShipmentService.list_shipments, page, page_size, order_id, status)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
@@ -33,10 +33,10 @@ async def update_tracking(
     shipment_id: int,
     body: ShipmentTrackRequest,
     user: dict = Depends(require_permission("shipments", "update")),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     try:
-        result = ShipmentService.update_tracking(db, shipment_id, body.tracking_no, body.carrier)
+        result = await run_sync(db, ShipmentService.update_tracking, shipment_id, body.tracking_no, body.carrier)
         return {"code": 0, "data": result, "message": "物流已更新"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))

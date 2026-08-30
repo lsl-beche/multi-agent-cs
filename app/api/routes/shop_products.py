@@ -1,15 +1,15 @@
 """C 端商品路由：商品列表/详情/类目/推荐"""
 from fastapi import APIRouter, Depends, Query, Request
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_db, run_sync
 from app.services.product_service import ProductService
 
 router = APIRouter()
 
 
 @router.get("", summary="商品列表")
-def list_products(
+async def list_products(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     keyword: str | None = None,
@@ -17,7 +17,7 @@ def list_products(
     sort: str | None = None,
     min_price: float | None = None,
     max_price: float | None = None,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     """C端商品列表，只返回已上架商品"""
     sort_by, sort_dir = "id", "desc"
@@ -26,8 +26,9 @@ def list_products(
     elif sort == "price_desc":
         sort_by, sort_dir = "min_price", "desc"
 
-    items, total = ProductService.list_products(
-        db, page=page, page_size=page_size,
+    items, total = await run_sync(
+        db, ProductService.list_products,
+        page=page, page_size=page_size,
         keyword=keyword, category_id=category_id,
         status="online", sort_by=sort_by, sort_dir=sort_dir,
     )
@@ -55,9 +56,9 @@ def list_products(
 
 
 @router.get("/categories/all", summary="全部分类")
-def list_categories(db: Session = Depends(get_db)):
+async def list_categories(db: AsyncSession = Depends(get_db)):
     """返回扁平分类列表（前端自行构建树）"""
-    data = ProductService.list_categories(db)
+    data = await run_sync(db, ProductService.list_categories)
     return {"code": 0, "data": data}
 
 
@@ -65,7 +66,7 @@ def list_categories(db: Session = Depends(get_db)):
 async def recommend(
     request: Request,
     limit: int = Query(8, ge=1, le=20),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     user_id = None
     try:
@@ -75,14 +76,14 @@ async def recommend(
     except Exception:
         user_id = None
     from app.services.recommend_service import recommend_for_user
-    items = recommend_for_user(db, user_id, limit)
+    items = await run_sync(db, recommend_for_user, user_id, limit)
     return {"code": 0, "data": {"items": items, "total": len(items)}}
 
 
 @router.get("/{product_id}", summary="商品详情")
-async def product_detail(product_id: int, request: Request, db: Session = Depends(get_db)):
+async def product_detail(product_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     try:
-        product = ProductService.get_product(db, product_id)
+        product = await run_sync(db, ProductService.get_product, product_id)
     except ValueError:
         return {"code": 1, "message": "商品不存在"}
 
@@ -94,7 +95,7 @@ async def product_detail(product_id: int, request: Request, db: Session = Depend
         from app.api.deps import current_user
         payload = await current_user(request)
         from app.services.behavior_service import record
-        record(db, int(payload["sub"]), product["id"], "view")
+        await run_sync(db, record, int(payload["sub"]), product["id"], "view")
     except Exception:
         pass  # 未登录或记录失败不影响详情返回
 

@@ -10,3 +10,23 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP", "B", "SIM"]
+ignore = [
+    "E501",
+    "B008",
+    "BLE001",
+    "UP035",
+    "DTZ001",
+    "DTZ003",
+    "RUF012",
+    "B023",
+    "F841",
+    "B904",
+    "B905",
+    "SIM102",
+    "SIM105",
+    "SIM115",
+    "E741",
+]

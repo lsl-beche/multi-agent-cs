@@ -1,22 +1,31 @@
-"""依赖注入：JWT认证 + 数据库会话"""
-from typing import Any
+"""依赖注入：JWT认证 + 异步数据库会话"""
+from collections.abc import AsyncIterator
+from typing import Any, Callable
 
 import jwt
-from fastapi import Depends, HTTPException, Request, status
-from sqlalchemy.orm import Session
+from fastapi import HTTPException, Request, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config.settings import settings
-from app.core.db import SessionLocal
-
+from app.core.db import AsyncSessionLocal
 
 # ── 数据库会话 ────────────────────────────────────────
 
-def get_db():
-    db = SessionLocal()
-    try:
+async def get_async_db() -> AsyncIterator[AsyncSession]:
+    """FastAPI 异步依赖：请求级 AsyncSession"""
+    async with AsyncSessionLocal() as db:
         yield db
-    finally:
-        db.close()
+
+
+async def get_db() -> AsyncIterator[AsyncSession]:
+    """兼容别名：路由可继续使用 get_db"""
+    async for db in get_async_db():
+        yield db
+
+
+async def run_sync(db: AsyncSession, func: Callable, *args, **kwargs):
+    """在 AsyncSession 的绿色线程中执行同步 Service/查询逻辑"""
+    return await db.run_sync(lambda session: func(session, *args, **kwargs))
 
 
 # ── JWT认证依赖 ───────────────────────────────────────

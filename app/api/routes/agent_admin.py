@@ -1,6 +1,6 @@
 """Agent 平台管理：工具目录 + 运行时性能统计"""
 from fastapi import APIRouter, Depends
-from prometheus_client import REGISTRY, Counter, Histogram
+from prometheus_client import REGISTRY
 
 from app.api.middleware.auth import require_permission
 from app.tools.registry import all_tools

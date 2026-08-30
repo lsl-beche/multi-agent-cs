@@ -38,6 +38,13 @@ def upgrade() -> None:
             sa.Column("version", sa.Integer(), nullable=False, server_default="1"),
         )
 
+    inventory_columns = {c["name"] for c in inspector.get_columns("inventory")}
+    if "version" not in inventory_columns:
+        op.add_column(
+            "inventory",
+            sa.Column("version", sa.Integer(), nullable=False, server_default="1"),
+        )
+
 
 def downgrade() -> None:
     """Downgrade schema."""
@@ -46,5 +53,8 @@ def downgrade() -> None:
     order_columns = {c["name"] for c in inspector.get_columns("orders")}
     if "version" in order_columns:
         op.drop_column("orders", "version")
+    inventory_columns = {c["name"] for c in inspector.get_columns("inventory")}
+    if "version" in inventory_columns:
+        op.drop_column("inventory", "version")
     if inspector.has_table("role_permissions"):
         op.drop_table("role_permissions")

@@ -1,5 +1,5 @@
 """对话组件单元测试：意图识别"""
-from app.dialogue.intent import IntentClassifier, KEYWORD_RULES
+from app.dialogue.intent import KEYWORD_RULES, IntentClassifier
 
 
 class TestIntentClassifier:

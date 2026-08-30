@@ -6,15 +6,13 @@
 import json
 import logging
 import math
-import time
 from datetime import datetime, timedelta
-from typing import Dict, Set
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.redis_client import get_redis
-from app.models.tables import Order, OrderItem, Product, UserBehavior
+from app.models.tables import Order, OrderItem, UserBehavior
 
 logger = logging.getLogger(__name__)
 

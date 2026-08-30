@@ -2,7 +2,7 @@
 from typing import Any, Callable
 
 import jwt
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import HTTPException, Request, status
 
 from app.config.settings import settings
 

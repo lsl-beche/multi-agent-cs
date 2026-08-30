@@ -12,7 +12,6 @@ label 阈值：score<-0.4 → negative；>0.4 → positive；否则 neutral
 
 升级路径：生产环境可替换为微调的情感分类模型（输出仍对齐 score/label）。
 """
-import re
 
 # 词典：覆盖电商客服场景
 NEGATIVE_WORDS = [

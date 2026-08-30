@@ -1,8 +1,8 @@
 """库存管理路由"""
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_db, run_sync
 from app.api.middleware.auth import require_permission
 from app.models.schemas import InventoryAdjustRequest
 from app.services.inventory_service import InventoryService
@@ -17,16 +17,16 @@ async def list_inventory(
     page_size: int = Query(20, ge=1, le=100),
     keyword: str | None = None,
     low_stock_only: bool = False,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    data, total = InventoryService.list_inventory(db, page, page_size, keyword, low_stock_only)
+    data, total = await run_sync(db, InventoryService.list_inventory, page, page_size, keyword, low_stock_only)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
 @router.post("/adjust", summary="调整库存")
-async def adjust_inventory(body: InventoryAdjustRequest, user: dict = Depends(require_permission("inventory", "update")), db: Session = Depends(get_db)):
+async def adjust_inventory(body: InventoryAdjustRequest, user: dict = Depends(require_permission("inventory", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = InventoryService.adjust_inventory(db, body.sku_id, body.change_qty, body.reason)
+        result = await run_sync(db, InventoryService.adjust_inventory, body.sku_id, body.change_qty, body.reason)
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -38,7 +38,7 @@ async def get_logs(
     sku_id: int | None = None,
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    data, total = InventoryService.get_logs(db, sku_id, page, page_size)
+    data, total = await run_sync(db, InventoryService.get_logs, sku_id, page, page_size)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}

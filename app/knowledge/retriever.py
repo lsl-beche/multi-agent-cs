@@ -12,9 +12,9 @@
 - 全程同步执行（无 IO 阻塞），单次检索约 100-500ms（CPU）
 """
 import time
-from loguru import logger
 
 from langchain_core.documents import Document
+from loguru import logger
 
 from app.config.settings import settings
 from app.knowledge.embedding import embed_query_cached

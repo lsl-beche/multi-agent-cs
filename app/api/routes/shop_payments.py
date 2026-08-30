@@ -3,9 +3,9 @@ from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import current_user, get_db
+from app.api.deps import current_user, get_db, run_sync
 from app.config.settings import settings
 from app.models.tables import Order, Payment
 from app.services.payment_gateway import get_gateway, sign_payload, verify_signature
@@ -18,17 +18,17 @@ async def _uid(request: Request) -> int:
     return int(payload["sub"])
 
 
-def _get_order(db: Session, order_id: int, user_id: int) -> Order:
-    order = db.execute(
+async def _get_order(db: AsyncSession, order_id: int, user_id: int) -> Order:
+    order = (await db.execute(
         select(Order).where(Order.id == order_id, Order.user_id == user_id)
-    ).scalar_one_or_none()
+    )).scalar_one_or_none()
     if not order:
         raise HTTPException(404, "订单不存在")
     return order
 
 
 @router.post("/pay")
-async def initiate_payment(req: dict, request: Request, db: Session = Depends(get_db)):
+async def initiate_payment(req: dict, request: Request, db: AsyncSession = Depends(get_db)):
     """发起支付：生成待支付单（沙箱返回模拟二维码+签名），不直接标记已支付"""
     user_id = await _uid(request)
     order_id = req.get("order_id")
@@ -36,7 +36,7 @@ async def initiate_payment(req: dict, request: Request, db: Session = Depends(ge
     if not order_id:
         raise HTTPException(400, "缺少订单ID")
 
-    order = _get_order(db, int(order_id), user_id)
+    order = await _get_order(db, int(order_id), user_id)
     if order.pay_status == "paid":
         raise HTTPException(400, "订单已支付")
     if order.order_status in ("cancelled", "completed"):
@@ -51,9 +51,9 @@ async def initiate_payment(req: dict, request: Request, db: Session = Depends(ge
     created = gateway.create_payment(order)
 
     # 幂等：同订单已有 pending 支付单则复用
-    payment = db.execute(
+    payment = (await db.execute(
         select(Payment).where(Payment.order_id == order.id, Payment.status == "pending")
-    ).scalars().first()
+    )).scalars().first()
     if payment is None:
         payment = Payment(
             payment_no=created["payment_no"],
@@ -65,8 +65,8 @@ async def initiate_payment(req: dict, request: Request, db: Session = Depends(ge
             status="pending",
         )
         db.add(payment)
-        db.commit()
-        db.refresh(payment)
+        await db.commit()
+        await db.refresh(payment)
     else:
         created["payment_no"] = payment.payment_no
         created["trade_no"] = payment.trade_no
@@ -94,7 +94,7 @@ async def initiate_payment(req: dict, request: Request, db: Session = Depends(ge
 
 
 @router.post("/confirm")
-async def confirm_payment(req: dict, request: Request, db: Session = Depends(get_db)):
+async def confirm_payment(req: dict, request: Request, db: AsyncSession = Depends(get_db)):
     """沙箱支付回调确认：校验签名 + 幂等标记已支付（生产环境由渠道回调替代）"""
     user_id = await _uid(request)
     payment_no = req.get("payment_no")
@@ -102,7 +102,7 @@ async def confirm_payment(req: dict, request: Request, db: Session = Depends(get
     if not payment_no:
         raise HTTPException(400, "缺少支付单号")
 
-    payment = db.execute(select(Payment).where(Payment.payment_no == payment_no)).scalar_one_or_none()
+    payment = (await db.execute(select(Payment).where(Payment.payment_no == payment_no))).scalar_one_or_none()
     if not payment or payment.user_id != user_id:
         raise HTTPException(404, "支付单不存在")
     if payment.status == "paid":
@@ -118,9 +118,9 @@ async def confirm_payment(req: dict, request: Request, db: Session = Depends(get
     if not verify_signature(payload, signature):
         raise HTTPException(400, "签名校验失败")
 
-    order = db.get(Order, payment.order_id)
+    order = await db.get(Order, payment.order_id)
     get_gateway().confirm_payment(payment, order)
-    db.commit()
+    await db.commit()
 
     # 领域事件：支付成功
     from app.core.events import publish
@@ -137,9 +137,9 @@ async def confirm_payment(req: dict, request: Request, db: Session = Depends(get
     try:
         from app.models.tables import OrderItem
         from app.services.behavior_service import record
-        items = db.execute(select(OrderItem).where(OrderItem.order_id == order.id)).scalars().all()
+        items = (await db.execute(select(OrderItem).where(OrderItem.order_id == order.id))).scalars().all()
         for it in items:
-            record(db, user_id, it.product_id, "pay")
+            await run_sync(db, record, user_id, it.product_id, "pay")
     except Exception:
         pass
 
@@ -157,13 +157,13 @@ async def confirm_payment(req: dict, request: Request, db: Session = Depends(get
 
 
 @router.get("/{order_id}/status")
-async def payment_status(order_id: int, request: Request, db: Session = Depends(get_db)):
+async def payment_status(order_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     """查询订单支付状态"""
     user_id = await _uid(request)
-    order = _get_order(db, order_id, user_id)
-    payment = db.execute(
+    order = await _get_order(db, order_id, user_id)
+    payment = (await db.execute(
         select(Payment).where(Payment.order_id == order.id).order_by(Payment.id.desc())
-    ).scalars().first()
+    )).scalars().first()
     return {
         "code": 0,
         "data": {

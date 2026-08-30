@@ -1,8 +1,8 @@
 """数据报表路由：销售统计 + CS客服数据"""
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_db, run_sync
 from app.api.middleware.auth import require_permission
 from app.services.report_service import ReportService
 
@@ -13,9 +13,9 @@ router = APIRouter()
 async def sales_summary(
     user: dict = Depends(require_permission("reports", "read")),
     period: str = Query("today", description="today / yesterday / week / month"),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    data = ReportService.sales_summary(db, period)
+    data = await run_sync(db, ReportService.sales_summary, period)
     return {"code": 0, "data": data}
 
 
@@ -23,7 +23,7 @@ async def sales_summary(
 async def cs_agent_dashboard(
     user: dict = Depends(require_permission("reports", "read")),
     period: str = Query("today", description="today / week / month"),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    data = ReportService.cs_agent_dashboard(db, period)
+    data = await run_sync(db, ReportService.cs_agent_dashboard, period)
     return {"code": 0, "data": data}

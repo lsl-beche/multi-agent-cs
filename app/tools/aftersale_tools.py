@@ -9,12 +9,12 @@
 import json
 
 from langchain_core.tools import tool
+from sqlalchemy import select
 
 from app.core.db import SessionLocal
 from app.models.tables import Order, Ticket
 from app.services.payment_service import PaymentService
 from app.tools.registry import register
-from sqlalchemy import select
 
 
 def _find_order(db, order_no: str):

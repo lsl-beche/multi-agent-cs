@@ -9,8 +9,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI
-from fastapi import HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -38,7 +37,6 @@ from app.api.routes import (
     metrics,
     privacy,
     session,
-    ticket,
     shop_cart,
     shop_coupons,
     shop_orders,
@@ -46,6 +44,7 @@ from app.api.routes import (
     shop_products,
     shop_reviews,
     shop_user,
+    ticket,
 )
 from app.config.logging import setup_logging
 from app.config.settings import settings

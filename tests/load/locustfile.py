@@ -3,7 +3,6 @@
 用法：
     locust -f tests/load/locustfile.py -H http://127.0.0.1:8000 --headless -u 100 -r 10 -t 5m
 """
-import json
 
 from locust import HttpUser, between, task
 

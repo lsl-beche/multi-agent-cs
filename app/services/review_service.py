@@ -2,7 +2,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.tables import Product, Review, CsatScore
+from app.models.tables import Product, Review
 
 
 class ReviewService:

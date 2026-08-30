@@ -5,7 +5,7 @@ from sqlalchemy import delete, select
 
 from app.core.db import SessionLocal
 from app.core.redis_client import get_redis
-from app.models.tables import Conversation, MessageRecord, UserPreference
+from app.models.tables import Conversation, MessageRecord
 
 logger = logging.getLogger(__name__)
 

@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 
 from sqlalchemy import select
 
-from app.config.settings import settings
 from app.core.db import SessionLocal
 from app.models.tables import Order, Payment, Refund
 

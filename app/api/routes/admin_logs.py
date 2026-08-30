@@ -1,9 +1,9 @@
 """操作日志路由"""
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_db, run_sync
 from app.api.middleware.auth import require_permission
 from app.models.tables import OperationLog
 
@@ -19,28 +19,24 @@ async def list_logs(
     keyword: str | None = None,
     start_time: str | None = None,
     end_time: str | None = None,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     query = select(OperationLog)
-    count_query = select(func.count()).select_from(OperationLog)
 
     if module:
         query = query.where(OperationLog.module == module)
-        count_query = count_query.where(OperationLog.module == module)
     if keyword:
         query = query.where(OperationLog.username.contains(keyword))
-        count_query = count_query.where(OperationLog.username.contains(keyword))
     if start_time:
         query = query.where(OperationLog.created_at >= start_time)
-        count_query = count_query.where(OperationLog.created_at >= start_time)
     if end_time:
         query = query.where(OperationLog.created_at <= end_time)
-        count_query = count_query.where(OperationLog.created_at <= end_time)
 
-    total = db.execute(count_query).scalar() or 0
-    rows = db.execute(
-        query.order_by(OperationLog.id.desc()).offset((page - 1) * page_size).limit(page_size)
-    ).scalars().all()
+    from app.core.pagination import paginate
+    rows, total = await run_sync(
+        db, paginate, query, page, page_size,
+        order_by=OperationLog.id.desc(),
+    )
 
     data = [{
         "id": r.id, "username": r.username, "module": r.module,

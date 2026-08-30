@@ -1,7 +1,6 @@
 """订单服务：状态机流转 + 取消释放库存"""
 import secrets
 from datetime import datetime
-from typing import Any
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session

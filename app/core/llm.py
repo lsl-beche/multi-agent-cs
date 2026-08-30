@@ -7,11 +7,10 @@
 import time
 
 from langchain_core.language_models.chat_models import BaseChatModel
-from langchain_core.messages import BaseMessage
 from langchain_openai import ChatOpenAI
 
-from app.core.metrics import LLM_CALLS, LLM_DURATION, LLM_TOKENS
 from app.config.settings import settings
+from app.core.metrics import LLM_CALLS, LLM_DURATION, LLM_TOKENS
 
 # llama.cpp本地服务不校验Key，但OpenAI客户端要求非空
 _LOCAL_DUMMY_KEY = "sk-local-no-key-required"

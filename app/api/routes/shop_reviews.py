@@ -1,46 +1,46 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from sqlalchemy import select
-from app.api.deps import get_db, current_user
-from app.models.tables import Review, Order, OrderItem
-from app.services.review_service import ReviewService
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.deps import current_user, get_db, run_sync
+from app.models.tables import Order, Review
 
 router = APIRouter()
 
 @router.post("/api/reviews")
-async def submit_review(req: dict, user=Depends(current_user), db: Session = Depends(get_db)):
+async def submit_review(req: dict, user=Depends(current_user), db: AsyncSession = Depends(get_db)):
     """用户提交商品评价"""
     order_id = req.get("order_id")
     product_id = req.get("product_id")
     rating = req.get("rating")
     content = req.get("content", "")
     is_anonymous = req.get("is_anonymous", False)
-    
+
     # 校验：订单属于该用户且已完成
     uid = int(user["sub"])
     if order_id:
-        order = db.execute(select(Order).where(Order.id == order_id, Order.user_id == uid)).scalar_one_or_none()
+        order = (await db.execute(select(Order).where(Order.id == order_id, Order.user_id == uid))).scalar_one_or_none()
         if not order:
             raise HTTPException(404, "订单不存在")
         if order.order_status != "completed":
             raise HTTPException(400, "订单未完成，无法评价")
-        
+
         # 校验：未重复评价
-        existing = db.execute(select(Review).where(Review.order_id == order_id, Review.product_id == product_id)).scalar_one_or_none()
+        existing = (await db.execute(select(Review).where(Review.order_id == order_id, Review.product_id == product_id))).scalar_one_or_none()
         if existing:
             raise HTTPException(400, "该商品已评价")
-    
+
     review = Review(
         product_id=product_id, order_id=order_id, user_id=uid,
         rating=rating, content=content, is_anonymous=is_anonymous, status="approved"
     )
     db.add(review)
-    db.commit()
+    await db.commit()
 
     # 行为日志：评价
     try:
         from app.services.behavior_service import record
-        record(db, uid, product_id, "review")
+        await run_sync(db, record, uid, product_id, "review")
     except Exception:
         pass
 
@@ -48,15 +48,19 @@ async def submit_review(req: dict, user=Depends(current_user), db: Session = Dep
 
 
 @router.get("/api/reviews/product/{product_id}")
-async def get_product_reviews(product_id: int, page: int = 1, page_size: int = 10, db: Session = Depends(get_db)):
+async def get_product_reviews(product_id: int, page: int = 1, page_size: int = 10, db: AsyncSession = Depends(get_db)):
     """获取商品评价列表（仅已审核通过的）"""
-    offset = (page - 1) * page_size
-    reviews = db.execute(
-        select(Review).where(Review.product_id == product_id, Review.status == "approved")
-        .order_by(Review.created_at.desc()).offset(offset).limit(page_size)
-    ).scalars().all()
-    total = len(db.execute(select(Review).where(Review.product_id == product_id, Review.status == "approved")).scalars().all())
-    
+    from app.core.pagination import paginate
+
+    query = select(Review).where(
+        Review.product_id == product_id,
+        Review.status == "approved",
+    )
+    reviews, total = await run_sync(
+        db, paginate, query, page, page_size,
+        order_by=Review.created_at.desc(),
+    )
+
     data = [{
         "id": r.id, "rating": r.rating, "content": r.content,
         "is_anonymous": r.is_anonymous, "reply": r.reply,

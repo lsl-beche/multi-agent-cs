@@ -7,17 +7,16 @@
 """
 import re
 import time
-from loguru import logger
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
+from loguru import logger
 
 from app.agents.base import BaseAgent, _strip_think_tags
 from app.agents.graphs.state import AgentState
 from app.config.settings import settings
-from app.dialogue.slots import SlotFiller
-from app.tools.logistics_tools import get_shipment_track, track_logistics
 from app.tools.action_tools import propose_address_change, propose_cancel_order, propose_confirm_receipt
+from app.tools.logistics_tools import get_shipment_track, track_logistics
 from app.tools.order_tools import get_order_detail, get_payment_status, query_order
 
 perf_logger = logger.bind(name="perf")

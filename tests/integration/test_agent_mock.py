@@ -19,8 +19,9 @@ class FakeLLM:
 
 def test_workflow_mock(monkeypatch):
     monkeypatch.setattr("app.core.llm.MetricChatOpenAI", lambda **kw: FakeLLM())
-    from app.agents.graphs.workflow import build_workflow
     from langchain_core.messages import HumanMessage
+
+    from app.agents.graphs.workflow import build_workflow
 
     workflow = build_workflow()
     result = asyncio.run(workflow.ainvoke({

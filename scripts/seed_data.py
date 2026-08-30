@@ -17,31 +17,29 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import bcrypt
-from sqlalchemy import text, select
+from sqlalchemy import select, text
 
 from app.core.db import SessionLocal
 from app.models.tables import (
-    # 权限
-    Role,
-    Permission,
-    RolePermission,
-    UserRole,
-    # 用户
-    User,
-    Address,
-    # 商品
     Category,
-    Product,
-    ProductImage,
-    Sku,
-    Inventory,
     # 营销
     Coupon,
+    Inventory,
+    Permission,
+    Product,
+    ProductImage,
     # 评价
     Review,
+    # 权限
+    Role,
+    RolePermission,
+    Sku,
+    # 用户
+    User,
+    UserRole,
 )
 
 # ── 角色定义 ────────────────────────────────────────
@@ -447,7 +445,7 @@ if __name__ == "__main__":
         seed_reviews(db)
 
         db.commit()
-        print(f"\n[OK] 种子数据填充完成")
+        print("\n[OK] 种子数据填充完成")
 
     except Exception as e:
         db.rollback()

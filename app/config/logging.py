@@ -7,8 +7,9 @@ from app.config.settings import settings
 
 
 def setup_logging() -> None:
-    from app.api.middleware.trace import current_trace_id
     from loguru import logger as _logger
+
+    from app.api.middleware.trace import current_trace_id
 
     _logger.remove()
     # 日志记录注入 trace_id（全链路可观测）

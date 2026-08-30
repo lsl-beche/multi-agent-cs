@@ -1,8 +1,8 @@
 """订单管理路由"""
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db
+from app.api.deps import get_db, run_sync
 from app.api.middleware.auth import require_permission
 from app.models.schemas import OrderCancelRequest, OrderShipRequest
 from app.services.order_service import OrderService
@@ -20,45 +20,46 @@ async def list_orders(
     pay_status: str | None = None,
     start_time: str | None = None,
     end_time: str | None = None,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    data, total = OrderService.list_orders(
-        db, page, page_size, keyword, order_status, pay_status, start_time, end_time
+    data, total = await run_sync(
+        db, OrderService.list_orders,
+        page, page_size, keyword, order_status, pay_status, start_time, end_time,
     )
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
 @router.get("/{order_id}", summary="订单详情")
-async def get_order(order_id: int, user: dict = Depends(require_permission("orders", "read")), db: Session = Depends(get_db)):
+async def get_order(order_id: int, user: dict = Depends(require_permission("orders", "read")), db: AsyncSession = Depends(get_db)):
     try:
-        return {"code": 0, "data": OrderService.get_order(db, order_id)}
+        return {"code": 0, "data": await run_sync(db, OrderService.get_order, order_id)}
     except ValueError as e:
         raise HTTPException(404, detail=str(e))
 
 
 @router.put("/{order_id}/confirm", summary="确认订单")
-async def confirm_order(order_id: int, user: dict = Depends(require_permission("orders", "update")), db: Session = Depends(get_db)):
+async def confirm_order(order_id: int, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = OrderService.confirm_order(db, order_id, int(user["sub"]))
+        result = await run_sync(db, OrderService.confirm_order, order_id, int(user["sub"]))
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
 
 
 @router.put("/{order_id}/ship", summary="发货")
-async def ship_order(order_id: int, body: OrderShipRequest, user: dict = Depends(require_permission("orders", "update")), db: Session = Depends(get_db)):
+async def ship_order(order_id: int, body: OrderShipRequest, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = OrderService.ship_order(db, order_id, body.carrier, body.tracking_no, int(user["sub"]))
+        result = await run_sync(db, OrderService.ship_order, order_id, body.carrier, body.tracking_no, int(user["sub"]))
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
 
 
 @router.put("/{order_id}/cancel", summary="取消订单")
-async def cancel_order(order_id: int, body: OrderCancelRequest | None = None, user: dict = Depends(require_permission("orders", "update")), db: Session = Depends(get_db)):
+async def cancel_order(order_id: int, body: OrderCancelRequest | None = None, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = OrderService.cancel_order(
-            db, order_id,
+        result = await run_sync(
+            db, OrderService.cancel_order, order_id,
             body.reason if body else None,
             int(user["sub"]),
         )
@@ -68,9 +69,9 @@ async def cancel_order(order_id: int, body: OrderCancelRequest | None = None, us
 
 
 @router.put("/{order_id}/complete", summary="完成订单")
-async def complete_order(order_id: int, user: dict = Depends(require_permission("orders", "update")), db: Session = Depends(get_db)):
+async def complete_order(order_id: int, user: dict = Depends(require_permission("orders", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = OrderService.complete_order(db, order_id, int(user["sub"]))
+        result = await run_sync(db, OrderService.complete_order, order_id, int(user["sub"]))
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))

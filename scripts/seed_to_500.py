@@ -12,10 +12,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from sqlalchemy import func, select, text
-
-from app.core.db import SessionLocal
-from app.models.tables import Category, Inventory, Product, ProductImage, Sku
 from seed_100_products import (
     BRANDS,
     DESCRIPTIONS,
@@ -24,6 +20,10 @@ from seed_100_products import (
     calculate_price,
     generate_sku_code,
 )
+from sqlalchemy import func, select, text
+
+from app.core.db import SessionLocal
+from app.models.tables import Category, Inventory, Product, ProductImage, Sku
 
 # 真实存在的商品图（优先使用，避免404占位）
 REAL_IMAGES = [

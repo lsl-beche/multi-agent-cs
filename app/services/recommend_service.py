@@ -9,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.tables import Product, UserPreference
-from app.services.behavior_service import build_item_similarity, weighted_matrix, user_cosine
+from app.services.behavior_service import build_item_similarity, user_cosine, weighted_matrix
 
 
 def _product_dict(p: Product, reason: str = "") -> dict:

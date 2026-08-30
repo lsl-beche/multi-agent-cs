@@ -12,13 +12,13 @@
 import json
 
 from langchain_core.tools import tool
+from sqlalchemy import select
 
 from app.core.db import SessionLocal
 from app.models.tables import Order
 from app.services import logistics_service
 from app.services.shipment_service import ShipmentService
 from app.tools.registry import register
-from sqlalchemy import select
 
 
 @tool

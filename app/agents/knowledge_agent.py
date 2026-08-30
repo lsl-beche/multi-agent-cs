@@ -9,14 +9,13 @@ import time
 
 from langchain_core.messages import AIMessage, SystemMessage
 from langchain_core.tools import BaseTool
+from loguru import logger
 
 from app.agents.base import BaseAgent, _strip_think_tags
 from app.agents.graphs.state import AgentState
 from app.knowledge.retriever import KnowledgeRetriever
 from app.tools.product_tools import check_stock, search_product
 from app.tools.review_tools import search_reviews
-
-from loguru import logger
 
 perf_logger = logger.bind(name="perf")
 
@@ -104,7 +103,8 @@ class KnowledgeAgent(BaseAgent):
         # ⑦ 空回答防护：本地小模型可能把 token 预算全耗在思考链上，
         #    导致 content 为空；重试一次并强制"直接输出答案"
         if not content:
-            perf_logger.warning(f"[knowledge_agent] empty answer, retry once (t_llm={t_llm * 1000:.0f}ms)")
+            t_llm = (time.perf_counter() - t0) * 1000
+            perf_logger.warning(f"[knowledge_agent] empty answer, retry once (t_llm={t_llm:.0f}ms)")
             t0 = time.perf_counter()
             retry_messages = [
                 SystemMessage(content=system_content + "\n\n直接输出最终答案，禁止输出<think>推理过程。"),
