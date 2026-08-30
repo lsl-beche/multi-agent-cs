@@ -2,6 +2,10 @@ export * from './auth/token'
 export * from './api/client'
 export * from './types/api'
 export * from './types/generated'
+export type { paths, operations, components } from './types/generated'
+
+import type { components as OpenApiComponents } from './types/generated'
+export type ApiSchemas = OpenApiComponents['schemas']
 export * from './directives/permission'
 export * from './composables/usePermission'
 export * from './ui/toast'

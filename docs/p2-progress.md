@@ -30,6 +30,13 @@
 - `web/shared` 提供 `generate:types` 脚本；
 - CI 在共享包中重新生成类型。
 
+### 类型接入与测试提升
+
+- `web/shared` 导出 `ApiSchemas`、`paths`、`operations`、`components`；
+- 新增 `useChatWidget.ts` 聊天 composable，为 ChatWidget 拆分预留；
+- 新增 `tests/unit/test_security.py`、`test_login_guard.py`、`test_gateway_contracts.py`；
+- 当前核心模块覆盖率 43%，CI 基线 40%，下一目标 70%。
+
 ### 前端分包与大页面基础拆分
 
 - Shop / Admin 增加 `manualChunks`：Vue、Axios、Element Plus、ECharts 独立 chunk；
@@ -53,6 +60,7 @@
 - 容器集成测试需在 Docker/CI 真正执行；
 - 覆盖率 70% 仍未达到；
 - OpenAPI 自动生成类型尚未全面替换手工类型；
-- Home、ChatWidget、ProductDetail 等大页面仍待继续拆分；
+- ChatWidget 业务已抽出 composable，模板/样式仍未完全拆分；
+- Home、ProductDetail 等大页面仍待继续拆分；
 - 第三方渗透测试、PIA、权限矩阵回归、备份恢复演练尚未执行；
 - 1000 QPS / 2000 WS 压测尚未完成。

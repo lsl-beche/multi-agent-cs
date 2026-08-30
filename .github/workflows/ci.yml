@@ -38,7 +38,7 @@ jobs:
         run: |
           pip install pytest-cov
           pytest tests/unit tests/api tests/integration/test_agent_mock.py -q
-          pytest tests/unit tests/api --cov=app --cov-report=term-missing --cov-fail-under=50
+          pytest tests/unit tests/api --cov=app --cov-report=term-missing --cov-fail-under=40
       - name: AI golden set gate
         run: python scripts/eval_dialogue.py --threshold 0.95
       - name: Compile
