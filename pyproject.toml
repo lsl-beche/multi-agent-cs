@@ -1,0 +1,12 @@
+[project]
+name = "csagent"
+version = "0.1.0"
+description = "电商店铺智能客服Agent平台"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120

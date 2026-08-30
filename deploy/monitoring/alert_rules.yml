@@ -1,0 +1,39 @@
+groups:
+  - name: csagent-slo
+    rules:
+      - alert: HttpErrorRateHigh
+        expr: sum(rate(csagent_http_requests_total{status=~"5.."}[5m])) / sum(rate(csagent_http_requests_total[5m])) > 0.01
+        for: 5m
+        labels: {severity: critical}
+        annotations: {summary: "HTTP 5xx 错误率 >1%", description: "5 分钟内 5xx 占比超过 1%"}
+
+      - alert: HttpP99High
+        expr: histogram_quantile(0.99, sum(rate(csagent_http_request_duration_seconds_bucket[5m])) by (le)) > 3
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "HTTP P99 > 3s", description: "接口 P99 延迟超过 3 秒"}
+
+      - alert: LlmCallsFailing
+        expr: sum(increase(csagent_llm_calls_total{provider="local"}[10m])) > 0 and
+          sum(rate(csagent_http_requests_total{status=~"5.."}[5m])) / sum(rate(csagent_http_requests_total[5m])) > 0.005
+        for: 5m
+        labels: {severity: critical}
+        annotations: {summary: "LLM 服务异常（伴随 5xx）", description: "建议检查 llm_watchdog 运行状态"}
+
+      - alert: HandoffRateSpike
+        expr: increase(csagent_handoffs_total[1h]) > 50
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "转人工激增", description: "1 小时内转人工超过 50 次，可能为服务异常"}
+
+      - alert: DbUnavailable
+        expr: avg_over_time(csagent_pg_pool_checks_total[5m]) == 0 and sum(rate(csagent_http_requests_total[5m])) > 0
+        for: 5m
+        labels: {severity: critical}
+        annotations: {summary: "PostgreSQL 疑似不可用", description: "readiness 应已将实例摘流量"}
+
+      - alert: ChatRateBlocked
+        expr: increase(csagent_chat_rate_blocked_total[1h]) > 500
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "聊天批量限流", description: "疑似刷接口，检查风控策略"}

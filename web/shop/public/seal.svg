@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#b3453a"/>
+  <rect x="5.5" y="5.5" width="53" height="53" rx="10" fill="none" stroke="#faf6ef" stroke-width="1.6" opacity="0.9"/>
+  <text x="32" y="35" font-family="'STSong','SimSun','Noto Serif SC',serif" font-size="23" font-weight="700" fill="#faf6ef" text-anchor="middle">茗</text>
+  <text x="32" y="55" font-family="'STSong','SimSun','Noto Serif SC',serif" font-size="23" font-weight="700" fill="#faf6ef" text-anchor="middle">韵</text>
+</svg>

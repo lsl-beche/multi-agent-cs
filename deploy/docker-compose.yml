@@ -1,0 +1,39 @@
+# 本地/轻量服务器一键部署：App + PostgreSQL + Redis（Chroma内嵌于App，无需独立服务）
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env
+    environment:
+      POSTGRES_URL: postgresql+psycopg://postgres:password@postgres:5432/csagent
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ../data:/code/data   # 向量库持久化
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: csagent
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  pg_data:

@@ -1,0 +1,13 @@
+# Prometheus 抓取配置 + 告警规则（监控体系7.1）
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: csagent
+    metrics_path: /metrics   # TODO: App侧接入 prometheus-fastapi-instrumentator 暴露指标
+    static_configs:
+      - targets: ["csagent:8000"]
+
+# 告警策略：错误率突增、响应超时、服务不可用
+rule_files:
+  - alert_rules.yml

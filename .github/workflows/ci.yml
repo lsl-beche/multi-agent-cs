@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Check whitespace
+        run: git diff --check
+      - run: pip install -r requirements.txt
+      - name: Lint
+        run: |
+          pip install ruff
+          ruff check app scripts tests --ignore E501
+      - name: Type check (advisory until P1)
+        continue-on-error: true
+        run: |
+          pip install mypy
+          mypy app --ignore-missing-imports --follow-imports=skip
+      - name: Unit tests
+        run: |
+          pip install pytest-cov
+          pytest tests/unit tests/integration/test_agent_mock.py -q
+          pytest tests/unit --cov=app --cov-report=term-missing --cov-fail-under=50
+      - name: AI golden set gate
+        run: python scripts/eval_dialogue.py --threshold 0.95
+      - name: Compile
+        run: python -m compileall -q app scripts
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Build shop
+        working-directory: web/shop
+        run: |
+          npm ci
+          npm run build
+      - name: Unit tests (vitest)
+        working-directory: web/shop
+        run: |
+          npx vitest run
+      - name: Build admin
+        working-directory: web/admin
+        run: |
+          npm ci
+          npm run build
+
+  docker:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && secrets.REGISTRY != ''
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & push image
+        run: |
+          docker build -f deploy/Dockerfile -t ${{ secrets.REGISTRY }}/csagent:${GITHUB_SHA::8} .
+          docker tag ${{ secrets.REGISTRY }}/csagent:${GITHUB_SHA::8} ${{ secrets.REGISTRY }}/csagent:latest
+          docker push ${{ secrets.REGISTRY }}/csagent:${GITHUB_SHA::8}
+          docker push ${{ secrets.REGISTRY }}/csagent:latest
+      - name: Deploy (GitOps)
+        run: |
+          # ArgoCD 监听 Git 仓库，此处仅更新镜像 tag（示例：curl ArgoCD API 或更新 values）
+          echo "Update image tag via ArgoCD/GitOps"

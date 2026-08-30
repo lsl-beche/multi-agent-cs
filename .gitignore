@@ -1,0 +1,56 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+*.whl
+*.so
+
+# ===== 环境与密钥 =====
+.env
+.env.local
+.env.production
+.env.test
+.env.*.local
+!.env.example
+
+# ===== Models / Data / Runtime =====
+models/
+data/vectordb/
+data/raw/*
+!data/raw/.gitkeep
+*.sqlite3
+*.db
+dump.rdb
+logs/
+*.log
+
+# ===== Node / 前端构建 =====
+node_modules/
+web/*/node_modules/
+web/*/dist/
+web/*/.vite/
+*.tsbuildinfo
+
+# ===== 测试 / 覆盖率 / 工具缓存 =====
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+htmlcov/
+locust_report*.html
+*.log
+playwright-report/
+test-results/
+
+# ===== IDE / 系统 =====
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

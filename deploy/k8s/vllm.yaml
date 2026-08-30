@@ -1,0 +1,85 @@
+# vLLM 推理集群（阶段二：LLM 服务化）
+# 按模型分池部署；后端通过 LLM_PROVIDER=vllm + LLM_VLLM_URL 指向本服务
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: csagent-vllm
+  namespace: csagent
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: csagent-vllm
+  template:
+    metadata:
+      labels:
+        app: csagent-vllm
+    spec:
+      nodeSelector:
+        node-pool: gpu
+      containers:
+        - name: vllm
+          image: vllm/vllm-openai:latest
+          args:
+            - --model
+            - Qwen/Qwen2.5-14B-Instruct-AWQ
+            - --quantization
+            - awq
+            - --served-model-name
+            - csagent-chat
+            - --max-model-len
+            - "8192"
+            - --gpu-memory-utilization
+            - "0.9"
+            - --enable-prefix-caching
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+              cpu: "16"
+              memory: 64Gi
+            requests:
+              cpu: "8"
+              memory: 32Gi
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /v1/models
+              port: 8000
+            initialDelaySeconds: 120
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: csagent-vllm
+  namespace: csagent
+spec:
+  selector:
+    app: csagent-vllm
+  ports:
+    - port: 8000
+      targetPort: 8000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: csagent-vllm-hpa
+  namespace: csagent
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: csagent-vllm
+  minReplicas: 2
+  maxReplicas: 16
+  metrics:
+    - type: Pods
+      pods:
+        metric:
+          name: vllm_running_requests
+        target:
+          type: AverageValue
+          averageValue: "16"

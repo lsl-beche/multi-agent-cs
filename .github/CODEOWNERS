@@ -1,0 +1,24 @@
+# 默认负责人：后端/平台主维护者
+* @csagent/core
+
+# 关键安全与权限文件
+app/api/middleware/ @csagent/security
+app/api/deps.py @csagent/security
+app/core/security.py @csagent/security
+app/services/auth_service.py @csagent/security
+app/models/tables.py @csagent/data
+
+# CI / 部署 / 文档
+.github/ @csagent/platform
+deploy/ @csagent/platform
+docs/ @csagent/platform
+
+# 前端
+web/shop/ @csagent/frontend
+web/admin/ @csagent/frontend
+
+# 数据/Agent
+app/agents/ @csagent/ai
+app/knowledge/ @csagent/ai
+scripts/ @csagent/data
+

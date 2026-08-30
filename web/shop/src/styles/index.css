@@ -1,0 +1,517 @@
+/* ═══════════════════════════════════════════════════════════════
+   茗韵茶庄 · 新中式设计系统（全局样式 index.css）
+   宣纸与墨 · 青瓷与茶汤
+   ───────────────────────────────────────────────────────────────
+   本文件职责：
+     1. 在 :root 中定义全局设计变量（茶青/墨色/宣纸/铜金/朱砂等色彩、
+        暖褐调阴影、圆角、字体栈），供全站组件与页面引用；
+     2. 将 Element Plus 组件主题色统一覆盖为茶青（--tea）色调；
+     3. 提供通用工具类：容器（shop-container/page-container）、
+        卡片（tea-card）、页面标题（page-title）、印章徽标（seal-tag）；
+     4. 定义顶部导航、类目导航、页脚等全站公共区块样式；
+     5. 提供页面切换过渡动画、商品卡入场微交互、滚动条与移动端适配。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 全局重置：清除默认边距，统一盒模型为 border-box ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* ── 茶 · 色彩 ── */
+  --tea: #3f5d4a;            /* 茶青（主色） */
+  --tea-deep: #314a3b;       /* 深茶青（hover） */
+  --tea-dark: #26392e;       /* 最深茶青（active） */
+  --tea-soft: #e8efe9;       /* 茶青浅底 */
+  --ink: #2c2a26;            /* 墨色（正文/深底） */
+  --ink-soft: #6b6257;       /* 次级文字 */
+  --paper: #faf6ef;          /* 宣纸底 */
+  --paper-deep: #f2ead9;     /* 深宣纸 */
+  --card: #fffdf9;           /* 暖白卡片 */
+  --gold: #b08d57;           /* 铜金（点缀） */
+  --gold-deep: #a17d4a;
+  --gold-soft: #d9c6a3;
+  --cinnabar: #b3453a;       /* 朱砂（价格/警示） */
+  --line: #e6ddca;           /* 描边 */
+
+  /* ── 暖褐调阴影 ── */
+  --shadow-sm: 0 2px 14px rgba(74, 61, 43, 0.06);
+  --shadow-md: 0 6px 22px rgba(74, 61, 43, 0.1);
+  --shadow-lg: 0 16px 40px rgba(74, 61, 43, 0.16);
+
+  /* ── 圆角 · 字体 ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --font-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+
+  /* ── Element Plus 主题 ── */
+  --el-color-primary: var(--tea);
+  --el-color-primary-light-3: #5f7d6c;
+  --el-color-primary-light-5: #7e9c8b;
+  --el-color-primary-light-7: #a9c4b3;
+  --el-color-primary-light-8: #cddccf;
+  --el-color-primary-light-9: var(--tea-soft);
+  --el-color-danger: var(--cinnabar);
+  --el-color-success: var(--tea);
+  --el-color-warning: var(--gold);
+  --el-border-radius-base: var(--radius-sm);
+}
+
+/* ── 全局正文：无衬线字体 + 宣纸底色 + SVG 噪点纹理（纸张质感） ── */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 链接：默认去掉下划线并继承文字颜色 ── */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── 标题：统一使用衬线字体（宋体/思源宋体），凸显中式韵味 ── */
+h1, h2, h3, h4, .serif {
+  font-family: var(--font-serif);
+}
+
+/* ── 通用容器：全站最大宽度 1200px，水平居中 ── */
+.shop-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ── 页面内容容器：与 shop-container 相同宽度，带统一内边距 ── */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ── Element Plus 组件覆盖 ── */
+/* 主按钮：默认/悬停/按下三态统一使用茶青色调 */
+.el-button--primary {
+  --el-button-bg-color: var(--tea);
+  --el-button-border-color: var(--tea);
+  --el-button-hover-bg-color: var(--tea-deep);
+  --el-button-hover-border-color: var(--tea-deep);
+  --el-button-active-bg-color: var(--tea-dark);
+}
+
+/* 危险按钮：使用朱砂色 */
+.el-button--danger {
+  --el-button-bg-color: var(--cinnabar);
+  --el-button-border-color: var(--cinnabar);
+}
+
+/* 单选按钮（按钮样式）选中态：茶青底色 */
+.el-radio-button__original-radio:checked + .el-radio-button__inner {
+  background-color: var(--tea);
+  border-color: var(--tea);
+  box-shadow: -1px 0 0 0 var(--tea);
+}
+
+/* 复选框选中态：茶青勾选块 */
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: var(--tea);
+  border-color: var(--tea);
+}
+
+/* 复选框选中后的文字：茶青色 */
+.el-checkbox__input.is-checked + .el-checkbox__label {
+  color: var(--tea);
+}
+
+/* 分页当前页：茶青底 */
+.el-pagination .el-pager li.is-active {
+  background-color: var(--tea);
+}
+
+/* 危险标签（如订单"已取消"）：浅朱砂底 + 朱砂文字 */
+.el-tag--danger {
+  --el-tag-bg-color: #fdf0ee;
+  --el-tag-border-color: #f2c6c1;
+  --el-tag-text-color: var(--cinnabar);
+}
+
+/* ── 通用卡片 / 标题 ── */
+/* 通用卡片：暖白底 + 圆角 + 轻阴影，hover 时阴影加深 */
+.tea-card {
+  background: var(--card);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.tea-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* 页面大标题：衬线体 + 底部金色短横线装饰 */
+.page-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  letter-spacing: 2px;
+}
+
+/* 标题下的金色装饰线（伪元素） */
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: var(--gold);
+}
+
+/* ── 印章式徽标（商品卡） ── */
+/* 徽标基础样式：墨色印章风格 */
+.seal-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* 徽标颜色变体：茶青 / 铜金 / 朱砂 / 浅底 */
+.seal-tag.tea   { background: var(--tea); }
+.seal-tag.gold  { background: var(--gold); color: var(--paper); }
+.seal-tag.cinnabar { background: var(--cinnabar); color: var(--paper); }
+.seal-tag.soft  { background: var(--tea-soft); color: var(--tea); box-shadow: none; }
+
+/* ── 顶部导航 ── */
+/* 导航条：墨色渐变底 + 吸顶效果，层级 100 保证覆盖页面内容 */
+.shop-header {
+  background: linear-gradient(180deg, var(--ink) 0%, #38342d 100%);
+  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.18);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* 顶部第一行：Logo / 搜索 / 操作区 水平均匀分布，固定高度 */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+/* 品牌 Logo 整体：衬线体 + 铜金色 */
+.shop-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 3px;
+}
+
+/* Logo 印章图片 */
+.shop-logo .logo-seal {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+
+/* Logo 英文副标：小号、半透明金色 */
+.shop-logo .logo-en {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: rgba(208, 196, 176, 0.55);
+  margin-top: 2px;
+}
+
+/* 搜索区：弹性占位，最大宽度 440px */
+.header-search {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 440px;
+  margin: 0 30px;
+}
+
+/* 搜索输入框：半透明白底圆角胶囊，适配深色导航背景 */
+.header-search .el-input__wrapper {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  box-shadow: none;
+}
+
+/* 搜索文字：白色 */
+.header-search .el-input__inner {
+  color: #fff;
+}
+
+/* 搜索占位符：半透明白 */
+.header-search .el-input__inner::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* 搜索按钮容器：透明无边框 */
+.header-search .el-input-group__append {
+  background: transparent;
+  border: none;
+}
+
+/* 右侧操作区：登录/注册/订单/购物车水平排列 */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* 操作区文字按钮：暖灰文字，hover 变铜金 */
+.header-actions .el-button {
+  color: #cfc4b0;
+  font-size: 14px;
+}
+
+.header-actions .el-button:hover {
+  color: var(--gold);
+}
+
+/* 购物车入口：大号图标，hover 变铜金 */
+.header-cart {
+  position: relative;
+  cursor: pointer;
+  font-size: 22px;
+  color: #cfc4b0;
+}
+
+.header-cart:hover {
+  color: var(--gold);
+}
+
+/* 购物车数量徽标：右上角圆形铜金底 */
+.header-cart .cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── 类目导航 ── */
+/* 类目条：暖白底，横向排列可横向滚动（小屏不换行） */
+.category-nav {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  overflow-x: auto;
+}
+
+/* 类目链接：次级文字色，hover/active 变茶青 */
+.category-nav a {
+  font-size: 14px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  position: relative;
+  padding-bottom: 2px;
+  transition: color 0.2s;
+}
+
+.category-nav a.active,
+.category-nav a:hover {
+  color: var(--tea);
+}
+
+/* 当前类目底部金色小横线指示条 */
+.category-nav a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+/* ── 页脚 ── */
+/* 页脚：墨色底 + 顶部铜金分隔线，居中文字 */
+.shop-footer {
+  background: var(--ink);
+  text-align: center;
+  padding: 36px 0;
+  color: #a3967f;
+  font-size: 13px;
+  margin-top: 60px;
+  border-top: 3px solid var(--gold);
+}
+
+.shop-footer p {
+  line-height: 1.9;
+}
+
+/* 页脚品牌名：衬线体铜金色 */
+.shop-footer .footer-brand {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  letter-spacing: 4px;
+  color: var(--gold);
+}
+
+/* ── 滚动条 ── */
+/* 全站细滚动条：金色系 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--paper);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold-soft);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ── 页面过渡动画 ── */
+/* 路由切换过渡：淡入淡出 + 纵向位移动画 */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+/* 进入前：透明 + 下移 12px */
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* 离开后：透明 + 上移 6px */
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* ── 微交互：商品卡入场动画 ── */
+/* 商品网格中每张卡片入场时依次"浮现"（下方上移淡入） */
+.product-grid .product-card {
+  animation: card-in 0.45s cubic-bezier(0.22, 0.7, 0.32, 1) both;
+}
+
+/* 第 2~8 张卡片依次延迟 0.05s 起播，形成逐张浮现的节奏感 */
+.product-grid .product-card:nth-child(2) { animation-delay: 0.05s; }
+.product-grid .product-card:nth-child(3) { animation-delay: 0.1s; }
+.product-grid .product-card:nth-child(4) { animation-delay: 0.15s; }
+.product-grid .product-card:nth-child(5) { animation-delay: 0.2s; }
+.product-grid .product-card:nth-child(6) { animation-delay: 0.25s; }
+.product-grid .product-card:nth-child(7) { animation-delay: 0.3s; }
+.product-grid .product-card:nth-child(8) { animation-delay: 0.35s; }
+
+/* ── 卡片浮现动画关键帧 ── */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── 无障碍焦点态 ── */
+/* 键盘导航焦点：铜金描边，保证可访问性 */
+a:focus-visible,
+.el-button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ── 移动端适配 ── */
+/* 768px 以下：顶部导航换行排列，搜索框占满整行 */
+@media (max-width: 768px) {
+  .header-top {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 0 12px;
+    gap: 10px 12px;
+  }
+
+  /* 搜索框独占一行（换行到第三位） */
+  .header-search {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  /* Logo 缩小、隐藏英文副标 */
+  .shop-logo {
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+
+  .shop-logo .logo-seal {
+    width: 26px;
+    height: 26px;
+  }
+
+  .shop-logo .logo-en {
+    display: none;
+  }
+
+  /* 类目间距收窄 */
+  .category-nav {
+    gap: 18px;
+  }
+
+  /* 页脚压缩内边距 */
+  .shop-footer {
+    padding: 28px 16px;
+  }
+
+  /* 商品图与骨架图高度降低 */
+  .product-grid .card-img-wrap,
+  .skeleton-grid .sk-img {
+    height: 180px;
+  }
+}

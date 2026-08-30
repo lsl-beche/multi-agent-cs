@@ -1,0 +1,133 @@
+/* ═══════════════════════════════════════════════════════════
+   茗韵茶庄 · 登录/注册页公共样式（auth.css）
+   ───────────────────────────────────────────────────────────
+   设计主题：新中式 · 茶山意境（墨绿山峦渐变背景 + 暖白卡片）
+   本文件职责：为 LoginView / RegisterView 两个页面提供公共布局样式：
+     1. 全屏居中布局 + 茶山渐变背景（含金色光晕）；
+     2. 左右分栏卡片（左侧品牌区 / 右侧表单区）；
+     3. 表单、提交按钮、页脚链接与移动端适配。
+   引用方式：两个视图文件通过 <style src="../../styles/auth.css"> 引入。
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 页面容器：占满视口高度，弹性居中，深绿茶山渐变底 ── */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(1000px 480px at 12% -10%, rgba(176, 141, 87, 0.2), transparent 60%),
+    linear-gradient(150deg, #20341f 0%, #314a3b 40%, #243c26 75%, #182b18 100%);
+  padding: 40px 20px;
+}
+
+/* ── 外层卡片：宽 860px 的左右分栏容器，暖白底 + 大圆角 + 深投影 ── */
+.login-wrapper {
+  display: flex;
+  width: 860px;
+  max-width: 100%;
+  background: #fffdf9;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+/* ── 左侧品牌区：深褐墨色渐变底，品牌文案居中 ── */
+.login-left {
+  width: 380px;
+  background: linear-gradient(160deg, #2c2a26, #5a4a3a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+/* 品牌图标（茶杯 emoji）：大号展示 */
+.brand .brand-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+/* 品牌主标题：铜金色衬线体，宽字距 */
+.brand h1 {
+  color: #b08d57;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  margin-bottom: 8px;
+  letter-spacing: 4px;
+}
+
+/* 品牌副标语：次级棕灰色 */
+.brand p {
+  color: #6b6257;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+/* ── 右侧表单区：弹性占满剩余宽度 ── */
+.login-card {
+  flex: 1;
+  padding: 50px 48px;
+}
+
+/* 表单区标题（欢迎回来/创建账号） */
+.login-card h2 {
+  font-size: 26px;
+  color: #2c2a26;
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+}
+
+/* 表单区副标题 */
+.login-sub {
+  font-size: 14px;
+  color: #6b6257;
+  margin-bottom: 32px;
+}
+
+/* 提交按钮：全宽大按钮，茶青底色（!important 覆盖 Element Plus 默认样式） */
+.submit-btn {
+  width: 100%;
+  height: 46px;
+  font-size: 16px;
+  border-radius: 10px;
+  background: #3f5d4a !important;
+  border-color: #3f5d4a !important;
+}
+
+/* 表单底部提示（立即注册/立即登录） */
+.login-footer {
+  text-align: center;
+  font-size: 14px;
+  color: #6b6257;
+}
+
+/* 提示中的链接文字：茶青加粗 */
+.login-footer .link {
+  color: #3f5d4a;
+  font-weight: 600;
+}
+
+/* 返回首页入口：居中展示 */
+.back-home {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+/* 返回首页链接：次级色，hover 变茶青 */
+.back-home a {
+  color: #6b6257;
+  transition: color 0.2s;
+}
+
+.back-home a:hover { color: #3f5d4a; }
+
+/* ── 移动端适配：768px 以下改为上下单列布局 ── */
+@media (max-width: 768px) {
+  .login-wrapper { flex-direction: column; }
+  .login-left { width: 100%; padding: 40px; }
+  .login-card { padding: 32px 24px; }
+}

@@ -1,0 +1,88 @@
+/* ============================================================
+   模块说明：全局样式表（styles/index.css）
+   存放整个后台管理系统通用的基础样式与公共类，与 Element Plus 配合使用。
+   主要区块：
+     1) 全局重置（Reset）
+     2) 页面基础样式（body）
+     3) 页面容器（.page-container）
+     4) 工具栏（.toolbar / .toolbar-left）
+     5) 统计卡片（.stat-cards / .stat-card）
+     6) 图表容器（.chart-box）
+   ============================================================ */
+
+/* ---------- 1. 全局重置 ---------- */
+/* 清除所有元素默认内外边距，并统一使用 border-box 盒模型（宽高包含边框与内边距） */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---------- 2. 页面基础样式 ---------- */
+/* 设置全局字体族：优先使用系统中文字体，保证各平台显示效果一致 */
+body {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+  /* 字体抗锯齿渲染，使文字边缘更平滑 */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 3. 页面容器 ---------- */
+/* 各业务页面的外层容器：白底卡片 + 圆角 + 内边距，最小高度撑满可视区域 */
+.page-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  min-height: calc(100vh - 100px);
+}
+
+/* ---------- 4. 工具栏 ---------- */
+/* 页面上方的操作栏：左右两端布局（左侧筛选/搜索，右侧操作按钮），支持换行与间距 */
+.toolbar {
+  display: flex;
+  justify-content: space-between;   /* 左侧与右侧内容分居两端 */
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;                  /* 空间不足时自动换行 */
+  gap: 12px;
+}
+
+/* 工具栏左侧：筛选控件组合，横向排列并支持换行 */
+.toolbar-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ---------- 5. 统计卡片 ---------- */
+/* 统计卡片网格：自适应列数（每列最小 220px），用于数据看板等页面的指标展示 */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* 单张统计卡片：白底 + 圆角 + 内边距 + 轻微阴影 */
+.stat-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* 统计卡片的指标名称文字（灰色小号字） */
+.stat-card .label { font-size: 13px; color: #909399; margin-bottom: 8px; }
+/* 统计卡片的指标数值（大号加粗深色字） */
+.stat-card .value { font-size: 28px; font-weight: 700; color: #303133; }
+/* 统计卡片的单位/角标文字（如增长率，绿色小字） */
+.stat-card .suffix { font-size: 14px; color: #67c23a; margin-top: 4px; }
+
+/* ---------- 6. 图表容器 ---------- */
+/* ECharts 图表的外层卡片容器：白底圆角 + 阴影，与统计卡片风格统一 */
+.chart-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
