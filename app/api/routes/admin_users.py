@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.models.schemas import AdminUserCreate, AdminUserUpdate
 from app.services.user_service import UserService
@@ -19,14 +19,14 @@ async def list_users(
     status: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(db, UserService.list_users, page, page_size, keyword, status)
+    data, total = await UserService.list_users_async(db, page, page_size, keyword, status)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
 @router.post("", summary="创建用户")
 async def create_user(body: AdminUserCreate, user: dict = Depends(require_permission("users", "create")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, UserService.create_user, body.username, body.password, body.email, body.phone, body.role)
+        result = await UserService.create_user_async(db, body.username, body.password, body.email, body.phone, body.role)
         return {"code": 0, "data": result, "message": "创建成功"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -35,7 +35,7 @@ async def create_user(body: AdminUserCreate, user: dict = Depends(require_permis
 @router.put("/{user_id}", summary="更新用户")
 async def update_user(user_id: int, body: AdminUserUpdate, user: dict = Depends(require_permission("users", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, UserService.update_user, user_id, body.email, body.phone, body.status)
+        result = await UserService.update_user_async(db, user_id, body.email, body.phone, body.status)
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -44,7 +44,7 @@ async def update_user(user_id: int, body: AdminUserUpdate, user: dict = Depends(
 @router.put("/{user_id}/ban", summary="封禁/解封用户")
 async def ban_user(user_id: int, user: dict = Depends(require_permission("users", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, UserService.ban_user, user_id)
+        result = await UserService.ban_user_async(db, user_id)
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -52,5 +52,5 @@ async def ban_user(user_id: int, user: dict = Depends(require_permission("users"
 
 @router.get("/{user_id}/addresses", summary="用户地址列表")
 async def get_addresses(user_id: int, user: dict = Depends(require_permission("users", "read")), db: AsyncSession = Depends(get_db)):
-    data = await run_sync(db, UserService.get_addresses, user_id)
+    data = await UserService.get_addresses_async(db, user_id)
     return {"code": 0, "data": data}

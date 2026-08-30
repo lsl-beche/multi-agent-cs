@@ -12,6 +12,7 @@ from app.core.security import (
     verify_password,
 )
 from app.models.tables import Permission, Role, RolePermission, User, UserRole
+from app.services.async_bridge import async_adapter
 
 # 角色⇄权限映射（与 seed_data 保持一致）
 ROLE_PERMISSION_MAP: dict[str, list[str]] = {
@@ -197,3 +198,9 @@ class AuthService:
             "permissions": permissions,
             "last_login": user.last_login.isoformat() if user.last_login else None,
         }
+
+
+AuthService.login_async = async_adapter(AuthService.login)
+AuthService.refresh_token_async = async_adapter(AuthService.refresh_token)
+AuthService.change_password_async = async_adapter(AuthService.change_password)
+AuthService.get_user_info_async = async_adapter(AuthService.get_user_info)

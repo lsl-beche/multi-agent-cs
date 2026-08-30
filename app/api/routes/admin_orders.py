@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.models.schemas import OrderCancelRequest, OrderShipRequest
 from app.services.order_service import OrderService
@@ -31,7 +31,7 @@ async def list_orders(
 @router.get("/{order_id}", summary="订单详情")
 async def get_order(order_id: int, user: dict = Depends(require_permission("orders", "read")), db: AsyncSession = Depends(get_db)):
     try:
-        return {"code": 0, "data": await run_sync(db, OrderService.get_order, order_id)}
+        return {"code": 0, "data": await OrderService.get_order_async(db, order_id)}
     except ValueError as e:
         raise HTTPException(404, detail=str(e))
 

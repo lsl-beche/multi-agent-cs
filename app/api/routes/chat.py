@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import current_user, get_db
 from app.core.db import AsyncSessionLocal
-from app.dialogue.chat_pipeline import chat_rate_ok, run_agent, validate_input
+from app.dialogue.chat_pipeline import chat_rate_ok, persist_turn, run_agent, stream_agent, validate_input
 from app.dialogue.memory import SessionMemory
 from app.models.schemas import ChatRequest, ChatResponse
 from app.models.tables import Conversation, CsatScore
@@ -127,9 +127,14 @@ async def chat_ws(ws: WebSocket, token: str = "") -> None:
             if err:
                 await _safe_ws_send(ws, {"type": "error", "detail": err})
                 continue
-            result = await run_agent(session_id, user_id, message)
-            await _safe_ws_send(ws, {"type": "chunk", "content": result["answer"]})
-            await _safe_ws_send(ws, {"type": "done", "intent": result.get("intent", ""), "need_human": result.get("need_human", False)})
+            final_answer = ""
+            async for stream_kind, content in stream_agent(session_id, user_id, message):
+                if stream_kind == "chunk" and content:
+                    await _safe_ws_send(ws, {"type": "chunk", "content": content})
+                elif stream_kind == "done":
+                    final_answer = content or ""
+                    await _safe_ws_send(ws, {"type": "done"})
+            await asyncio.to_thread(persist_turn, session_id, user_id, message, final_answer)
     except WebSocketDisconnect:
         pass
     finally:

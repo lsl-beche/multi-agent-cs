@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.services.shipment_service import ShipmentService
 
@@ -24,7 +24,7 @@ async def list_shipments(
     status: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(db, ShipmentService.list_shipments, page, page_size, order_id, status)
+    data, total = await ShipmentService.list_shipments_async(db, page, page_size, order_id, status)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
@@ -36,7 +36,7 @@ async def update_tracking(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        result = await run_sync(db, ShipmentService.update_tracking, shipment_id, body.tracking_no, body.carrier)
+        result = await ShipmentService.update_tracking_async(db, shipment_id, body.tracking_no, body.carrier)
         return {"code": 0, "data": result, "message": "物流已更新"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))

@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.services.report_service import ReportService
 
@@ -15,7 +15,7 @@ async def sales_summary(
     period: str = Query("today", description="today / yesterday / week / month"),
     db: AsyncSession = Depends(get_db),
 ):
-    data = await run_sync(db, ReportService.sales_summary, period)
+    data = await ReportService.sales_summary_async(db, period)
     return {"code": 0, "data": data}
 
 
@@ -25,5 +25,5 @@ async def cs_agent_dashboard(
     period: str = Query("today", description="today / week / month"),
     db: AsyncSession = Depends(get_db),
 ):
-    data = await run_sync(db, ReportService.cs_agent_dashboard, period)
+    data = await ReportService.cs_agent_dashboard_async(db, period)
     return {"code": 0, "data": data}

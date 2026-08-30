@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.tables import Order, Shipment
+from app.services.async_bridge import async_adapter
 
 
 class ShipmentService:
@@ -64,3 +65,7 @@ class ShipmentService:
             s.carrier = carrier
         db.commit()
         return {"id": s.id, "tracking_no": s.tracking_no, "carrier": s.carrier}
+
+
+ShipmentService.list_shipments_async = async_adapter(ShipmentService.list_shipments)
+ShipmentService.update_tracking_async = async_adapter(ShipmentService.update_tracking)

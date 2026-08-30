@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.config.settings import settings
 from app.models.tables import Conversation, CsatScore, MessageRecord, Order, Payment, Ticket
+from app.services.async_bridge import async_adapter
 
 
 class ReportService:
@@ -153,3 +154,7 @@ class ReportService:
             "ai_resolution_rate": ai_resolution_rate,
             "llm_cost_estimate": llm_cost,
         }
+
+
+ReportService.sales_summary_async = async_adapter(ReportService.sales_summary)
+ReportService.cs_agent_dashboard_async = async_adapter(ReportService.cs_agent_dashboard)

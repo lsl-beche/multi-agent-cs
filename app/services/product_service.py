@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.tables import Category, Inventory, Product, ProductImage, Sku
+from app.services.async_bridge import async_adapter
 
 
 class ProductService:
@@ -192,6 +193,8 @@ class ProductService:
         db.commit()
         return {"id": cat.id, "name": cat.name}
 
+
+
     @staticmethod
     def search_products(db: Session, keyword: str, limit: int = 5) -> list[dict]:
         """客服工具：按关键词搜索在售商品，返回价格与库存摘要"""
@@ -237,3 +240,13 @@ class ProductService:
             "stock": qty,
             "available": qty > 0,
         }
+
+
+ProductService.list_products_async = async_adapter(ProductService.list_products)
+ProductService.create_product_async = async_adapter(ProductService.create_product)
+ProductService.get_product_async = async_adapter(ProductService.get_product)
+ProductService.update_product_async = async_adapter(ProductService.update_product)
+ProductService.delete_product_async = async_adapter(ProductService.delete_product)
+ProductService.toggle_online_async = async_adapter(ProductService.toggle_online)
+ProductService.list_categories_async = async_adapter(ProductService.list_categories)
+ProductService.create_category_async = async_adapter(ProductService.create_category)

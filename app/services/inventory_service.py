@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.pagination import paginate
 from app.models.tables import Inventory, InventoryLog, Product, Sku
 from app.repositories import InventoryRepository
+from app.services.async_bridge import async_adapter
 
 
 class InventoryService:
@@ -143,3 +144,8 @@ class InventoryService:
             "created_at": l.created_at.isoformat() if l.created_at else None,
         } for l in rows]
         return result, total
+
+
+InventoryService.list_inventory_async = async_adapter(InventoryService.list_inventory)
+InventoryService.adjust_inventory_async = async_adapter(InventoryService.adjust_inventory)
+InventoryService.get_logs_async = async_adapter(InventoryService.get_logs)

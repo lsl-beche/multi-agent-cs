@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
-from app.api.deps import current_user, get_db, run_sync
+from app.api.deps import current_user, get_db
 from app.services.order_service import OrderService
 
 router = APIRouter()
@@ -42,9 +42,9 @@ async def create_order(body: CreateOrderBody, request: Request, db=Depends(get_d
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     try:
-        from app.services.behavior_service import record
+        from app.services.behavior_service import record_async
         for item in result.get("items", []):
-            await run_sync(db, record, uid, item["product_id"], "order")
+            await record_async(db, uid, item["product_id"], "order")
     except Exception:
         pass
     return {"code": 0, "data": result, "message": "下单成功"}

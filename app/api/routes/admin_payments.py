@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.services.payment_service import PaymentService
 
@@ -17,7 +17,7 @@ async def list_payments(
     status: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(db, PaymentService.list_payments, page, page_size, status)
+    data, total = await PaymentService.list_payments_async(db, page, page_size, status)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
@@ -29,7 +29,7 @@ async def list_refunds(
     status: str | None = None,
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(db, PaymentService.list_refunds, page, page_size, status)
+    data, total = await PaymentService.list_refunds_async(db, page, page_size, status)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 

@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 
-from app.api.deps import current_user, get_db, run_sync
+from app.api.deps import current_user, get_db
 from app.models.schemas import CartQuantityRequest, CartSelectRequest
 from app.services.cart_service import CartService
 
@@ -33,8 +33,8 @@ async def add_to_cart(body: AddCartBody, request: Request, db=Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     try:
-        from app.services.behavior_service import record
-        await run_sync(db, record, uid, body.sku_id, "cart")
+        from app.services.behavior_service import record_async
+        await record_async(db, uid, body.sku_id, "cart")
     except Exception:
         pass
     return {"code": 0, "message": "已加入购物车"}

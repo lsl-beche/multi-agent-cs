@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.services.product_service import ProductService
 
 router = APIRouter()
@@ -26,8 +26,8 @@ async def list_products(
     elif sort == "price_desc":
         sort_by, sort_dir = "min_price", "desc"
 
-    items, total = await run_sync(
-        db, ProductService.list_products,
+    items, total = await ProductService.list_products_async(
+        db,
         page=page, page_size=page_size,
         keyword=keyword, category_id=category_id,
         status="online", sort_by=sort_by, sort_dir=sort_dir,
@@ -58,7 +58,7 @@ async def list_products(
 @router.get("/categories/all", summary="全部分类")
 async def list_categories(db: AsyncSession = Depends(get_db)):
     """返回扁平分类列表（前端自行构建树）"""
-    data = await run_sync(db, ProductService.list_categories)
+    data = await ProductService.list_categories_async(db)
     return {"code": 0, "data": data}
 
 
@@ -75,15 +75,15 @@ async def recommend(
         user_id = int(payload["sub"])
     except Exception:
         user_id = None
-    from app.services.recommend_service import recommend_for_user
-    items = await run_sync(db, recommend_for_user, user_id, limit)
+    from app.services.recommend_service import recommend_for_user_async
+    items = await recommend_for_user_async(db, user_id, limit)
     return {"code": 0, "data": {"items": items, "total": len(items)}}
 
 
 @router.get("/{product_id}", summary="商品详情")
 async def product_detail(product_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     try:
-        product = await run_sync(db, ProductService.get_product, product_id)
+        product = await ProductService.get_product_async(db, product_id)
     except ValueError:
         return {"code": 1, "message": "商品不存在"}
 
@@ -94,8 +94,8 @@ async def product_detail(product_id: int, request: Request, db: AsyncSession = D
     try:
         from app.api.deps import current_user
         payload = await current_user(request)
-        from app.services.behavior_service import record
-        await run_sync(db, record, int(payload["sub"]), product["id"], "view")
+        from app.services.behavior_service import record_async
+        await record_async(db, int(payload["sub"]), product["id"], "view")
     except Exception:
         pass  # 未登录或记录失败不影响详情返回
 

@@ -1,7 +1,7 @@
 """C 端评价路由（仅 HTTP 适配）"""
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.deps import current_user, get_db, run_sync
+from app.api.deps import current_user, get_db
 from app.models.schemas import ReviewSubmitRequest
 from app.services.review_service import ReviewService
 
@@ -24,8 +24,8 @@ async def submit_review(body: ReviewSubmitRequest, user=Depends(current_user), d
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
     try:
-        from app.services.behavior_service import record
-        await run_sync(db, record, uid, body.product_id, "review")
+        from app.services.behavior_service import record_async
+        await record_async(db, uid, body.product_id, "review")
     except Exception:
         pass
     return {"code": 0, "data": result}

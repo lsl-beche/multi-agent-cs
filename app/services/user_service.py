@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.security import hash_password
 from app.models.tables import Address, Role, User, UserRole
 from app.repositories import AddressRepository, UserRepository
+from app.services.async_bridge import async_adapter
 
 
 class UserService:
@@ -214,3 +215,9 @@ class UserService:
             raise ValueError("新密码至少6位")
         user.password_hash = hash_password(new_pwd)
         await repo.commit()
+
+
+UserService.list_users_async = async_adapter(UserService.list_users)
+UserService.create_user_async = async_adapter(UserService.create_user)
+UserService.update_user_async = async_adapter(UserService.update_user)
+UserService.ban_user_async = async_adapter(UserService.ban_user)

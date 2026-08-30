@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.models.schemas import CouponCreate, CouponGrantRequest, PromotionCreate
 from app.services.coupon_service import CouponService
@@ -19,7 +19,7 @@ async def list_coupons(
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(db, CouponService.list_coupons, page, page_size)
+    data, total = await CouponService.list_coupons_async(db, page, page_size)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
@@ -30,7 +30,7 @@ async def create_coupon(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        result = await run_sync(db, CouponService.create_coupon, body.model_dump())
+        result = await CouponService.create_coupon_async(db, body.model_dump())
         return {"code": 0, "data": result, "message": "创建成功"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -43,7 +43,7 @@ async def delete_coupon(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        result = await run_sync(db, CouponService.delete_coupon, coupon_id)
+        result = await CouponService.delete_coupon_async(db, coupon_id)
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -57,7 +57,7 @@ async def grant_coupon(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        result = await run_sync(db, CouponService.grant_coupon, coupon_id, body.user_ids)
+        result = await CouponService.grant_coupon_async(db, coupon_id, body.user_ids)
         return {"code": 0, "data": result, "message": f"已发放 {result['granted']} 张"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -72,7 +72,7 @@ async def list_promotions(
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(db, CouponService.list_promotions, page, page_size)
+    data, total = await CouponService.list_promotions_async(db, page, page_size)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
@@ -83,7 +83,7 @@ async def create_promotion(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        result = await run_sync(db, CouponService.create_promotion, body.model_dump())
+        result = await CouponService.create_promotion_async(db, body.model_dump())
         return {"code": 0, "data": result, "message": "创建成功"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))

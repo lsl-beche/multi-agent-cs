@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.models.schemas import CategoryCreate, ProductCreate, ProductUpdate
 from app.services.product_service import ProductService
@@ -28,14 +28,14 @@ async def list_products(
     sort_dir: str = "desc",
     db: AsyncSession = Depends(get_db),
 ):
-    data, total = await run_sync(db, ProductService.list_products, page, page_size, keyword, category_id, status, sort_by, sort_dir)
+    data, total = await ProductService.list_products_async(db, page, page_size, keyword, category_id, status, sort_by, sort_dir)
     return {"code": 0, "data": data, "total": total, "page": page, "page_size": page_size}
 
 
 @router.post("", summary="创建商品")
 async def create_product(body: ProductCreate, user: dict = Depends(require_permission("products", "create")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, ProductService.create_product, body.model_dump())
+        result = await ProductService.create_product_async(db, body.model_dump())
         return {"code": 0, "data": result, "message": "创建成功"}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -44,7 +44,7 @@ async def create_product(body: ProductCreate, user: dict = Depends(require_permi
 @router.get("/{product_id}", summary="商品详情")
 async def get_product(product_id: int, user: dict = Depends(require_permission("products", "read")), db: AsyncSession = Depends(get_db)):
     try:
-        return {"code": 0, "data": await run_sync(db, ProductService.get_product, product_id)}
+        return {"code": 0, "data": await ProductService.get_product_async(db, product_id)}
     except ValueError as e:
         raise HTTPException(404, detail=str(e))
 
@@ -52,7 +52,7 @@ async def get_product(product_id: int, user: dict = Depends(require_permission("
 @router.put("/{product_id}", summary="更新商品")
 async def update_product(product_id: int, body: ProductUpdate, user: dict = Depends(require_permission("products", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, ProductService.update_product, product_id, body.model_dump(exclude_none=True))
+        result = await ProductService.update_product_async(db, product_id, body.model_dump(exclude_none=True))
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -61,7 +61,7 @@ async def update_product(product_id: int, body: ProductUpdate, user: dict = Depe
 @router.delete("/{product_id}", summary="下架商品")
 async def delete_product(product_id: int, user: dict = Depends(require_permission("products", "delete")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, ProductService.delete_product, product_id)
+        result = await ProductService.delete_product_async(db, product_id)
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(404, detail=str(e))
@@ -70,7 +70,7 @@ async def delete_product(product_id: int, user: dict = Depends(require_permissio
 @router.put("/{product_id}/online", summary="上架商品")
 async def online_product(product_id: int, user: dict = Depends(require_permission("products", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, ProductService.toggle_online, product_id, True)
+        result = await ProductService.toggle_online_async(db, product_id, True)
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -79,7 +79,7 @@ async def online_product(product_id: int, user: dict = Depends(require_permissio
 @router.put("/{product_id}/offline", summary="下架商品")
 async def offline_product(product_id: int, user: dict = Depends(require_permission("products", "update")), db: AsyncSession = Depends(get_db)):
     try:
-        result = await run_sync(db, ProductService.toggle_online, product_id, False)
+        result = await ProductService.toggle_online_async(db, product_id, False)
         return {"code": 0, "data": result}
     except ValueError as e:
         raise HTTPException(400, detail=str(e))
@@ -89,13 +89,13 @@ async def offline_product(product_id: int, user: dict = Depends(require_permissi
 
 @router.get("/categories/all", summary="类目树")
 async def list_categories(user: dict = Depends(require_permission("products", "read")), db: AsyncSession = Depends(get_db)):
-    data = await run_sync(db, ProductService.list_categories)
+    data = await ProductService.list_categories_async(db)
     return {"code": 0, "data": data}
 
 
 @router.post("/categories", summary="创建类目")
 async def create_category(body: CategoryCreate, user: dict = Depends(require_permission("products", "create")), db: AsyncSession = Depends(get_db)):
-    result = await run_sync(db, ProductService.create_category, body.name, body.parent_id, body.level, body.sort_order)
+    result = await ProductService.create_category_async(db, body.name, body.parent_id, body.level, body.sort_order)
     return {"code": 0, "data": result}
 
 

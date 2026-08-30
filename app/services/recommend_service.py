@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.tables import Product, UserPreference
+from app.services.async_bridge import async_adapter
 from app.services.behavior_service import build_item_similarity, user_cosine, weighted_matrix
 
 
@@ -138,3 +139,6 @@ def recommend_for_user(db: Session, user_id: int | None, limit: int = 8) -> list
             reason = "热门推荐"
         items.append(_product_dict(p, reason))
     return items
+
+
+recommend_for_user_async = async_adapter(recommend_for_user)

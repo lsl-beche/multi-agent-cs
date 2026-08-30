@@ -3,9 +3,10 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_db, run_sync
+from app.api.deps import get_db
 from app.api.middleware.auth import require_permission
 from app.models.tables import OperationLog
+from app.repositories import BaseRepository
 
 router = APIRouter()
 
@@ -32,10 +33,8 @@ async def list_logs(
     if end_time:
         query = query.where(OperationLog.created_at <= end_time)
 
-    from app.core.pagination import paginate
-    rows, total = await run_sync(
-        db, paginate, query, page, page_size,
-        order_by=OperationLog.id.desc(),
+    rows, total = await BaseRepository(db).paginate(
+        query, page, page_size, order_by=OperationLog.id.desc()
     )
 
     data = [{

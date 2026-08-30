@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models.tables import Product, Review
 from app.repositories import OrderRepository, ReviewRepository
+from app.services.async_bridge import async_adapter
 
 
 class ReviewService:
@@ -124,3 +125,8 @@ class ReviewService:
         r.reply = reply
         db.commit()
         return {"id": r.id, "reply": reply}
+
+
+ReviewService.list_reviews_async = async_adapter(ReviewService.list_reviews)
+ReviewService.approve_review_async = async_adapter(ReviewService.approve_review)
+ReviewService.reply_review_async = async_adapter(ReviewService.reply_review)

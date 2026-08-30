@@ -25,6 +25,7 @@ from app.repositories import (
     OrderRepository,
     ProductRepository,
 )
+from app.services.async_bridge import async_adapter
 
 
 class OrderService:
@@ -711,3 +712,6 @@ class OrderService:
             OrderService._transition(db, o, "delivered", operator_id)
         OrderService._transition(db, o, "completed", operator_id)
         return {"id": o.id, "order_status": o.order_status}
+
+
+OrderService.get_order_async = async_adapter(OrderService.get_order)

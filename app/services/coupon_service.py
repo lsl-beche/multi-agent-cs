@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.models.tables import Coupon, Promotion, User, UserCoupon
+from app.services.async_bridge import async_adapter
 
 
 class CouponService:
@@ -312,3 +313,11 @@ class CouponService:
         db.add(p)
         db.commit()
         return {"id": p.id, "name": p.name}
+
+
+CouponService.list_coupons_async = async_adapter(CouponService.list_coupons)
+CouponService.create_coupon_async = async_adapter(CouponService.create_coupon)
+CouponService.delete_coupon_async = async_adapter(CouponService.delete_coupon)
+CouponService.grant_coupon_async = async_adapter(CouponService.grant_coupon)
+CouponService.list_promotions_async = async_adapter(CouponService.list_promotions)
+CouponService.create_promotion_async = async_adapter(CouponService.create_promotion)

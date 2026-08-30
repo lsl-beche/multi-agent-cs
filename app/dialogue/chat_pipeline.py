@@ -2,6 +2,7 @@
 import asyncio
 import concurrent.futures
 import logging
+import re
 import socket
 import threading
 import time
@@ -239,3 +240,77 @@ async def run_agent(session_id: str, user_id: str, message: str) -> dict:
     except Exception:
         perf_logger.error(f"[_run_agent] ERROR after {(time.perf_counter() - t_start) * 1000:.0f}ms: {traceback.format_exc()}")
         return await fallback_reply(message)
+
+
+def _clean_think(text: str) -> str:
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    return text.strip()
+
+
+async def stream_agent(session_id: str, user_id: str, message: str):
+    """逐 token 流式执行 Agent，产出 (kind, content) 事件。
+
+    kind: "chunk" 表示文本增量；"done" 表示最终完整回复。
+    """
+    from app.agents.graphs.workflow import get_workflow
+
+    messages = await asyncio.get_running_loop().run_in_executor(
+        _memory_executor, build_messages, session_id, user_id, message
+    )
+    workflow = get_workflow()
+    root_run_id: str | None = None
+    full_answer = ""
+    stream_buf = ""
+    sent_len = 0
+    in_think = False
+    tool_call_seen = False
+    final_content = ""
+
+    async for event in workflow.astream_events(
+        {"messages": messages, "session_id": session_id, "user_id": user_id, "slots": {}},
+        version="v2",
+    ):
+        if root_run_id is None:
+            root_run_id = event.get("run_id", "")
+        kind = event["event"]
+
+        if kind == "on_chat_model_stream":
+            chunk = event["data"]["chunk"]
+            if not hasattr(chunk, "content") or not chunk.content:
+                continue
+            token = chunk.content
+            if not isinstance(token, str):
+                continue
+            full_answer += token
+            stream_buf += token
+
+            if in_think:
+                if "</think>" in stream_buf:
+                    in_think = False
+                    stream_buf = _clean_think(stream_buf)
+                    sent_len = len(stream_buf)
+                    if stream_buf.strip() and not tool_call_seen:
+                        yield ("chunk", stream_buf)
+                continue
+            if "<think" in stream_buf:
+                in_think = True
+                continue
+            visible = stream_buf[sent_len:]
+            if visible and not tool_call_seen:
+                yield ("chunk", visible)
+                sent_len = len(stream_buf)
+
+        elif kind == "on_chain_end" and event.get("run_id") == root_run_id:
+            output = event["data"].get("output", {})
+            msgs = output.get("messages", [])
+            if msgs:
+                final = msgs[-1]
+                final_content = getattr(final, "content", "") or ""
+
+    final_content = _clean_think(final_content or full_answer)
+    if not final_content and full_answer:
+        final_content = _clean_think(full_answer)
+    if final_content and not tool_call_seen and stream_buf != final_content:
+        # 兜底：某些事件路径没有完整流式输出时一次性推送
+        yield ("chunk", final_content)
+    yield ("done", final_content)

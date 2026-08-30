@@ -9,6 +9,7 @@ from app.config.settings import settings
 from app.events.outbox import record_outbox
 from app.models.tables import Order, Payment, Refund
 from app.repositories import InventoryRepository, OrderRepository, PaymentRepository, RefundRepository
+from app.services.async_bridge import async_adapter
 from app.services.payment_gateway import get_gateway, sign_payload
 
 
@@ -275,3 +276,7 @@ class PaymentService:
             order.pay_status = "refunded"
         db.commit()
         return {"id": refund.id, "status": refund.status, "refund_no": refund.refund_no}
+
+
+PaymentService.list_payments_async = async_adapter(PaymentService.list_payments)
+PaymentService.list_refunds_async = async_adapter(PaymentService.list_refunds)

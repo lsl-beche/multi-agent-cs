@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.core.redis_client import get_redis
 from app.models.tables import Order, OrderItem, UserBehavior
+from app.services.async_bridge import async_adapter
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,9 @@ def record(db: Session, user_id: int, product_id: int, behavior: str) -> bool:
     except Exception:
         logger.exception("record behavior failed: user=%s product=%s behavior=%s", user_id, product_id, behavior)
         return False
+
+
+record_async = async_adapter(record)
 
 
 def weighted_matrix(db: Session, max_days: int = 365) -> dict[int, dict[int, float]]:
