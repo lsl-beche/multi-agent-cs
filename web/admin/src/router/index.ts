@@ -20,6 +20,7 @@
  * ============================================================
  */
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { adminTokenStorage } from '@shared'
 
 /**
  * 路由表定义
@@ -146,8 +147,7 @@ const router = createRouter({
  * @param next   路由放行 / 重定向函数
  */
 router.beforeEach((to, _from, next) => {
-  // 从 localStorage 读取访问令牌（由登录接口写入），用于判断登录态
-  const token = localStorage.getItem('token')
+  const token = adminTokenStorage.accessToken
   // 动态设置浏览器标签页标题：优先使用路由 meta.title，缺省用后台名称
   document.title = (to.meta.title as string) || 'CSagent 管理后台'
 

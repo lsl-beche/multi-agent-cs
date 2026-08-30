@@ -151,7 +151,7 @@ const loading = ref(false) // 详情加载中标记
 // ── 订单状态文案映射 ──
 // 作用：将订单状态码转为中文文案；未匹配时原样返回
 const statusLabel = (s: string) =>
-  ({ pending: '待付款', confirmed: '待发货', shipped: '待收货', completed: '已完成', cancelled: '已取消' } as any)[s] || s
+  ({ pending: '待付款', confirmed: '待发货', shipped: '待收货', completed: '已完成', cancelled: '已取消' } as Record<string, string>)[s] || s
 
 // ── 评价弹窗 ──
 const showReviewDialog = ref(false) // 评价弹窗显隐

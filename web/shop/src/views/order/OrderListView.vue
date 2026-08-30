@@ -104,12 +104,12 @@ const statusFilter = ref('') // 状态筛选条件（空串表示全部）
 // ── 订单状态文案映射 ──
 // 作用：将订单状态码转为中文文案；未匹配时原样返回
 const statusLabel = (s: string) =>
-  ({ pending: '待付款', confirmed: '待发货', shipped: '待收货', completed: '已完成', cancelled: '已取消' } as any)[s] || s
+  ({ pending: '待付款', confirmed: '待发货', shipped: '待收货', completed: '已完成', cancelled: '已取消' } as Record<string, string>)[s] || s
 
 // ── 订单状态标签类型映射 ──
 // 作用：将订单状态码映射为 el-tag 的 type（warning 待付款 / success 待收货 / info 已完成 / danger 已取消）
 const statusType = (s: string) =>
-  ({ pending: 'warning', confirmed: '', shipped: 'success', completed: 'info', cancelled: 'danger' } as any)[s] || ''
+  ({ pending: 'warning', confirmed: '', shipped: 'success', completed: 'info', cancelled: 'danger' } as Record<string, string>)[s] || ''
 
 // ── 拉取订单列表 ──
 // 作用：按当前页码与状态筛选请求订单数据，成功写入列表与总数
@@ -117,7 +117,7 @@ const statusType = (s: string) =>
 async function fetchData() {
   loading.value = true
   try {
-    const params: any = { page: page.value, page_size: pageSize } // 基础分页参数
+    const params: Record<string, unknown> = { page: page.value, page_size: pageSize } // 基础分页参数
     if (statusFilter.value) params.status = statusFilter.value // 有筛选条件时附带状态参数
     const res = await getOrders(params) // 请求订单列表
     orders.value = res.data.data?.items || []

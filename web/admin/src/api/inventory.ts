@@ -42,15 +42,15 @@ export interface InventoryLog { id: number; sku_id: number; change_qty: number; 
  * @returns Promise<PaginatedData<InventoryItem>> 分页的库存条目数据
  * @description 对应后端接口：GET /api/admin/inventory
  */
-export const getInventory = (params: any) => api.get<PaginatedData<InventoryItem>>('/admin/inventory', { params }) // 携带查询参数请求库存列表
+export const getInventory = (params: Record<string, unknown>) => api.get<PaginatedData<InventoryItem>>('/admin/inventory', { params }) // 携带查询参数请求库存列表
 
 /**
  * 库存调整（人工盘点修正 / 手动出入库）
  * @param data 调整数据（sku_id 目标 SKU、change_qty 变动数量可正可负、reason 调整原因）
- * @returns Promise<ApiResponse<any>> 调整结果，成功时 data 通常为调整后的库存信息
+ * @returns Promise<ApiResponse<unknown>> 调整结果，成功时 data 通常为调整后的库存信息
  * @description 对应后端接口：POST /api/admin/inventory/adjust
  */
-export const adjustInventory = (data: { sku_id: number; change_qty: number; reason: string }) => api.post<ApiResponse<any>>('/admin/inventory/adjust', data) // 变动数量正数为入库、负数为出库
+export const adjustInventory = (data: { sku_id: number; change_qty: number; reason: string }) => api.post<ApiResponse<Record<string, unknown>>>('/admin/inventory/adjust', data) // 变动数量正数为入库、负数为出库
 
 /**
  * 分页查询库存变动流水
@@ -58,4 +58,4 @@ export const adjustInventory = (data: { sku_id: number; change_qty: number; reas
  * @returns Promise<PaginatedData<InventoryLog>> 分页的库存流水数据
  * @description 对应后端接口：GET /api/admin/inventory/logs
  */
-export const getInventoryLogs = (params: any) => api.get<PaginatedData<InventoryLog>>('/admin/inventory/logs', { params }) // 用于库存追溯与对账
+export const getInventoryLogs = (params: Record<string, unknown>) => api.get<PaginatedData<InventoryLog>>('/admin/inventory/logs', { params }) // 用于库存追溯与对账

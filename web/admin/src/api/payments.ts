@@ -42,7 +42,7 @@ export interface RefundItem { id: number; refund_no: string; order_id: number; a
  * @returns Promise<PaginatedData<PaymentItem>> 分页的支付记录数据
  * @description 对应后端接口：GET /api/admin/payments
  */
-export const getPayments = (params: any) => api.get<PaginatedData<PaymentItem>>('/admin/payments', { params }) // 携带筛选参数请求支付记录列表
+export const getPayments = (params: Record<string, unknown>) => api.get<PaginatedData<PaymentItem>>('/admin/payments', { params }) // 携带筛选参数请求支付记录列表
 
 /**
  * 分页查询退款记录
@@ -50,7 +50,7 @@ export const getPayments = (params: any) => api.get<PaginatedData<PaymentItem>>(
  * @returns Promise<PaginatedData<RefundItem>> 分页的退款记录数据
  * @description 对应后端接口：GET /api/admin/payments/refunds
  */
-export const getRefunds = (params: any) => api.get<PaginatedData<RefundItem>>('/admin/payments/refunds', { params }) // 携带筛选参数请求退款记录列表
+export const getRefunds = (params: Record<string, unknown>) => api.get<PaginatedData<RefundItem>>('/admin/payments/refunds', { params }) // 携带筛选参数请求退款记录列表
 
 /**
  * 同意退款（审核通过后执行退款）

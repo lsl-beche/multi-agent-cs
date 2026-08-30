@@ -186,7 +186,7 @@ const currentImage = ref('') // 当前展示的主图地址（点击缩略图切
 const selectedSku = ref<Sku | null>(null) // 当前选中的 SKU（规格）
 
 // ── 评价相关 ──
-const reviews = ref<any[]>([]) // 已加载的评价列表
+const reviews = ref<Array<{ id: number; rating: number; content: string; is_anonymous: boolean; reply?: string; created_at: string }>>([]) // 已加载的评价列表
 const reviewTotal = ref(0) // 评价总数
 const reviewPage = ref(1) // 当前评价页码
 const reviewLoaded = ref(false) // 评价是否已加载完成（控制空态展示）

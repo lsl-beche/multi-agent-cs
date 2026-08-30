@@ -31,7 +31,7 @@ export interface ShipmentItem { id: number; shipment_no: string; order_id: numbe
  * @returns Promise<PaginatedData<ShipmentItem>> 分页的发货单数据
  * @description 对应后端接口：GET /api/admin/shipments
  */
-export const getShipments = (params: any) => api.get<PaginatedData<ShipmentItem>>('/admin/shipments', { params }) // 携带筛选参数请求发货单列表
+export const getShipments = (params: Record<string, unknown>) => api.get<PaginatedData<ShipmentItem>>('/admin/shipments', { params }) // 携带筛选参数请求发货单列表
 
 /**
  * 更新物流追踪信息（补录/修改快递单号）

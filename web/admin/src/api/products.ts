@@ -47,7 +47,7 @@ export interface ProductItem {
  * - barcode: 条形码（可选）
  * - status: SKU 状态（如 online 在售、offline 停售）
  */
-export interface SkuItem { id: number; sku_code: string; spec_info: any; price: number; original_price?: number; barcode?: string; status: string }
+export interface SkuItem { id: number; sku_code: string; spec_info: Record<string, string>; price: number; original_price?: number; barcode?: string; status: string }
 
 /**
  * 商品图片条目
@@ -74,7 +74,7 @@ export interface CategoryItem { id: number; name: string; parent_id?: number; le
  * @returns Promise<PaginatedData<ProductItem>> 分页的商品数据
  * @description 对应后端接口：GET /api/admin/products
  */
-export const getProducts = (params: any) => api.get<PaginatedData<ProductItem>>('/admin/products', { params }) // 携带筛选参数请求商品列表
+export const getProducts = (params: Record<string, unknown>) => api.get<PaginatedData<ProductItem>>('/admin/products', { params }) // 携带筛选参数请求商品列表
 
 /**
  * 查询商品详情
@@ -87,19 +87,19 @@ export const getProduct = (id: number) => api.get<ApiResponse<ProductItem>>(`/ad
 /**
  * 新增商品
  * @param data 商品创建数据（SPU 信息 + SKU 列表 + 图片等）
- * @returns Promise<ApiResponse<any>> 创建结果，成功时返回新商品信息
+ * @returns Promise<ApiResponse<unknown>> 创建结果，成功时返回新商品信息
  * @description 对应后端接口：POST /api/admin/products
  */
-export const createProduct = (data: any) => api.post<ApiResponse<any>>('/admin/products', data) // 提交商品及 SKU 配置到后端
+export const createProduct = (data: Record<string, unknown>) => api.post<ApiResponse<Record<string, unknown>>>('/admin/products', data) // 提交商品及 SKU 配置到后端
 
 /**
  * 编辑商品
  * @param id 商品 ID
  * @param data 商品更新数据（仅传需要修改的字段）
- * @returns Promise<ApiResponse<any>> 更新结果，成功时返回更新后的商品信息
+ * @returns Promise<ApiResponse<unknown>> 更新结果，成功时返回更新后的商品信息
  * @description 对应后端接口：PUT /api/admin/products/{id}
  */
-export const updateProduct = (id: number, data: any) => api.put<ApiResponse<any>>(`/admin/products/${id}`, data) // 按 ID 提交商品信息修改
+export const updateProduct = (id: number, data: Record<string, unknown>) => api.put<ApiResponse<Record<string, unknown>>>(`/admin/products/${id}`, data) // 按 ID 提交商品信息修改
 
 /**
  * 删除商品
@@ -135,10 +135,10 @@ export const getCategories = () => api.get<ApiResponse<CategoryItem[]>>('/admin/
 /**
  * 新增商品分类
  * @param data 分类创建数据（名称、父级 ID、层级等）
- * @returns Promise<ApiResponse<any>> 创建结果，成功时返回新分类信息
+ * @returns Promise<ApiResponse<unknown>> 创建结果，成功时返回新分类信息
  * @description 对应后端接口：POST /api/admin/products/categories
  */
-export const createCategory = (data: any) => api.post<ApiResponse<any>>('/admin/products/categories', data) // 提交分类配置到后端
+export const createCategory = (data: Record<string, unknown>) => api.post<ApiResponse<Record<string, unknown>>>('/admin/products/categories', data) // 提交分类配置到后端
 
 /**
  * 上传商品图片（multipart/form-data）
@@ -149,7 +149,7 @@ export const createCategory = (data: any) => api.post<ApiResponse<any>>('/admin/
 export function uploadProductImage(file: File) {
   const formData = new FormData() // 构造表单数据，用于文件上传
   formData.append('file', file) // 将图片文件放入 form-data 的 file 字段
-  return api.post('/admin/products/upload-image', formData, {
+  return api.post<ApiResponse<{ url: string }>>('/admin/products/upload-image', formData, {
     headers: { 'Content-Type': 'multipart/form-data' } // 指定文件上传的内容类型
   })
 }

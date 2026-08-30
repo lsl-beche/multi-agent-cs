@@ -25,6 +25,7 @@ import {
   ElTag,
 } from 'element-plus'
 import { ArrowDown, EditPen, Lock, Promotion, Search, ShoppingCart, User } from '@element-plus/icons-vue'
+import { PermissionDirective } from '@shared'
 import 'element-plus/dist/index.css'
 import App from './App.vue'
 import router from './router'
@@ -34,6 +35,7 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.directive('permission', PermissionDirective)
 
 // 全局错误处理（ErrorBoundary 语义）：组件渲染/事件异常统一记录，
 // 避免未捕获异常导致白屏且无日志

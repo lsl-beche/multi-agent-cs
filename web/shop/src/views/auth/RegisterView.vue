@@ -80,7 +80,7 @@ const form = reactive({
 // 作用：比对确认密码与密码是否一致，不一致则返回错误信息
 // 参数：_ —— 未使用的 rule 占位；value —— 当前输入值（确认密码）；
 //       cb —— Element Plus 校验回调（传入 Error 表示校验失败，undefined 表示通过）
-const validatePass = (_: any, value: string, cb: any) => {
+const validatePass = (_: unknown, value: string, cb: (error?: Error) => void) => {
   cb(value !== form.password ? new Error('两次密码不一致') : undefined)
 }
 

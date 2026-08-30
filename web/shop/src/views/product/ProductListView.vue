@@ -174,7 +174,7 @@ function cardBadges(item: Product): { text: string; cls: string }[] {
 async function fetchData() {
   loading.value = true
   try {
-    const params: any = { page: page.value, page_size: pageSize } // 基础分页参数
+    const params: Record<string, unknown> = { page: page.value, page_size: pageSize } // 基础分页参数
     if (route.query.keyword) params.keyword = route.query.keyword // 关键词（来自顶部搜索框）
     if (route.query.category_id) params.category_id = Number(route.query.category_id) // 类目
     if (sort.value) params.sort = sort.value // 排序方式

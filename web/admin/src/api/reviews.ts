@@ -31,7 +31,7 @@ export interface ReviewItem { id: number; product_id: number; order_id: number; 
  * @returns Promise<PaginatedData<ReviewItem>> 分页的评价数据
  * @description 对应后端接口：GET /api/admin/reviews
  */
-export const getReviews = (params: any) => api.get<PaginatedData<ReviewItem>>('/admin/reviews', { params }) // 携带筛选参数请求评价列表
+export const getReviews = (params: Record<string, unknown>) => api.get<PaginatedData<ReviewItem>>('/admin/reviews', { params }) // 携带筛选参数请求评价列表
 
 /**
  * 审核通过评价（评价内容合规后放行展示）

@@ -41,24 +41,24 @@ export interface AddressItem { id: number; receiver: string; phone: string; prov
  * @returns Promise<PaginatedData<UserItem>> 分页的用户数据
  * @description 对应后端接口：GET /api/admin/users
  */
-export const getUsers = (params: any) => api.get<PaginatedData<UserItem>>('/admin/users', { params }) // 携带筛选参数请求用户列表
+export const getUsers = (params: Record<string, unknown>) => api.get<PaginatedData<UserItem>>('/admin/users', { params }) // 携带筛选参数请求用户列表
 
 /**
  * 新增用户（后台手动创建账号）
  * @param data 用户创建数据（username 用户名、password 密码必填；email、phone 可选；role 角色）
- * @returns Promise<ApiResponse<any>> 创建结果，成功时返回新用户信息
+ * @returns Promise<ApiResponse<unknown>> 创建结果，成功时返回新用户信息
  * @description 对应后端接口：POST /api/admin/users
  */
-export const createUser = (data: { username: string; password: string; email?: string; phone?: string; role: string }) => api.post<ApiResponse<any>>('/admin/users', data) // 提交新账号信息到后端
+export const createUser = (data: { username: string; password: string; email?: string; phone?: string; role: string }) => api.post<ApiResponse<Record<string, unknown>>>('/admin/users', data) // 提交新账号信息到后端
 
 /**
  * 编辑用户信息
  * @param id 用户 ID
  * @param data 用户更新数据（如邮箱、手机号、角色等，仅传需要修改的字段）
- * @returns Promise<ApiResponse<any>> 更新结果，成功时返回更新后的用户信息
+ * @returns Promise<ApiResponse<unknown>> 更新结果，成功时返回更新后的用户信息
  * @description 对应后端接口：PUT /api/admin/users/{id}
  */
-export const updateUser = (id: number, data: any) => api.put<ApiResponse<any>>(`/admin/users/${id}`, data) // 按 ID 提交用户信息修改
+export const updateUser = (id: number, data: Record<string, unknown>) => api.put<ApiResponse<Record<string, unknown>>>(`/admin/users/${id}`, data) // 按 ID 提交用户信息修改
 
 /**
  * 封禁/解封用户（后端根据用户当前状态自动切换）

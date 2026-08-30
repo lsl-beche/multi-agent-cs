@@ -13,10 +13,17 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@shared": ["../shared/src/index.ts"],
+      "@shared/*": ["../shared/src/*"],
+      "vue": ["node_modules/vue"],
+      "axios": ["node_modules/axios"],
+      "element-plus": ["node_modules/element-plus"],
+      "element-plus/*": ["node_modules/element-plus/*"],
+      "@element-plus/icons-vue": ["node_modules/@element-plus/icons-vue"]
     },
     "types": ["node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "vite-env.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "vite-env.d.ts", "../shared/src/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

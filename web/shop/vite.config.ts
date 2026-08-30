@@ -7,6 +7,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
+      '@shared': resolve(__dirname, '../shared/src'),
+      'vue': resolve(__dirname, 'node_modules/vue'),
+      'axios': resolve(__dirname, 'node_modules/axios'),
+      'element-plus': resolve(__dirname, 'node_modules/element-plus'),
+      '@element-plus/icons-vue': resolve(__dirname, 'node_modules/@element-plus/icons-vue'),
     },
   },
   server: {

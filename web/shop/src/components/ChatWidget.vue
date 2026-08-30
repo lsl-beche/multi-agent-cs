@@ -188,7 +188,7 @@ async function loadChatHistory() {
     const history = res.data?.data?.messages || []
     if (history.length > 0) {
       // 将服务端历史格式转换为前端格式
-      messages.value = history.map((h: any) => ({
+      messages.value = history.map((h: { role: string; content: string; ts?: number; time?: string }) => ({
         role: h.role === 'user' ? 'user' : (h.role === 'agent' ? 'agent' : 'assistant'),
         content: h.content,
         time: h.ts ? formatTimestamp(h.ts) : '',
@@ -458,7 +458,7 @@ function requestHuman() {
 // 参数：role —— 消息角色（user/assistant/agent）；content —— 消息正文；
 //       handler —— 人工客服昵称（可选）；返回值：无
 function addMessage(role: string, content: string, handler?: string) {
-  const msg: any = { role, content, time: now() }
+  const msg: { role: string; content: string; time: string; handler?: string } = { role, content, time: now() }
   if (handler) msg.handler = handler
   messages.value.push(msg)
   if (!visible.value) unreadCount.value++ // 面板未打开时累计未读数

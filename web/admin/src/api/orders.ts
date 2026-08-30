@@ -28,8 +28,29 @@ import api, { type ApiResponse, type PaginatedData } from './index'
 export interface OrderItem {
   id: number; order_no: string; user_id: number; total_amount: number;
   pay_amount: number; order_status: string; pay_status: string;
-  created_at: string; paid_at?: string; items?: any[];
-  payments?: any[]; logs?: any[];
+  created_at: string; paid_at?: string; items?: Record<string, unknown>[];
+  payments?: Record<string, unknown>[]; logs?: Record<string, unknown>[];
+}
+
+export interface OrderLogRecord {
+  id: number
+  action: string
+  detail?: string
+  created_at: string
+}
+
+export interface OrderPaymentRecord {
+  id: number
+  payment_no: string
+  amount: number
+  channel: string
+  status: string
+}
+
+export interface OrderDetailItem extends Omit<OrderItem, 'logs' | 'payments'> {
+  items: Array<Record<string, string | number | undefined>>
+  logs?: OrderLogRecord[]
+  payments?: OrderPaymentRecord[]
 }
 
 /**
@@ -38,7 +59,7 @@ export interface OrderItem {
  * @returns Promise<PaginatedData<OrderItem>> 分页的订单数据
  * @description 对应后端接口：GET /api/admin/orders
  */
-export const getOrders = (params: any) => api.get<PaginatedData<OrderItem>>('/admin/orders', { params }) // 携带筛选条件请求订单列表
+export const getOrders = (params: Record<string, unknown>) => api.get<PaginatedData<OrderItem>>('/admin/orders', { params }) // 携带筛选条件请求订单列表
 
 /**
  * 查询订单详情
@@ -46,7 +67,7 @@ export const getOrders = (params: any) => api.get<PaginatedData<OrderItem>>('/ad
  * @returns Promise<ApiResponse<OrderItem>> 订单完整信息（含商品明细、支付记录、操作日志）
  * @description 对应后端接口：GET /api/admin/orders/{id}
  */
-export const getOrder = (id: number) => api.get<ApiResponse<OrderItem>>(`/admin/orders/${id}`) // 按 ID 拉取订单全量信息
+export const getOrder = (id: number) => api.get<ApiResponse<OrderDetailItem>>(`/admin/orders/${id}`) // 按 ID 拉取订单全量信息
 
 /**
  * 确认订单（商家接单）

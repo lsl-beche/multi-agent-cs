@@ -86,10 +86,11 @@ const dialogVisible = ref(false)
 // 是否为编辑模式（true 编辑 / false 新增）
 const isEdit = ref(false)
 // 商品编辑表单数据（含基础信息、图片列表、SKU 列表；any 以便灵活赋值接口返回字段）
-const editForm = reactive<any>({
+const editForm = reactive({
+  id: undefined as number | undefined,
   spu_code: '', name: '', subtitle: '', category_id: undefined, brand: '', main_image: '', description: '',
   images: [] as { url: string; sort_order: number; is_main: boolean }[],
-  skus: [] as { sku_code: string; spec_info: any; price: number; original_price?: number; barcode?: string; stock: number }[],
+  skus: [] as { sku_code: string; spec_info: Record<string, string>; price: number; original_price?: number; barcode?: string; stock: number }[],
 })
 // 规格名列表（如 ['颜色', '尺寸']，仅新增模式用于生成 SKU）
 const specKeys = ref<string[]>([])
@@ -194,7 +195,7 @@ function openEdit(row: ProductItem) {
 async function submitForm() {
   if (isEdit.value) {
     // 编辑模式：只提交允许修改的字段
-    await updateProduct(editForm.id, {
+    await updateProduct(editForm.id!, {
       name: editForm.name,
       subtitle: editForm.subtitle,
       category_id: editForm.category_id,

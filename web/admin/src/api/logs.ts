@@ -18,7 +18,7 @@ export interface LogItem {
   module: string // 所属业务模块（如 orders、products、users 等）
   action: string // 操作动作（如 create、update、delete、ban 等）
   target_id?: string // 操作对象 ID（如被修改的订单号/商品 ID，可选）
-  detail?: any // 操作详情（如修改前后的字段对比 JSON，可选）
+  detail?: Record<string, unknown> // 操作详情（如修改前后的字段对比 JSON，可选）
   ip_address?: string // 操作者 IP 地址（可选，用于安全审计）
   created_at: string // 操作发生时间
 }
@@ -29,4 +29,4 @@ export interface LogItem {
  * @returns Promise<PaginatedData<LogItem>> 分页的操作日志数据
  * @description 对应后端接口：GET /api/admin/logs
  */
-export const getOperationLogs = (params: any) => api.get<PaginatedData<LogItem>>('/admin/logs', { params }) // 供审计与安全排查使用
+export const getOperationLogs = (params: Record<string, unknown>) => api.get<PaginatedData<LogItem>>('/admin/logs', { params }) // 供审计与安全排查使用

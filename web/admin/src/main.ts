@@ -26,6 +26,7 @@ import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 // Element Plus 全部图标组件（注册为全局组件后可直接在模板中使用）
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { PermissionDirective } from '@shared'
 
 // 根组件
 import App from './App.vue'
@@ -40,6 +41,7 @@ const app = createApp(App)
 app.use(createPinia())
 // 注册 Vue Router 插件（启用路由导航能力）
 app.use(router)
+app.directive('permission', PermissionDirective)
 // 注册 Element Plus 插件，并指定中文语言包
 app.use(ElementPlus, { locale: zhCn })
 

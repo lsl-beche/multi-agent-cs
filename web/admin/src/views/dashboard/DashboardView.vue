@@ -78,11 +78,11 @@ onMounted(async () => {
       getProducts({ page_size: 1 }),
       getUsers({ page_size: 1 }),
       getRefunds({ status: 'pending', page_size: 1 }),
-      getSalesSummary({ period: 'week' }),
+      getSalesSummary('week'),
     ])
 
     // 销售汇总数据（接口未返回时降级为空对象）
-    const salesData: SalesData = (salesRes as any).data || {}
+    const salesData: SalesData = salesRes.data || {}
     // 汇总写入顶部统计卡片：优先取销售汇总字段，缺省取分页接口的 total
     stats.value = {
       orders: salesData.total_orders || oRes.total || 0,

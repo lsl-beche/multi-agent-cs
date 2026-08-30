@@ -13,11 +13,14 @@
   <!-- Element Plus 全局配置：注入中文 locale，让组件内置文案显示为中文 -->
   <el-config-provider :locale="zhCn">
     <!-- 路由出口：根据当前路由地址渲染对应页面组件 -->
-    <router-view />
+    <AppErrorBoundary>
+      <router-view />
+    </AppErrorBoundary>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
 // 引入 Element Plus 官方中文语言包（zh-cn.mjs）
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { AppErrorBoundary } from '@shared'
 </script>

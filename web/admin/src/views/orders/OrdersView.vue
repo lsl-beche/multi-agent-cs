@@ -22,6 +22,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   getOrders, getOrder, confirmOrder, shipOrder, cancelOrder, completeOrder,
   type OrderItem,
+  type OrderDetailItem,
 } from '@/api/orders'
 
 // ── 列表 ──
@@ -57,7 +58,7 @@ async function fetchList() {
 // 详情弹窗显示/隐藏
 const detailVisible = ref(false)
 // 当前查看的订单详情数据（null 表示未加载）
-const detail = ref<OrderItem | null>(null)
+const detail = ref<OrderDetailItem | null>(null)
 /**
  * 打开订单详情弹窗（异步）
  * 根据订单 ID 拉取完整详情（含状态日志与商品明细）并展示

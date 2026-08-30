@@ -16,6 +16,7 @@ branches:
           - backend
           - frontend
           - integration
+          - e2e
       enforce_admins: false
       required_pull_request_reviews:
         required_approving_review_count: 1

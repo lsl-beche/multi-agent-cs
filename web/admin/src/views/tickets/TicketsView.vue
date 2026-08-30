@@ -95,7 +95,7 @@
       </div>
 
       <!-- 输入区：可回复状态（已认领/已回复）显示输入框，否则显示提示 -->
-      <div class="chat-input-area" v-if="canReply">
+      <div class="chat-input-area" v-if="canReply()">
         <!-- 回复内容输入框（Ctrl+Enter 快捷发送） -->
         <el-input
           v-model="replyText"
@@ -245,7 +245,7 @@ function scrollToBottom() {
 async function loadTickets() {
   try {
     const res = await getTickets(filterStatus.value || undefined)
-    tickets.value = res.data.data?.tickets || []
+    tickets.value = res.data.tickets || []
   } catch {
     ElMessage.error('加载工单列表失败')
   }
@@ -269,7 +269,7 @@ async function selectTicket(t: TicketItem) {
   try {
     // 拉取工单详情（含历史消息与用户在线状态）
     const res = await getTicketDetail(t.ticket_id)
-    detail.value = res.data.data!
+    detail.value = res.data
     detailMessages.value = detail.value?.messages || []
 
     // 连接管理员 WebSocket（实时接收该工单的新消息）
@@ -412,7 +412,7 @@ watch(activeTicketId, (val) => {
       if (!activeTicketId.value) return
       try {
         const res = await getTicketDetail(activeTicketId.value)
-        const msgs = res.data.data?.messages || []
+        const msgs = res.data.messages || []
         // 仅当消息数量发生变化时才更新（避免无意义的重渲染）
         if (msgs.length !== detailMessages.value.length) {
           detailMessages.value = msgs

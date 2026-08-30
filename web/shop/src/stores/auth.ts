@@ -15,14 +15,15 @@
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { shopTokenStorage, type UserProfile } from '@shared'
 import { login as apiLogin, register as apiRegister, getProfile } from '@/api/auth'
 
 // 定义并导出认证 Store（采用 setup 风格的定义方式）
 export const useAuthStore = defineStore('shop-auth', () => {
   // 登录令牌：初始化时从 localStorage 恢复，实现刷新页面后保持登录态
-  const token = ref(localStorage.getItem('shop_token') || '')
+  const token = ref(shopTokenStorage.accessToken)
   // 当前登录用户信息（结构由后端返回决定，故类型用 any）
-  const user = ref<any>(null)
+  const user = ref<UserProfile | null>(null)
 
   // 判断当前是否已登录：token 非空即视为已登录
   const isLoggedIn = () => !!token.value
@@ -47,7 +48,7 @@ export const useAuthStore = defineStore('shop-auth', () => {
     // 将 token 写入内存状态，供请求拦截器与页面判断登录态使用
     token.value = t
     // 将 token 持久化到 localStorage，刷新页面后不丢失登录态
-    localStorage.setItem('shop_token', t)
+    shopTokenStorage.setTokens(t, res.data.data?.refresh_token || '')
     // 登录成功后拉取用户资料，同步刷新 user 状态
     await fetchProfile()
   }
@@ -82,7 +83,7 @@ export const useAuthStore = defineStore('shop-auth', () => {
     // 保存令牌到内存状态
     token.value = t
     // 持久化令牌到 localStorage
-    localStorage.setItem('shop_token', t)
+    shopTokenStorage.setTokens(t, res.data.data?.refresh_token || '')
     // 注册后拉取用户资料，刷新用户状态
     await fetchProfile()
   }
@@ -124,7 +125,7 @@ export const useAuthStore = defineStore('shop-auth', () => {
     // 清空内存中的用户信息
     user.value = null
     // 移除 localStorage 中的令牌，保证刷新后不再恢复登录态
-    localStorage.removeItem('shop_token')
+    shopTokenStorage.clear()
   }
 
   // 对外暴露状态与动作，供组件通过 store 实例调用

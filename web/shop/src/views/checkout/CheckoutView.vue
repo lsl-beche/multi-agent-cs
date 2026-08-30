@@ -160,7 +160,7 @@ const cart = useCartStore() // 购物车仓库
 const loading = ref(false) // 页面初始化加载中标记
 const submitting = ref(false) // 提交订单进行中标记
 const addresses = ref<Address[]>([]) // 用户收货地址列表
-const coupons = ref<any[]>([]) // 用户可用优惠券列表
+const coupons = ref<CouponItem[]>([]) // 用户可用优惠券列表
 const selectedCouponId = ref<number | null>(null) // 当前选中的优惠券 ID（null 表示未选）
 const discountAmount = ref(0) // 优惠券减免金额
 const couponValid = ref(false) // 优惠券校验是否通过
@@ -231,7 +231,12 @@ async function submitOrder() {
   if (!defaultAddr.value) { ElMessage.warning('请选择收货地址'); return } // 无地址禁止提交
   submitting.value = true // 进入提交中状态
   try {
-    const body: any = {
+    const body: {
+      items: { sku_id: number; quantity: number }[]
+      address_id: number
+      remark?: string
+      coupon_id?: number
+    } = {
       items: confirmItems.value.map((i) => ({ sku_id: i.sku_id, quantity: i.quantity })), // 待结算商品明细
       address_id: defaultAddr.value.id, // 收货地址 ID
     }

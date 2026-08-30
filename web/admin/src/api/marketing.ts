@@ -37,7 +37,7 @@ export interface CouponItem { id: number; name: string; coupon_type: string; thr
  * - start_time: 活动开始时间
  * - end_time: 活动结束时间
  */
-export interface PromotionItem { id: number; name: string; promo_type: string; rules: any; product_ids: number[]; status: string; start_time: string; end_time: string }
+export interface PromotionItem { id: number; name: string; promo_type: string; rules: Record<string, unknown>; product_ids: number[]; status: string; start_time: string; end_time: string }
 
 /**
  * 分页查询优惠券列表
@@ -45,15 +45,15 @@ export interface PromotionItem { id: number; name: string; promo_type: string; r
  * @returns Promise<PaginatedData<CouponItem>> 分页的优惠券数据
  * @description 对应后端接口：GET /api/admin/marketing/coupons
  */
-export const getCoupons = (params: any) => api.get<PaginatedData<CouponItem>>('/admin/marketing/coupons', { params }) // 携带筛选参数请求优惠券列表
+export const getCoupons = (params: Record<string, unknown>) => api.get<PaginatedData<CouponItem>>('/admin/marketing/coupons', { params }) // 携带筛选参数请求优惠券列表
 
 /**
  * 创建优惠券
  * @param data 优惠券创建数据（名称、类型、面额、门槛、数量、有效期等）
- * @returns Promise<ApiResponse<any>> 创建结果，成功时返回新优惠券信息
+ * @returns Promise<ApiResponse<unknown>> 创建结果，成功时返回新优惠券信息
  * @description 对应后端接口：POST /api/admin/marketing/coupons
  */
-export const createCoupon = (data: any) => api.post<ApiResponse<any>>('/admin/marketing/coupons', data) // 提交优惠券配置到后端
+export const createCoupon = (data: Record<string, unknown>) => api.post<ApiResponse<Record<string, unknown>>>('/admin/marketing/coupons', data) // 提交优惠券配置到后端
 
 /**
  * 删除优惠券
@@ -70,7 +70,7 @@ export const deleteCoupon = (id: number) => api.delete(`/admin/marketing/coupons
  * @returns Promise 发放成功时正常 resolve
  * @description 对应后端接口：POST /api/admin/marketing/coupons/{id}/grant
  */
-export const grantCoupon = (id: number, data: { user_ids: number[] }) => api.post(`/admin/marketing/coupons/${id}/grant`, data) // 按用户 ID 列表批量发券
+export const grantCoupon = (id: number, data: { user_ids: number[] }) => api.post<ApiResponse<{ granted: number }>>(`/admin/marketing/coupons/${id}/grant`, data) // 按用户 ID 列表批量发券
 
 /**
  * 分页查询促销活动列表
@@ -78,12 +78,12 @@ export const grantCoupon = (id: number, data: { user_ids: number[] }) => api.pos
  * @returns Promise<PaginatedData<PromotionItem>> 分页的促销活动数据
  * @description 对应后端接口：GET /api/admin/marketing/promotions
  */
-export const getPromotions = (params: any) => api.get<PaginatedData<PromotionItem>>('/admin/marketing/promotions', { params }) // 携带筛选参数请求活动列表
+export const getPromotions = (params: Record<string, unknown>) => api.get<PaginatedData<PromotionItem>>('/admin/marketing/promotions', { params }) // 携带筛选参数请求活动列表
 
 /**
  * 创建促销活动
  * @param data 促销活动创建数据（名称、类型、规则、参与商品、活动时间等）
- * @returns Promise<ApiResponse<any>> 创建结果，成功时返回新活动信息
+ * @returns Promise<ApiResponse<unknown>> 创建结果，成功时返回新活动信息
  * @description 对应后端接口：POST /api/admin/marketing/promotions
  */
-export const createPromotion = (data: any) => api.post<ApiResponse<any>>('/admin/marketing/promotions', data) // 提交活动配置到后端
+export const createPromotion = (data: Record<string, unknown>) => api.post<ApiResponse<Record<string, unknown>>>('/admin/marketing/promotions', data) // 提交活动配置到后端

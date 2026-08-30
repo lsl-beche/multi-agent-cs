@@ -17,6 +17,7 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { adminTokenStorage, type UserProfile } from '@shared'
 import { loginApi, refreshApi, meApi } from '@/api/auth'
 
 /**
@@ -26,12 +27,7 @@ import { loginApi, refreshApi, meApi } from '@/api/auth'
  * - role:        角色（super_admin / admin / operator / viewer 等）
  * - permissions: 权限点列表（用于细粒度权限控制）
  */
-interface UserInfo {
-  id: number
-  username: string
-  role: string
-  permissions: string[]
-}
+type UserInfo = UserProfile
 
 /**
  * 认证 Store（setup 语法风格）
@@ -39,9 +35,9 @@ interface UserInfo {
  */
 export const useAuthStore = defineStore('auth', () => {
   // 访问令牌：调用受保护接口时使用，从 localStorage 初始化以保持刷新后的登录态
-  const token = ref<string>(localStorage.getItem('token') || '')
+  const token = ref<string>(adminTokenStorage.accessToken)
   // 刷新令牌：访问令牌过期后用于换取新令牌
-  const refreshToken = ref<string>(localStorage.getItem('refresh_token') || '')
+  const refreshToken = ref<string>(adminTokenStorage.refreshToken)
   // 当前登录用户信息（未登录时为 null）
   const user = ref<UserInfo | null>(null)
 
@@ -65,10 +61,8 @@ export const useAuthStore = defineStore('auth', () => {
     token.value = res.data.access_token
     // 写入内存中的刷新令牌状态
     refreshToken.value = res.data.refresh_token
-    // 持久化访问令牌到 localStorage
-    localStorage.setItem('token', res.data.access_token)
-    // 持久化刷新令牌到 localStorage
-    localStorage.setItem('refresh_token', res.data.refresh_token)
+    // 通过统一 TokenStorage 持久化（默认 sessionStorage）
+    adminTokenStorage.setTokens(res.data.access_token, res.data.refresh_token)
     // 登录成功后拉取当前用户信息并存入 user
     await fetchMe()
   }
@@ -82,6 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
       // 调用 /auth/me 接口获取当前用户信息
       const res = await meApi()
       user.value = res.data
+      localStorage.setItem('permissions', JSON.stringify(res.data.permissions || []))
     } catch {
       // token 失效或网络异常：执行登出
       logout()
@@ -98,8 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
       const res = await refreshApi({ refresh_token: refreshToken.value })
       // 更新内存中的访问令牌
       token.value = res.data.access_token
-      // 同步更新 localStorage 中的访问令牌
-      localStorage.setItem('token', res.data.access_token)
+      adminTokenStorage.setTokens(res.data.access_token, refreshToken.value)
     } catch {
       // 刷新失败 → 登出
       logout()
@@ -117,10 +111,9 @@ export const useAuthStore = defineStore('auth', () => {
     refreshToken.value = ''
     // 清空用户信息
     user.value = null
-    // 移除本地持久化的访问令牌
-    localStorage.removeItem('token')
-    // 移除本地持久化的刷新令牌
-    localStorage.removeItem('refresh_token')
+    // 统一清除 TokenStorage
+    adminTokenStorage.clear()
+    localStorage.removeItem('permissions')
   }
 
   // 导出 Store 的公开状态与动作，供组件与其他 Store 使用
