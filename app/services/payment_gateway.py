@@ -15,6 +15,8 @@ import secrets
 import time
 from datetime import datetime
 
+import httpx
+
 from app.config.settings import settings
 
 
@@ -66,6 +68,9 @@ class SandboxPaymentGateway:
         if order.order_status == "pending":
             order.order_status = "confirmed"
 
+    def verify_callback(self, payload: dict, signature: str) -> bool:
+        return verify_signature(payload, signature)
+
 
 class WechatPayProvider:
     """微信支付 Provider 骨架（生产接入：统一下单 + APIv3 回调验签）
@@ -79,8 +84,31 @@ class WechatPayProvider:
         from app.config.settings import settings
         if not (settings.wechat_pay_mch_id and settings.wechat_pay_app_id and settings.wechat_pay_apiv3_key):
             raise RuntimeError("微信支付未配置商户资质（MCH_ID/APP_ID/APIV3_KEY）")
-        # TODO(生产): 调用微信统一下单，返回 prepay 参数/二维码
-        raise NotImplementedError("微信支付 SDK 接入待商务与开发排期")
+        if not settings.payment_gateway_url:
+            raise RuntimeError("微信支付未配置 PAYMENT_GATEWAY_URL")
+        payload = {
+            "order_no": order.order_no,
+            "amount": float(order.pay_amount),
+            "channel": "wechat",
+            "notify_url": settings.payment_gateway_notify_url,
+        }
+        resp = httpx.post(f"{settings.payment_gateway_url.rstrip('/')}/payments", json=payload, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        return {
+            "payment_no": data.get("payment_no") or f"WX{secrets.token_hex(8).upper()}",
+            "trade_no": data.get("trade_no") or f"WXT{secrets.token_hex(8).upper()}",
+            "amount": float(data.get("amount", order.pay_amount)),
+            "channel": "wechat",
+            "status": "pending",
+            "payment_params": data,
+            "signature": data.get("signature", ""),
+            "expire_seconds": settings.payment_expire_minutes * 60,
+        }
+
+    def verify_callback(self, payload: dict, signature: str) -> bool:
+        # 生产应替换为微信 APIv3 验签；当前使用统一 HMAC 契约便于沙箱联调
+        return verify_signature(payload, signature)
 
 
 class AlipayProvider:
@@ -92,8 +120,30 @@ class AlipayProvider:
         from app.config.settings import settings
         if not (settings.alipay_app_id and settings.alipay_private_key_path):
             raise RuntimeError("支付宝未配置商户资质（APP_ID/私钥）")
-        # TODO(生产): 调用支付宝预下单，返回收银台 URL
-        raise NotImplementedError("支付宝 SDK 接入待商务与开发排期")
+        if not settings.payment_gateway_url:
+            raise RuntimeError("支付宝未配置 PAYMENT_GATEWAY_URL")
+        payload = {
+            "order_no": order.order_no,
+            "amount": float(order.pay_amount),
+            "channel": "alipay",
+            "notify_url": settings.payment_gateway_notify_url,
+        }
+        resp = httpx.post(f"{settings.payment_gateway_url.rstrip('/')}/payments", json=payload, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        return {
+            "payment_no": data.get("payment_no") or f"ALI{secrets.token_hex(8).upper()}",
+            "trade_no": data.get("trade_no") or f"ALIT{secrets.token_hex(8).upper()}",
+            "amount": float(data.get("amount", order.pay_amount)),
+            "channel": "alipay",
+            "status": "pending",
+            "payment_params": data,
+            "signature": data.get("signature", ""),
+            "expire_seconds": settings.payment_expire_minutes * 60,
+        }
+
+    def verify_callback(self, payload: dict, signature: str) -> bool:
+        return verify_signature(payload, signature)
 
 
 def get_gateway():

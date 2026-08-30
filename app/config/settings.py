@@ -80,6 +80,8 @@ class Settings(BaseSettings):
     # ===== 支付（沙箱/真实渠道）=====
     payment_gateway_provider: str = "sandbox"  # sandbox | wechat | alipay（生产接入真实渠道）
     payment_gateway_secret: str = ""           # 网关签名密钥（生产必须配置）
+    payment_gateway_url: str = ""               # 真实支付渠道统一下单 API（可选，为空时按未接入处理）
+    payment_gateway_notify_url: str = ""        # 支付回调通知地址
     payment_expire_minutes: int = 30           # 待支付订单/支付单超时时间
     # 真实渠道资质（接入微信/支付宝时配置）
     wechat_pay_mch_id: str = ""                # 微信商户号
@@ -110,6 +112,8 @@ class Settings(BaseSettings):
 
     # ===== 物流 =====
     logistics_provider: str = "sandbox"  # sandbox | kuaidi100 | cainiao（生产接入）
+    logistics_api_url: str = ""              # 真实物流渠道 API 地址
+    logistics_api_key: str = ""              # 物流渠道 API Key
 
 
 settings = Settings()

@@ -12,15 +12,30 @@ from cryptography.fernet import Fernet
 from app.config.settings import settings
 
 _fernet: Fernet | None = None
+_legacy_fernet: Fernet | None = None
 
 
 def _get_fernet() -> Fernet:
     global _fernet
     if _fernet is None:
-        key = settings.api_secret_key.encode()
-        derived = base64.urlsafe_b64encode(hashlib.sha256(key).digest())
-        _fernet = Fernet(derived)
+        key_source = settings.field_encryption_key or settings.api_secret_key
+        if not key_source:
+            raise RuntimeError("未配置 FIELD_ENCRYPTION_KEY / API_SECRET_KEY")
+        if len(key_source) == 44:
+            _fernet = Fernet(key_source.encode())
+        else:
+            derived = base64.urlsafe_b64encode(hashlib.sha256(key_source.encode()).digest())
+            _fernet = Fernet(derived)
     return _fernet
+
+
+def _get_legacy_fernet() -> Fernet:
+    """兼容旧版 API_SECRET_KEY 加密数据"""
+    global _legacy_fernet
+    if _legacy_fernet is None:
+        derived = base64.urlsafe_b64encode(hashlib.sha256(settings.api_secret_key.encode()).digest())
+        _legacy_fernet = Fernet(derived)
+    return _legacy_fernet
 
 
 # ── 加密/脱敏 ────────────────────────────────────────
@@ -31,7 +46,12 @@ def encrypt_text(plain: str) -> str:
 
 
 def decrypt_text(token: str) -> str:
-    return _get_fernet().decrypt(token.encode()).decode()
+    try:
+        return _get_fernet().decrypt(token.encode()).decode()
+    except Exception:
+        if settings.api_secret_key and settings.field_encryption_key:
+            return _get_legacy_fernet().decrypt(token.encode()).decode()
+        raise
 
 
 def mask_phone(text: str) -> str:

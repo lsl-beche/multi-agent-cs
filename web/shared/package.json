@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "main": "src/index.ts",
-  "types": "src/index.ts"
+  "types": "src/index.ts",
+  "scripts": {
+    "generate:types": "python ../../scripts/export_openapi.py && openapi-typescript ../../docs/openapi.json -o src/types/generated.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.6.0"
+  }
 }
-

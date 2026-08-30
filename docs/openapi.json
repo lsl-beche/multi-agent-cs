@@ -1,0 +1,5793 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CSagent 电商智能客服",
+    "description": "多Agent协同架构的智能客服系统",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": [
+          "健康检查"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ready": {
+      "get": {
+        "tags": [
+          "健康检查"
+        ],
+        "summary": "Ready",
+        "operationId": "ready_api_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Ready Api Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chat/history": {
+      "get": {
+        "tags": [
+          "对话"
+        ],
+        "summary": "Get Chat History",
+        "operationId": "get_chat_history_api_chat_history_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Chat History Api Chat History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chat/csat": {
+      "post": {
+        "tags": [
+          "对话"
+        ],
+        "summary": "Submit Csat",
+        "operationId": "submit_csat_api_chat_csat_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Rating"
+            }
+          },
+          {
+            "name": "comment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Comment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Submit Csat Api Chat Csat Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chat": {
+      "post": {
+        "tags": [
+          "对话"
+        ],
+        "summary": "Chat",
+        "operationId": "chat_api_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/session/{session_id}/history": {
+      "get": {
+        "tags": [
+          "会话"
+        ],
+        "summary": "Get History",
+        "operationId": "get_history_api_session__session_id__history_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get History Api Session  Session Id  History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/session/{session_id}": {
+      "delete": {
+        "tags": [
+          "会话"
+        ],
+        "summary": "Reset Session",
+        "operationId": "reset_session_api_session__session_id__delete",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Reset Session Api Session  Session Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ticket/{ticket_id}/queue-status": {
+      "get": {
+        "tags": [
+          "工单"
+        ],
+        "summary": "Queue Status",
+        "operationId": "queue_status_api_ticket__ticket_id__queue_status_get",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticket Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Queue Status Api Ticket  Ticket Id  Queue Status Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ticket/{ticket_id}": {
+      "get": {
+        "tags": [
+          "工单"
+        ],
+        "summary": "Get Ticket",
+        "operationId": "get_ticket_api_ticket__ticket_id__get",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticket Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Ticket Api Ticket  Ticket Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ticket/admin/list": {
+      "get": {
+        "tags": [
+          "工单"
+        ],
+        "summary": "List Tickets",
+        "operationId": "list_tickets_api_ticket_admin_list_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Tickets Api Ticket Admin List Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ticket/admin/{ticket_id}/detail": {
+      "get": {
+        "tags": [
+          "工单"
+        ],
+        "summary": "Ticket Detail",
+        "operationId": "ticket_detail_api_ticket_admin__ticket_id__detail_get",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticket Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Ticket Detail Api Ticket Admin  Ticket Id  Detail Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ticket/admin/{ticket_id}/claim": {
+      "post": {
+        "tags": [
+          "工单"
+        ],
+        "summary": "Claim Ticket",
+        "operationId": "claim_ticket_api_ticket_admin__ticket_id__claim_post",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticket Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Claim Ticket Api Ticket Admin  Ticket Id  Claim Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ticket/admin/{ticket_id}/reply": {
+      "post": {
+        "tags": [
+          "工单"
+        ],
+        "summary": "Reply Ticket",
+        "operationId": "reply_ticket_api_ticket_admin__ticket_id__reply_post",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticket Id"
+            }
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Content"
+            }
+          },
+          {
+            "name": "handler",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "客服",
+              "title": "Handler"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Reply Ticket Api Ticket Admin  Ticket Id  Reply Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ticket/admin/dashboard": {
+      "get": {
+        "tags": [
+          "工单"
+        ],
+        "summary": "Dashboard",
+        "operationId": "dashboard_api_ticket_admin_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Dashboard Api Ticket Admin Dashboard Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/knowledge/items": {
+      "post": {
+        "tags": [
+          "知识库"
+        ],
+        "summary": "Add Items",
+        "operationId": "add_items_api_knowledge_items_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": {
+                  "$ref": "#/components/schemas/KnowledgeItem"
+                },
+                "type": "array",
+                "title": "Items"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Add Items Api Knowledge Items Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/knowledge/search": {
+      "get": {
+        "tags": [
+          "知识库"
+        ],
+        "summary": "Search",
+        "operationId": "search_api_knowledge_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "top_k",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 5,
+              "title": "Top K"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Search Api Knowledge Search Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/knowledge/webhook": {
+      "post": {
+        "tags": [
+          "知识库"
+        ],
+        "summary": "Knowledge Webhook",
+        "description": "商品信息变更Webhook：HMAC签名验证 + 触发知识库热更新",
+        "operationId": "knowledge_webhook_api_knowledge_webhook_post",
+        "parameters": [
+          {
+            "name": "x-signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Signature"
+            }
+          },
+          {
+            "name": "x-timestamp",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Timestamp"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Knowledge Webhook Api Knowledge Webhook Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "用户注册",
+        "operationId": "register_api_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "管理员登录",
+        "operationId": "login_api_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "刷新令牌",
+        "operationId": "refresh_api_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/password": {
+      "put": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "修改密码",
+        "operationId": "change_password_api_auth_password_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "当前用户信息",
+        "operationId": "get_me_api_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "tags": [
+          "用户管理"
+        ],
+        "summary": "用户列表",
+        "operationId": "list_users_api_admin_users_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Keyword"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "用户管理"
+        ],
+        "summary": "创建用户",
+        "operationId": "create_user_api_admin_users_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUserCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{user_id}": {
+      "put": {
+        "tags": [
+          "用户管理"
+        ],
+        "summary": "更新用户",
+        "operationId": "update_user_api_admin_users__user_id__put",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{user_id}/ban": {
+      "put": {
+        "tags": [
+          "用户管理"
+        ],
+        "summary": "封禁/解封用户",
+        "operationId": "ban_user_api_admin_users__user_id__ban_put",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{user_id}/addresses": {
+      "get": {
+        "tags": [
+          "用户管理"
+        ],
+        "summary": "用户地址列表",
+        "operationId": "get_addresses_api_admin_users__user_id__addresses_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products": {
+      "get": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "商品列表",
+        "operationId": "list_products_api_admin_products_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Keyword"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "id",
+              "title": "Sort By"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "desc",
+              "title": "Sort Dir"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "创建商品",
+        "operationId": "create_product_api_admin_products_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products/{product_id}": {
+      "get": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "商品详情",
+        "operationId": "get_product_api_admin_products__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "更新商品",
+        "operationId": "update_product_api_admin_products__product_id__put",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "下架商品",
+        "operationId": "delete_product_api_admin_products__product_id__delete",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products/{product_id}/online": {
+      "put": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "上架商品",
+        "operationId": "online_product_api_admin_products__product_id__online_put",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products/{product_id}/offline": {
+      "put": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "下架商品",
+        "operationId": "offline_product_api_admin_products__product_id__offline_put",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products/categories/all": {
+      "get": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "类目树",
+        "operationId": "list_categories_api_admin_products_categories_all_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products/categories": {
+      "post": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "创建类目",
+        "operationId": "create_category_api_admin_products_categories_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/products/upload-image": {
+      "post": {
+        "tags": [
+          "商品管理"
+        ],
+        "summary": "Upload Product Image",
+        "description": "上传商品图片，返回URL",
+        "operationId": "upload_product_image_api_admin_products_upload_image_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_product_image_api_admin_products_upload_image_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/orders": {
+      "get": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "订单列表",
+        "operationId": "list_orders_api_admin_orders_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Keyword"
+            }
+          },
+          {
+            "name": "order_status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order Status"
+            }
+          },
+          {
+            "name": "pay_status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pay Status"
+            }
+          },
+          {
+            "name": "start_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Time"
+            }
+          },
+          {
+            "name": "end_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "订单详情",
+        "operationId": "get_order_api_admin_orders__order_id__get",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/orders/{order_id}/confirm": {
+      "put": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "确认订单",
+        "operationId": "confirm_order_api_admin_orders__order_id__confirm_put",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/orders/{order_id}/ship": {
+      "put": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "发货",
+        "operationId": "ship_order_api_admin_orders__order_id__ship_put",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderShipRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/orders/{order_id}/cancel": {
+      "put": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "取消订单",
+        "operationId": "cancel_order_api_admin_orders__order_id__cancel_put",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/OrderCancelRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/orders/{order_id}/complete": {
+      "put": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "完成订单",
+        "operationId": "complete_order_api_admin_orders__order_id__complete_put",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/inventory": {
+      "get": {
+        "tags": [
+          "库存管理"
+        ],
+        "summary": "库存列表",
+        "operationId": "list_inventory_api_admin_inventory_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Keyword"
+            }
+          },
+          {
+            "name": "low_stock_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Low Stock Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/inventory/adjust": {
+      "post": {
+        "tags": [
+          "库存管理"
+        ],
+        "summary": "调整库存",
+        "operationId": "adjust_inventory_api_admin_inventory_adjust_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryAdjustRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/inventory/logs": {
+      "get": {
+        "tags": [
+          "库存管理"
+        ],
+        "summary": "库存流水",
+        "operationId": "get_logs_api_admin_inventory_logs_get",
+        "parameters": [
+          {
+            "name": "sku_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sku Id"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/payments": {
+      "get": {
+        "tags": [
+          "支付管理"
+        ],
+        "summary": "支付流水列表",
+        "operationId": "list_payments_api_admin_payments_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/payments/refunds": {
+      "get": {
+        "tags": [
+          "支付管理"
+        ],
+        "summary": "退款列表",
+        "operationId": "list_refunds_api_admin_payments_refunds_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/payments/refunds/{refund_id}/approve": {
+      "post": {
+        "tags": [
+          "支付管理"
+        ],
+        "summary": "通过退款",
+        "operationId": "approve_refund_api_admin_payments_refunds__refund_id__approve_post",
+        "parameters": [
+          {
+            "name": "refund_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Refund Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/payments/refunds/{refund_id}/reject": {
+      "post": {
+        "tags": [
+          "支付管理"
+        ],
+        "summary": "拒绝退款",
+        "operationId": "reject_refund_api_admin_payments_refunds__refund_id__reject_post",
+        "parameters": [
+          {
+            "name": "refund_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Refund Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/payments/refunds/{refund_id}/complete": {
+      "post": {
+        "tags": [
+          "支付管理"
+        ],
+        "summary": "退款到账",
+        "operationId": "complete_refund_api_admin_payments_refunds__refund_id__complete_post",
+        "parameters": [
+          {
+            "name": "refund_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Refund Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/shipments": {
+      "get": {
+        "tags": [
+          "物流管理"
+        ],
+        "summary": "物流列表",
+        "operationId": "list_shipments_api_admin_shipments_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "order_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Order Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/shipments/{shipment_id}/track": {
+      "put": {
+        "tags": [
+          "物流管理"
+        ],
+        "summary": "更新物流追踪",
+        "operationId": "update_tracking_api_admin_shipments__shipment_id__track_put",
+        "parameters": [
+          {
+            "name": "shipment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Shipment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShipmentTrackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/marketing/coupons": {
+      "get": {
+        "tags": [
+          "营销管理"
+        ],
+        "summary": "优惠券列表",
+        "operationId": "list_coupons_api_admin_marketing_coupons_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "营销管理"
+        ],
+        "summary": "创建优惠券",
+        "operationId": "create_coupon_api_admin_marketing_coupons_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/marketing/coupons/{coupon_id}": {
+      "delete": {
+        "tags": [
+          "营销管理"
+        ],
+        "summary": "停用优惠券",
+        "operationId": "delete_coupon_api_admin_marketing_coupons__coupon_id__delete",
+        "parameters": [
+          {
+            "name": "coupon_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Coupon Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/marketing/coupons/{coupon_id}/grant": {
+      "post": {
+        "tags": [
+          "营销管理"
+        ],
+        "summary": "发放优惠券",
+        "operationId": "grant_coupon_api_admin_marketing_coupons__coupon_id__grant_post",
+        "parameters": [
+          {
+            "name": "coupon_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Coupon Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponGrantRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/marketing/promotions": {
+      "get": {
+        "tags": [
+          "营销管理"
+        ],
+        "summary": "促销活动列表",
+        "operationId": "list_promotions_api_admin_marketing_promotions_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "营销管理"
+        ],
+        "summary": "创建促销活动",
+        "operationId": "create_promotion_api_admin_marketing_promotions_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromotionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reviews": {
+      "get": {
+        "tags": [
+          "评价管理"
+        ],
+        "summary": "评价列表",
+        "operationId": "list_reviews_api_admin_reviews_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reviews/{review_id}/approve": {
+      "put": {
+        "tags": [
+          "评价管理"
+        ],
+        "summary": "通过评价",
+        "operationId": "approve_review_api_admin_reviews__review_id__approve_put",
+        "parameters": [
+          {
+            "name": "review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Review Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reviews/{review_id}/reject": {
+      "put": {
+        "tags": [
+          "评价管理"
+        ],
+        "summary": "驳回评价",
+        "operationId": "reject_review_api_admin_reviews__review_id__reject_put",
+        "parameters": [
+          {
+            "name": "review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Review Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reviews/{review_id}/reply": {
+      "put": {
+        "tags": [
+          "评价管理"
+        ],
+        "summary": "回复评价",
+        "operationId": "reply_review_api_admin_reviews__review_id__reply_put",
+        "parameters": [
+          {
+            "name": "review_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Review Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewReplyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reports/sales": {
+      "get": {
+        "tags": [
+          "数据报表"
+        ],
+        "summary": "销售数据汇总",
+        "operationId": "sales_summary_api_admin_reports_sales_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "today / yesterday / week / month",
+              "default": "today",
+              "title": "Period"
+            },
+            "description": "today / yesterday / week / month"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reports/cs-agent": {
+      "get": {
+        "tags": [
+          "数据报表"
+        ],
+        "summary": "CS客服数据大屏",
+        "operationId": "cs_agent_dashboard_api_admin_reports_cs_agent_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "today / week / month",
+              "default": "today",
+              "title": "Period"
+            },
+            "description": "today / week / month"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/reports/reconciliation": {
+      "get": {
+        "tags": [
+          "数据报表"
+        ],
+        "summary": "支付/退款对账",
+        "operationId": "payment_reconciliation_api_admin_reports_reconciliation_get",
+        "parameters": [
+          {
+            "name": "window_hours",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 720,
+              "minimum": 1,
+              "default": 24,
+              "title": "Window Hours"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/logs": {
+      "get": {
+        "tags": [
+          "操作日志"
+        ],
+        "summary": "操作日志列表",
+        "operationId": "list_logs_api_admin_logs_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "module",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Module"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Keyword"
+            }
+          },
+          {
+            "name": "start_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Time"
+            }
+          },
+          {
+            "name": "end_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/agents/tools": {
+      "get": {
+        "tags": [
+          "Agent平台"
+        ],
+        "summary": "工具目录",
+        "description": "全部已注册工具（工具市场的基础清单）",
+        "operationId": "tool_catalog_api_admin_agents_tools_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/agents/stats": {
+      "get": {
+        "tags": [
+          "Agent平台"
+        ],
+        "summary": "Agent 运行时统计",
+        "description": "从 Prometheus 指标读取：LLM/工具调用量与时延",
+        "operationId": "agent_stats_api_admin_agents_stats_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/privacy": {
+      "get": {
+        "tags": [
+          "隐私合规"
+        ],
+        "summary": "隐私合规说明",
+        "description": "返回当前隐私配置：是否启用偏好/向量记忆，及遗忘权入口",
+        "operationId": "privacy_api_privacy_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Privacy Api Privacy Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": [
+          "C端商品"
+        ],
+        "summary": "商品列表",
+        "description": "C端商品列表，只返回已上架商品",
+        "operationId": "list_products_api_products_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Keyword"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category Id"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sort"
+            }
+          },
+          {
+            "name": "min_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Price"
+            }
+          },
+          {
+            "name": "max_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Max Price"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/categories/all": {
+      "get": {
+        "tags": [
+          "C端商品"
+        ],
+        "summary": "全部分类",
+        "description": "返回扁平分类列表（前端自行构建树）",
+        "operationId": "list_categories_api_products_categories_all_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/recommend": {
+      "get": {
+        "tags": [
+          "C端商品"
+        ],
+        "summary": "为你推荐（协同过滤+偏好+热销）",
+        "operationId": "recommend_api_products_recommend_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20,
+              "minimum": 1,
+              "default": 8,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{product_id}": {
+      "get": {
+        "tags": [
+          "C端商品"
+        ],
+        "summary": "商品详情",
+        "operationId": "product_detail_api_products__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "tags": [
+          "C端订单"
+        ],
+        "summary": "创建订单",
+        "operationId": "create_order_api_orders_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "C端订单"
+        ],
+        "summary": "我的订单",
+        "operationId": "list_orders_api_orders_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "C端订单"
+        ],
+        "summary": "订单详情",
+        "operationId": "order_detail_api_orders__order_id__get",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{order_id}/cancel": {
+      "put": {
+        "tags": [
+          "C端订单"
+        ],
+        "summary": "取消订单",
+        "operationId": "cancel_order_api_orders__order_id__cancel_put",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{order_id}/confirm": {
+      "put": {
+        "tags": [
+          "C端订单"
+        ],
+        "summary": "确认收货",
+        "operationId": "confirm_order_api_orders__order_id__confirm_put",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart": {
+      "get": {
+        "tags": [
+          "C端购物车"
+        ],
+        "summary": "获取购物车",
+        "operationId": "get_cart_api_cart_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "C端购物车"
+        ],
+        "summary": "加入购物车",
+        "operationId": "add_to_cart_api_cart_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCartBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/{item_id}": {
+      "put": {
+        "tags": [
+          "C端购物车"
+        ],
+        "summary": "更新数量",
+        "operationId": "update_item_api_cart__item_id__put",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartQuantityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "C端购物车"
+        ],
+        "summary": "删除",
+        "operationId": "remove_item_api_cart__item_id__delete",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/select-all": {
+      "put": {
+        "tags": [
+          "C端购物车"
+        ],
+        "summary": "全选/取消全选",
+        "operationId": "select_all_api_cart_select_all_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartSelectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/{item_id}/select": {
+      "put": {
+        "tags": [
+          "C端购物车"
+        ],
+        "summary": "选中某条",
+        "operationId": "select_one_api_cart__item_id__select_put",
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartSelectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/addresses": {
+      "get": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "地址列表",
+        "operationId": "list_addresses_api_user_addresses_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "新增地址",
+        "operationId": "create_address_api_user_addresses_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/addresses/{addr_id}": {
+      "put": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "更新地址",
+        "operationId": "update_address_api_user_addresses__addr_id__put",
+        "parameters": [
+          {
+            "name": "addr_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Addr Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddressUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "删除地址",
+        "operationId": "delete_address_api_user_addresses__addr_id__delete",
+        "parameters": [
+          {
+            "name": "addr_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Addr Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/profile": {
+      "put": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "更新个人信息",
+        "operationId": "update_profile_api_user_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/password": {
+      "put": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "修改密码",
+        "operationId": "change_password_api_user_password_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChangeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/memory": {
+      "delete": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "清除我的客服记忆（遗忘权）",
+        "operationId": "erase_memory_api_user_memory_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/pay": {
+      "post": {
+        "tags": [
+          "C端支付"
+        ],
+        "summary": "Initiate Payment",
+        "operationId": "initiate_payment_api_payments_pay_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentInitiateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/confirm": {
+      "post": {
+        "tags": [
+          "C端支付"
+        ],
+        "summary": "Confirm Payment",
+        "operationId": "confirm_payment_api_payments_confirm_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentConfirmRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/{order_id}/status": {
+      "get": {
+        "tags": [
+          "C端支付"
+        ],
+        "summary": "Payment Status",
+        "operationId": "payment_status_api_payments__order_id__status_get",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews": {
+      "post": {
+        "tags": [
+          "C端评价"
+        ],
+        "summary": "Submit Review",
+        "operationId": "submit_review_api_reviews_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewSubmitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/product/{product_id}": {
+      "get": {
+        "tags": [
+          "C端评价"
+        ],
+        "summary": "Get Product Reviews",
+        "operationId": "get_product_reviews_api_reviews_product__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/coupons": {
+      "get": {
+        "tags": [
+          "C端优惠券"
+        ],
+        "summary": "List User Coupons",
+        "operationId": "list_user_coupons_api_user_coupons_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/validate-coupon": {
+      "post": {
+        "tags": [
+          "C端优惠券"
+        ],
+        "summary": "Validate Coupon",
+        "operationId": "validate_coupon_api_orders_validate_coupon_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Req"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddCartBody": {
+        "properties": {
+          "sku_id": {
+            "type": "integer",
+            "title": "Sku Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku_id"
+        ],
+        "title": "AddCartBody"
+      },
+      "AddressCreateRequest": {
+        "properties": {
+          "receiver_name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Receiver Name"
+          },
+          "receiver_phone": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 6,
+            "title": "Receiver Phone"
+          },
+          "province": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Province"
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "City"
+          },
+          "district": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "District"
+          },
+          "detail": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Detail"
+          },
+          "is_default": {
+            "type": "boolean",
+            "title": "Is Default",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "receiver_name",
+          "receiver_phone",
+          "province",
+          "city",
+          "district",
+          "detail"
+        ],
+        "title": "AddressCreateRequest"
+      },
+      "AddressUpdateRequest": {
+        "properties": {
+          "receiver_name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Receiver Name"
+          },
+          "receiver_phone": {
+            "type": "string",
+            "maxLength": 20,
+            "minLength": 6,
+            "title": "Receiver Phone"
+          },
+          "province": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Province"
+          },
+          "city": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "City"
+          },
+          "district": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "District"
+          },
+          "detail": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Detail"
+          },
+          "is_default": {
+            "type": "boolean",
+            "title": "Is Default",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "receiver_name",
+          "receiver_phone",
+          "province",
+          "city",
+          "district",
+          "detail"
+        ],
+        "title": "AddressUpdateRequest"
+      },
+      "AdminUserCreate": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 2,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "title": "Password"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "default": "viewer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "AdminUserCreate"
+      },
+      "AdminUserUpdate": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "title": "AdminUserUpdate"
+      },
+      "Body_upload_product_image_api_admin_products_upload_image_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_product_image_api_admin_products_upload_image_post"
+      },
+      "CartQuantityRequest": {
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "title": "CartQuantityRequest"
+      },
+      "CartSelectRequest": {
+        "properties": {
+          "selected": {
+            "type": "boolean",
+            "title": "Selected",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "CartSelectRequest"
+      },
+      "CategoryCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level",
+            "default": 1
+          },
+          "sort_order": {
+            "type": "integer",
+            "title": "Sort Order",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CategoryCreate"
+      },
+      "ChangePasswordRequest": {
+        "properties": {
+          "old_password": {
+            "type": "string",
+            "title": "Old Password"
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 6,
+            "title": "New Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "old_password",
+          "new_password"
+        ],
+        "title": "ChangePasswordRequest"
+      },
+      "ChatRequest": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "user_id",
+          "message"
+        ],
+        "title": "ChatRequest"
+      },
+      "ChatResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "intent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent"
+          },
+          "need_human": {
+            "type": "boolean",
+            "title": "Need Human",
+            "default": false
+          },
+          "suggestions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Suggestions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "answer"
+        ],
+        "title": "ChatResponse"
+      },
+      "CouponCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "coupon_type": {
+            "type": "string",
+            "title": "Coupon Type",
+            "default": "fixed"
+          },
+          "threshold": {
+            "type": "number",
+            "title": "Threshold",
+            "default": 0
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "total_count": {
+            "type": "integer",
+            "title": "Total Count"
+          },
+          "user_limit": {
+            "type": "integer",
+            "title": "User Limit",
+            "default": 1
+          },
+          "start_time": {
+            "type": "string",
+            "title": "Start Time"
+          },
+          "end_time": {
+            "type": "string",
+            "title": "End Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "total_count",
+          "start_time",
+          "end_time"
+        ],
+        "title": "CouponCreate"
+      },
+      "CouponGrantRequest": {
+        "properties": {
+          "user_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "User Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_ids"
+        ],
+        "title": "CouponGrantRequest"
+      },
+      "CreateOrderBody": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CreateOrderItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "address_id": {
+            "type": "integer",
+            "title": "Address Id"
+          },
+          "remark": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remark"
+          },
+          "coupon_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coupon Id"
+          },
+          "idempotency_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idempotency Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "address_id"
+        ],
+        "title": "CreateOrderBody"
+      },
+      "CreateOrderItem": {
+        "properties": {
+          "sku_id": {
+            "type": "integer",
+            "title": "Sku Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku_id",
+          "quantity"
+        ],
+        "title": "CreateOrderItem"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageCreate": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "sort_order": {
+            "type": "integer",
+            "title": "Sort Order",
+            "default": 0
+          },
+          "is_main": {
+            "type": "boolean",
+            "title": "Is Main",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "ImageCreate"
+      },
+      "InventoryAdjustRequest": {
+        "properties": {
+          "sku_id": {
+            "type": "integer",
+            "title": "Sku Id"
+          },
+          "change_qty": {
+            "type": "integer",
+            "title": "Change Qty"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "default": "manual"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku_id",
+          "change_qty"
+        ],
+        "title": "InventoryAdjustRequest"
+      },
+      "KnowledgeItem": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question"
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question",
+          "answer"
+        ],
+        "title": "KnowledgeItem"
+      },
+      "LoginRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 2,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "OrderCancelRequest": {
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "title": "OrderCancelRequest"
+      },
+      "OrderShipRequest": {
+        "properties": {
+          "carrier": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Carrier"
+          },
+          "tracking_no": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tracking No"
+          }
+        },
+        "type": "object",
+        "required": [
+          "carrier"
+        ],
+        "title": "OrderShipRequest"
+      },
+      "PasswordChangeRequest": {
+        "properties": {
+          "old_password": {
+            "type": "string",
+            "title": "Old Password"
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 6,
+            "title": "New Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "old_password",
+          "new_password"
+        ],
+        "title": "PasswordChangeRequest"
+      },
+      "PaymentConfirmRequest": {
+        "properties": {
+          "payment_no": {
+            "type": "string",
+            "title": "Payment No"
+          },
+          "signature": {
+            "type": "string",
+            "title": "Signature"
+          },
+          "timestamp": {
+            "type": "integer",
+            "title": "Timestamp",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "payment_no",
+          "signature"
+        ],
+        "title": "PaymentConfirmRequest"
+      },
+      "PaymentInitiateRequest": {
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "title": "Order Id"
+          },
+          "channel": {
+            "type": "string",
+            "title": "Channel",
+            "default": "wechat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id"
+        ],
+        "title": "PaymentInitiateRequest"
+      },
+      "ProductCreate": {
+        "properties": {
+          "spu_code": {
+            "type": "string",
+            "title": "Spu Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtitle"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "main_image": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Main Image"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "default": "draft"
+          },
+          "images": {
+            "items": {
+              "$ref": "#/components/schemas/ImageCreate"
+            },
+            "type": "array",
+            "title": "Images",
+            "default": []
+          },
+          "skus": {
+            "items": {
+              "$ref": "#/components/schemas/SkuCreate"
+            },
+            "type": "array",
+            "title": "Skus",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "spu_code",
+          "name"
+        ],
+        "title": "ProductCreate"
+      },
+      "ProductUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subtitle"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "main_image": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Main Image"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "images": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ImageCreate"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Images"
+          }
+        },
+        "type": "object",
+        "title": "ProductUpdate"
+      },
+      "ProfileUpdateRequest": {
+        "properties": {
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          }
+        },
+        "type": "object",
+        "title": "ProfileUpdateRequest"
+      },
+      "PromotionCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "promo_type": {
+            "type": "string",
+            "title": "Promo Type"
+          },
+          "rules": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Rules"
+          },
+          "product_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Product Ids",
+            "default": []
+          },
+          "start_time": {
+            "type": "string",
+            "title": "Start Time"
+          },
+          "end_time": {
+            "type": "string",
+            "title": "End Time"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "promo_type",
+          "rules",
+          "start_time",
+          "end_time"
+        ],
+        "title": "PromotionCreate"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshRequest"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 2,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "RegisterRequest"
+      },
+      "ReviewReplyRequest": {
+        "properties": {
+          "reply": {
+            "type": "string",
+            "title": "Reply"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reply"
+        ],
+        "title": "ReviewReplyRequest"
+      },
+      "ReviewSubmitRequest": {
+        "properties": {
+          "order_id": {
+            "type": "integer",
+            "title": "Order Id"
+          },
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "rating": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Rating"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "default": ""
+          },
+          "is_anonymous": {
+            "type": "boolean",
+            "title": "Is Anonymous",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "order_id",
+          "product_id",
+          "rating"
+        ],
+        "title": "ReviewSubmitRequest"
+      },
+      "ShipmentTrackRequest": {
+        "properties": {
+          "tracking_no": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Tracking No"
+          },
+          "carrier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Carrier"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tracking_no"
+        ],
+        "title": "ShipmentTrackRequest"
+      },
+      "SkuCreate": {
+        "properties": {
+          "sku_code": {
+            "type": "string",
+            "title": "Sku Code"
+          },
+          "spec_info": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Spec Info",
+            "default": {}
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "original_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Price"
+          },
+          "barcode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Barcode"
+          },
+          "stock": {
+            "type": "integer",
+            "title": "Stock",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "sku_code",
+          "price"
+        ],
+        "title": "SkuCreate"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

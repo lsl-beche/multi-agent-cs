@@ -76,7 +76,7 @@ class PaymentService:
 
     @staticmethod
     async def confirm_payment_async(db: AsyncSession, payment_no: str, user_id: int, signature: str, timestamp: int) -> dict:
-        from app.services.payment_gateway import verify_signature
+        from app.services.payment_gateway import get_gateway
 
         payment_repo = PaymentRepository(db)
         payment = await payment_repo.get_by_no(payment_no)
@@ -90,7 +90,7 @@ class PaymentService:
             "amount": float(payment.amount),
             "timestamp": timestamp,
         }
-        if not verify_signature(payload, signature):
+        if not get_gateway().verify_callback(payload, signature):
             raise ValueError("签名校验失败")
         order_repo = OrderRepository(db)
         order = await order_repo.get_by_id(payment.order_id)

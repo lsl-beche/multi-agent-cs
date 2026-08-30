@@ -37,8 +37,8 @@ jobs:
       - name: Unit tests
         run: |
           pip install pytest-cov
-          pytest tests/unit tests/integration/test_agent_mock.py -q
-          pytest tests/unit --cov=app --cov-report=term-missing --cov-fail-under=50
+          pytest tests/unit tests/api tests/integration/test_agent_mock.py -q
+          pytest tests/unit tests/api --cov=app --cov-report=term-missing --cov-fail-under=50
       - name: AI golden set gate
         run: python scripts/eval_dialogue.py --threshold 0.95
       - name: Compile
@@ -82,12 +82,33 @@ jobs:
       - name: Service container tests
         run: |
           pytest tests/services -q
+      - name: API container tests
+        run: |
+          pytest tests/api -q
       - name: API smoke tests
         run: |
           pytest tests/integration/test_agent_mock.py -q
+      - name: Export OpenAPI
+        run: |
+          python scripts/export_openapi.py
+
+  security:
+    needs: [backend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: pip install ruff
+      - name: Security acceptance
+        run: python scripts/security_acceptance.py
 
   e2e:
-    needs: [frontend]
+    needs: [frontend, integration]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -103,6 +124,11 @@ jobs:
       - name: Run E2E
         working-directory: web/e2e
         run: npx playwright test
+      - name: Generate shared types
+        working-directory: web/shared
+        run: |
+          npm install
+          npx openapi-typescript ../../docs/openapi.json -o src/types/generated.ts
 
   docker:
     needs: [backend, frontend]

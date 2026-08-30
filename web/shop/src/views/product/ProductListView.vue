@@ -56,42 +56,12 @@
     <!-- 加载完成：商品卡片网格 -->
     <div v-else class="product-grid">
       <!-- 每张商品卡片：点击进入详情页 -->
-      <div
+      <ProductCard
         v-for="item in products"
         :key="item.id"
-        class="product-card"
+        :item="item"
         @click="$router.push(`/product/${item.id}`)"
-      >
-        <!-- 图片区：主图 + 印章徽标 + 悬停浮层 -->
-        <div class="card-img-wrap">
-          <el-image :src="item.images?.[0] || ''" fit="cover" class="card-img" lazy>
-            <template #error>
-              <div class="image-placeholder"><TeaIcon name="bowl" class="placeholder-icon" /></div>
-            </template>
-          </el-image>
-          <!-- 徽标：类目名 + 推导徽标 -->
-          <div class="card-tags">
-            <span class="seal-tag tea" v-if="item.category_name">{{ item.category_name }}</span>
-            <span
-              v-for="b in cardBadges(item)"
-              :key="b.text"
-              class="seal-tag"
-              :class="b.cls"
-            >{{ b.text }}</span>
-          </div>
-          <div class="card-hover">
-            <span class="hover-btn">查看详情 →</span>
-          </div>
-        </div>
-        <!-- 文字区：名称 + 价格/销量 -->
-        <div class="card-body">
-          <h3 class="card-name">{{ item.name }}</h3>
-          <div class="card-footer">
-            <span class="card-price"><i>¥</i>{{ item.price?.toFixed(2) }}</span>
-            <span class="card-sold">已售 {{ item.total_sales || 0 }}+</span>
-          </div>
-        </div>
-      </div>
+      />
     </div>
 
     <!-- 空状态：无商品时展示 -->
@@ -113,8 +83,8 @@ import { ref, computed, onMounted, watch } from 'vue' // Vue 响应式/计算属
 import { useRoute, useRouter } from 'vue-router' // 路由：读取查询参数 + 更新类目参数
 import { getProducts, getCategories, type Product, type Category } from '@/api/products' // 商品/类目 API 与类型
 import ProductSkeleton from '@/components/ProductSkeleton.vue' // 骨架屏组件
-import TeaIcon from '@/components/TeaIcon.vue' // 主题图标（图片失败占位）
 import EmptyTea from '@/components/EmptyTea.vue' // 空状态组件
+import ProductCard from '@/components/product/ProductCard.vue' // 商品卡片组件
 
 // ── 状态定义 ──
 const route = useRoute() // 当前路由（读取 keyword/category_id 查询参数）
@@ -155,19 +125,6 @@ watch(() => route.query, () => {
 // 从真实商品数据推导印章徽标（名称/销量），不虚构信息
 // 作用：根据商品名称关键词与销量阈值生成徽标数组（最多 2 个）
 // 参数：item —— 商品对象；返回值：徽标数组 [{ text, cls }]
-function cardBadges(item: Product): { text: string; cls: string }[] {
-  const tags: { text: string; cls: string }[] = []
-  const n = item.name || ''
-  if (n.includes('明前')) tags.push({ text: '明前', cls: 'soft' })
-  if (n.includes('雨前')) tags.push({ text: '雨前', cls: 'soft' })
-  if (n.includes('头采')) tags.push({ text: '头采', cls: 'gold' })
-  if (n.includes('古树')) tags.push({ text: '古树', cls: 'cinnabar' })
-  if (n.includes('特级')) tags.push({ text: '特级', cls: 'soft' })
-  if (n.includes('礼盒')) tags.push({ text: '礼盒', cls: 'gold' })
-  if ((item.total_sales || 0) >= 300) tags.push({ text: '热销', cls: 'cinnabar' })
-  return tags.slice(0, 2)
-}
-
 // ── 拉取商品列表 ──
 // 作用：按页码/关键词/类目/排序/价格区间组装参数请求商品列表，成功写入列表与总数
 // 参数：无；返回值：Promise<void>

@@ -7,6 +7,8 @@
 import logging
 from datetime import datetime, timedelta
 
+import httpx
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,11 +32,46 @@ class SandboxLogisticsProvider:
         return {"tracking_no": tracking_no, "status": status, "events": events}
 
 
+class Kuaidi100Provider:
+    provider = "kuaidi100"
+
+    def track(self, tracking_no: str, shipped_at: datetime | None, carrier: str = "") -> dict:
+        from app.config.settings import settings
+        if not settings.logistics_api_url or not settings.logistics_api_key:
+            raise RuntimeError("快递100未配置 LOGISTICS_API_URL/LOGISTICS_API_KEY")
+        resp = httpx.get(
+            f"{settings.logistics_api_url.rstrip('/')}/track",
+            params={"tracking_no": tracking_no, "carrier": carrier},
+            headers={"Authorization": f"Bearer {settings.logistics_api_key}"},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp.json()
+
+
+class CainiaoProvider:
+    provider = "cainiao"
+
+    def track(self, tracking_no: str, shipped_at: datetime | None, carrier: str = "") -> dict:
+        from app.config.settings import settings
+        if not settings.logistics_api_url or not settings.logistics_api_key:
+            raise RuntimeError("菜鸟物流未配置 LOGISTICS_API_URL/LOGISTICS_API_KEY")
+        resp = httpx.get(
+            f"{settings.logistics_api_url.rstrip('/')}/track",
+            params={"tracking_no": tracking_no, "carrier": carrier},
+            headers={"Authorization": f"Bearer {settings.logistics_api_key}"},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp.json()
+
+
 def get_logistics_provider():
     from app.config.settings import settings
     if settings.logistics_provider == "sandbox":
         return SandboxLogisticsProvider()
-    raise NotImplementedError(
-        f"物流渠道 {settings.logistics_provider} 待接入（需第三方 API Key），"
-        "已配置 LOGISTICS_PROVIDER 但未实现 Provider"
-    )
+    if settings.logistics_provider == "kuaidi100":
+        return Kuaidi100Provider()
+    if settings.logistics_provider == "cainiao":
+        return CainiaoProvider()
+    raise NotImplementedError(f"不支持的物流渠道: {settings.logistics_provider}")

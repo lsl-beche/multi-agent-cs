@@ -6,12 +6,14 @@
 
 填充内容：
     1. 角色+权限（super_admin / admin / operator / viewer）
-    2. 管理员账户（admin/admin123）
+    2. 管理员账户（密码优先取环境变量，未配置时自动生成）
     3. 商品类目（三级茶品类目树）
     4. 示例商品（6款茶叶产品含SKU+库存）
     5. 优惠券模板
     6. 示例用户
 """
+import os
+import secrets
 import sys
 from pathlib import Path
 
@@ -264,10 +266,20 @@ DEMO_COUPONS = [
 
 # ── 示例用户 ─────────────────────────────────────────
 DEMO_USERS = [
-    {"username": "admin", "password": "admin123", "email": "admin@teashop.com", "role": "super_admin"},
-    {"username": "operator1", "password": "op123456", "email": "op1@teashop.com", "role": "operator"},
-    {"username": "viewer1", "password": "view1234", "email": "viewer@teashop.com", "role": "viewer"},
+    {"username": "admin", "email": "admin@teashop.com", "role": "super_admin"},
+    {"username": "operator1", "email": "op1@teashop.com", "role": "operator"},
+    {"username": "viewer1", "email": "viewer@teashop.com", "role": "viewer"},
 ]
+
+
+def _seed_password(role: str) -> str:
+    env_name = {
+        "super_admin": "SUPER_ADMIN_PASSWORD",
+        "operator": "OPERATOR_PASSWORD",
+        "viewer": "VIEWER_PASSWORD",
+    }[role]
+    configured = os.environ.get(env_name)
+    return configured or f"{secrets.token_urlsafe(12)}!"
 
 # ══════════════════════════════════════════════════════
 
@@ -322,9 +334,10 @@ def seed_roles_and_permissions(db) -> dict:
 def seed_admin_users(db, role_map: dict) -> None:
     """创建管理员账户"""
     for u in DEMO_USERS:
+        password = _seed_password(u["role"])
         user = User(
             username=u["username"],
-            password_hash=hash_password(u["password"]),
+            password_hash=hash_password(password),
             email=u["email"],
             status="active",
         )

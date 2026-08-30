@@ -4,6 +4,18 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules/element-plus')) return 'vendor-element-plus'
+          if (id.includes('node_modules/vue') || id.includes('node_modules/@vue')) return 'vendor-vue'
+          if (id.includes('node_modules/axios')) return 'vendor-http'
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),

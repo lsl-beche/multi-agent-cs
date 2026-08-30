@@ -1,6 +1,7 @@
 export * from './auth/token'
 export * from './api/client'
 export * from './types/api'
+export * from './types/generated'
 export * from './directives/permission'
 export * from './composables/usePermission'
 export * from './ui/toast'

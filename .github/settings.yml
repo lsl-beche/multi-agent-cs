@@ -16,6 +16,7 @@ branches:
           - backend
           - frontend
           - integration
+          - security
           - e2e
       enforce_admins: false
       required_pull_request_reviews:
