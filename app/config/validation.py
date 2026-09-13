@@ -27,4 +27,31 @@ def validate_settings() -> list[str]:
     if settings.payment_gateway_provider in ("wechat", "alipay"):
         if not settings.payment_gateway_secret:
             _check(True, "真实支付渠道未配置 PAYMENT_GATEWAY_SECRET")
+    if settings.payment_gateway_provider == "wechat":
+        notify_url = settings.payment_gateway_notify_url or settings.payment_notify_url
+        missing = [
+            name for name, value in {
+                "WECHAT_PAY_MCH_ID": settings.wechat_pay_mch_id,
+                "WECHAT_PAY_APP_ID": settings.wechat_pay_app_id,
+                "WECHAT_PAY_APIV3_KEY": settings.wechat_pay_apiv3_key,
+                "WECHAT_PAY_PRIVATE_KEY_PATH": settings.wechat_pay_private_key_path,
+                "WECHAT_PAY_PLATFORM_CERT_PATH": settings.wechat_pay_platform_cert_path,
+                "WECHAT_PAY_CERT_SERIAL": settings.wechat_pay_cert_serial,
+                "PAYMENT_NOTIFY_URL": notify_url,
+            }.items() if not value
+        ]
+        if missing:
+            _check(True, f"微信支付缺少配置：{', '.join(missing)}")
+    if settings.payment_gateway_provider == "alipay":
+        notify_url = settings.payment_gateway_notify_url or settings.payment_notify_url
+        missing = [
+            name for name, value in {
+                "ALIPAY_APP_ID": settings.alipay_app_id,
+                "ALIPAY_PRIVATE_KEY_PATH": settings.alipay_private_key_path,
+                "ALIPAY_PUBLIC_KEY_PATH": settings.alipay_public_key_path,
+                "PAYMENT_NOTIFY_URL": notify_url,
+            }.items() if not value
+        ]
+        if missing:
+            _check(True, f"支付宝缺少配置：{', '.join(missing)}")
     return problems

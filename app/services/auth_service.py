@@ -71,8 +71,61 @@ ROLE_PERMISSION_MAP: dict[str, list[str]] = {
 class AuthService:
 
     @staticmethod
+    def _cache_key(user_id: int) -> str:
+        return f"csagent:auth:perms:{user_id}"
+
+    @staticmethod
+    def _read_permission_cache(user_id: int) -> tuple[str | None, list[str] | None]:
+        try:
+            from app.core.redis_client import get_redis
+            raw = get_redis().get(AuthService._cache_key(user_id))
+            if not raw:
+                return None, None
+            import json
+            data = json.loads(raw)
+            return str(data.get("role", "")), list(data.get("permissions", []))
+        except Exception:
+            return None, None
+
+    @staticmethod
+    def _write_permission_cache(user_id: int, role_name: str, permissions: list[str]) -> None:
+        try:
+            import json
+
+            from app.core.redis_client import get_redis
+            get_redis().set(
+                AuthService._cache_key(user_id),
+                json.dumps({"role": role_name, "permissions": permissions}, ensure_ascii=False),
+                ex=300,
+            )
+        except Exception:
+            pass
+
+    @staticmethod
+    def invalidate_user_permissions(user_id: int) -> None:
+        """角色/权限变更后即时失效缓存，下一次鉴权强制回源 DB。"""
+        try:
+            from app.core.redis_client import get_redis
+            get_redis().delete(AuthService._cache_key(int(user_id)))
+        except Exception:
+            pass
+
+    @staticmethod
+    def invalidate_all_permissions() -> None:
+        try:
+            from app.core.redis_client import get_redis
+            r = get_redis()
+            for key in r.scan_iter("csagent:auth:perms:*", count=100):
+                r.delete(key)
+        except Exception:
+            pass
+
+    @staticmethod
     def _get_user_permissions(db: Session, user: User) -> tuple[str, list[str]]:
         """获取用户角色和权限列表（优先读 DB role_permissions，无数据时回退内置映射）"""
+        cached_role, cached_permissions = AuthService._read_permission_cache(user.id)
+        if cached_role and cached_permissions is not None:
+            return cached_role, cached_permissions
         role_row = db.execute(
             select(Role.name).join(UserRole).where(UserRole.user_id == user.id)
         ).scalars().first()
@@ -95,7 +148,24 @@ class AuthService:
         if not permissions:
             # role_permissions 未灌数据（未跑 seed）时回退内置映射，避免全部 403
             permissions = ROLE_PERMISSION_MAP.get(role_name, ROLE_PERMISSION_MAP["viewer"])
+        AuthService._write_permission_cache(user.id, role_name, permissions)
         return role_name, permissions
+
+    @staticmethod
+    def get_permission_snapshot(db: Session, user_id: int) -> dict:
+        """供鉴权中间件实时回源：状态/角色/权限以 DB 为准。"""
+        user = db.execute(select(User).where(User.id == user_id)).scalar_one_or_none()
+        if not user:
+            raise ValueError("用户不存在")
+        if user.status != "active":
+            raise ValueError("账户已被禁用")
+        role_name, permissions = AuthService._get_user_permissions(db, user)
+        return {
+            "sub": str(user.id),
+            "username": user.username,
+            "role": role_name,
+            "permissions": permissions,
+        }
 
     @staticmethod
     def login(db: Session, username: str, password: str, client_ip: str = "") -> dict:

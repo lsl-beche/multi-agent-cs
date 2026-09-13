@@ -16,6 +16,11 @@ async def _uid(request: Request) -> int:
 @router.post("/pay")
 async def initiate_payment(body: PaymentInitiateRequest, request: Request, db=Depends(get_db)):
     user_id = await _uid(request)
+    # 风控：支付频率/黑名单
+    from app.core.risk import evaluate_async as risk_evaluate_async
+    risk = await risk_evaluate_async("payment", {"user_id": user_id, "ip": request.client.host if request.client else None})
+    if risk["action"] == "block":
+        raise HTTPException(403, detail="支付行为异常，请稍后再试")
     try:
         result = await PaymentService.initiate_payment_async(
             db, body.order_id, user_id, body.channel

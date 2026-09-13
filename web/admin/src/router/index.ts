@@ -97,6 +97,20 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/reports/ReportsView.vue'),
     meta: { title: '客服看板' },
   },
+  // AI Agent 平台：工具市场、运行 trace、运行时统计
+  {
+    path: '/agents',
+    name: 'Agents',
+    component: () => import('@/views/agents/AgentPlatformView.vue'),
+    meta: { title: 'AI Agent 平台' },
+  },
+  // 开放平台 / ISV：商户与 API Key 管理
+  {
+    path: '/openapi',
+    name: 'OpenApi',
+    component: () => import('@/views/openapi/OpenApiView.vue'),
+    meta: { title: '开放平台' },
+  },
   // 支付管理：支付流水查询、退款审批（通过/驳回）
   {
     path: '/payments',

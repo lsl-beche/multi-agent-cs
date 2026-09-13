@@ -482,6 +482,39 @@ class OperationLog(Base):
 
 
 # ============================================================
+# 开放平台 / 多商户基础
+# ============================================================
+
+
+class Tenant(Base):
+    """商户（租户）基础表：多商户/ISV 扩展的租户骨架。"""
+    __tablename__ = "tenants"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
+    slug: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
+    contact_email: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    status: Mapped[str] = mapped_column(String(16), default="active")  # active/disabled/pending
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class ApiKey(Base):
+    """ISV/开放平台 API Key：仅保存摘要，明文只在创建时返回。"""
+    __tablename__ = "api_keys"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tenant_id: Mapped[int | None] = mapped_column(ForeignKey("tenants.id"), index=True, nullable=True)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
+    key_hash: Mapped[str] = mapped_column(String(128), unique=True, index=True, nullable=False)
+    scopes: Mapped[dict] = mapped_column(JSONB, default=dict)
+    status: Mapped[str] = mapped_column(String(16), default="active")  # active/revoked
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+# ============================================================
 # 十、安全闭环: 1 张（写操作提案表）
 # ============================================================
 
@@ -544,4 +577,97 @@ class CartItem(Base):
     sku_id: Mapped[int] = mapped_column(ForeignKey("skus.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, default=1)
     selected: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+# 以下为 L2-A（真实业务闭环）新增表
+
+
+class InvoiceRequest(Base):
+    """电子发票申请：订单完成后用户申请，服务商开具后回填发票号"""
+    __tablename__ = "invoice_requests"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), index=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    title: Mapped[str] = mapped_column(String(128), nullable=False)      # 抬头（个人/企业）
+    tax_no: Mapped[str | None] = mapped_column(String(64), nullable=True)  # 企业税号
+    email: Mapped[str] = mapped_column(String(128), nullable=False)      # 推送邮箱
+    amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), default="created")   # created/processing/issued/voided
+    invoice_no: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    file_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    issued_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class Dispute(Base):
+    """售后仲裁：退款被拒/纠纷升级后进入人工仲裁，支持举证与判定"""
+    __tablename__ = "disputes"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    dispute_no: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
+    refund_id: Mapped[int | None] = mapped_column(ForeignKey("refunds.id"), nullable=True)
+    order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), index=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    evidence: Mapped[dict] = mapped_column(JSONB, default=dict)          # 举证材料（图片URL/文字）
+    status: Mapped[str] = mapped_column(String(16), default="pending")   # pending/mediation/resolved/rejected
+    resolution: Mapped[str | None] = mapped_column(Text, nullable=True)  # 判定说明
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class PrivacyConsent(Base):
+    """隐私授权记录（个保法）：记录用户对隐私政策的同意时间与版本"""
+    __tablename__ = "privacy_consents"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    doc_version: Mapped[str] = mapped_column(String(32), nullable=False)  # 政策版本
+    granted: Mapped[bool] = mapped_column(Boolean, default=True)
+    source: Mapped[str] = mapped_column(String(32), default="register")   # register/privacy_page
+    ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class ChannelLedger(Base):
+    """渠道账单（对账）：下载/模拟的渠道侧流水，与本地支付/退款做双侧比对"""
+    __tablename__ = "channel_ledgers"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    ledger_date: Mapped[datetime] = mapped_column(DateTime, index=True, nullable=False)
+    channel: Mapped[str] = mapped_column(String(16), index=True, nullable=False)  # sandbox/wechat/alipay
+    type: Mapped[str] = mapped_column(String(16), nullable=False)                  # payment/refund
+    channel_trade_no: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
+    out_no: Mapped[str] = mapped_column(String(64), index=True, nullable=False)    # 我方单号
+    amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False)               # paid/refunded/pending
+    raw: Mapped[dict] = mapped_column(JSONB, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class RiskEvent(Base):
+    """风控事件：记录每次风险判定（命中/放行），供复审与指标分析"""
+    __tablename__ = "risk_events"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    scene: Mapped[str] = mapped_column(String(32), index=True, nullable=False)  # register/login/coupon/order/payment
+    subject: Mapped[str] = mapped_column(String(64), index=True, nullable=False)  # user/ip/device/phone/address
+    subject_value: Mapped[str] = mapped_column(String(128), nullable=False)
+    score: Mapped[int] = mapped_column(Integer, default=0)
+    action: Mapped[str] = mapped_column(String(16), default="allow")            # allow/block/review
+    detail: Mapped[dict] = mapped_column(JSONB, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class RiskBlacklist(Base):
+    """风控黑名单：按主体类型维护，命中即拦截"""
+    __tablename__ = "risk_blacklist"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    kind: Mapped[str] = mapped_column(String(16), index=True, nullable=False)  # user/ip/device/phone/address
+    value: Mapped[str] = mapped_column(String(128), index=True, nullable=False)
+    reason: Mapped[str] = mapped_column(String(256), nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

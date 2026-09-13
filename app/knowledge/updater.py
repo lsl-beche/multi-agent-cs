@@ -12,10 +12,11 @@ from app.knowledge.vectordb import get_vectorstore
 
 
 class KnowledgeUpdater:
-    def upsert(self, items: list[dict]) -> int:
+    def upsert(self, items: list[dict], version: str = "latest") -> int:
         """新增/更新知识条目（按问题先删后插，幂等）
 
         items 格式：[{"question":..., "answer":..., "category":...}]
+        version：知识版本标签，配合 knowledge_version 做灰度发布。
         返回成功写入条数。
         """
         vs = get_vectorstore()
@@ -24,7 +25,11 @@ class KnowledgeUpdater:
         for it in items:
             self.delete_by_question(it["question"])
             texts.append(f"问题：{it['question']}\n答案：{it['answer']}")
-            metadatas.append({"category": it.get("category", "general"), "question": it["question"]})
+            metadatas.append({
+                "category": it.get("category", "general"),
+                "question": it["question"],
+                "version": version,
+            })
         if texts:
             vs.add_texts(texts, metadatas=metadatas)
         return len(texts)
@@ -41,7 +46,20 @@ class KnowledgeUpdater:
     async def handle_webhook(self, event: dict) -> dict:
         """处理商品变更Webhook事件：{"type": "product.updated", "payload": {...}}"""
         event_type = event.get("type", "")
-        # TODO: 按事件类型分发：商品更新 -> 重建对应向量；商品下架 -> 删除向量
-        return {"handled": event_type, "status": "TODO"}
+        payload = event.get("payload") or {}
+        if event_type == "knowledge.upsert":
+            count = self.upsert(payload.get("items", []), payload.get("version", "latest"))
+            return {"handled": event_type, "status": "updated", "count": count}
+        if event_type in ("product.updated", "product.created"):
+            # 商品变更热更新：由业务网关把商品摘要转换为知识条目后调用
+            items = payload.get("items") or []
+            count = self.upsert(items, payload.get("version", "latest"))
+            return {"handled": event_type, "status": "updated", "count": count, "note": "按 payload.items 增量更新"}
+        if event_type == "product.offline":
+            # 下架：按商品名/问题删除对应知识条目
+            question = payload.get("question", "")
+            deleted = self.delete_by_question(question) if question else 0
+            return {"handled": event_type, "status": "deleted", "count": deleted}
+        return {"handled": event_type, "status": "ignored"}
 
     # TODO: RabbitMQ消费者（aio-pika）：监听商品变更消息队列，调用 upsert/delete

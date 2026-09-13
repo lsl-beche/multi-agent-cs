@@ -37,6 +37,11 @@ class ChangePasswordRequest(BaseModel):
 async def register(body: RegisterRequest, request: Request, db: AsyncSession = Depends(get_db)):
     try:
         client_ip = request.client.host if request.client else ""
+        # 风控：注册 IP 频率/黑名单
+        from app.core.risk import evaluate_async as risk_evaluate_async
+        risk = await risk_evaluate_async("register", {"ip": client_ip, "user_id": body.username})
+        if risk["action"] == "block":
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="注册过于频繁，请稍后再试")
         await UserService.create_user_async(db, body.username, body.password, role_name="viewer")
         result = await AuthService.login_async(db, body.username, body.password, client_ip)
         return {"code": 0, "data": result, "message": "注册成功"}
@@ -48,6 +53,11 @@ async def register(body: RegisterRequest, request: Request, db: AsyncSession = D
 async def login(body: LoginRequest, request: Request, db: AsyncSession = Depends(get_db)):
     try:
         client_ip = request.client.host if request.client else ""
+        # 风控：登录黑名单/频率
+        from app.core.risk import evaluate_async as risk_evaluate_async
+        risk = await risk_evaluate_async("login", {"ip": client_ip, "user_id": body.username})
+        if risk["action"] == "block":
+            raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="登录尝试过于频繁，请1分钟后再试")
         result = await AuthService.login_async(db, body.username, body.password, client_ip)
         return {"code": 0, "data": result, "message": "登录成功"}
     except ValueError as e:

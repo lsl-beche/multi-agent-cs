@@ -1,9 +1,15 @@
 """导出 FastAPI OpenAPI 3.1 JSON，供前端自动生成类型"""
 import json
+import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+# OpenAPI 导出只读取本地代码与本地模型缓存，禁止网络下载
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 from app.main import app
 

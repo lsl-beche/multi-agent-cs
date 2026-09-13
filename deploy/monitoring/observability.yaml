@@ -1,0 +1,83 @@
+# 可观测性快速部署：Prometheus + Grafana + Loki（云原生基础版；生产可换托管版）
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: prometheus}}
+  template:
+    metadata: {labels: {app: prometheus}}
+    spec:
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.53.0
+          ports: [{containerPort: 9090}]
+          volumeMounts:
+            - {name: cfg, mountPath: /etc/prometheus/prometheus.yml, subPath: prometheus.yml}
+      volumes:
+        - name: cfg
+          configMap:
+            name: prometheus-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+      - job_name: csagent
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: csagent
+            action: keep
+          - source_labels: [__address__]
+            action: replace
+            regex: (.*)
+            replacement: ${1}/api/metrics
+            target_label: __metrics_path__
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  selector: {app: prometheus}
+  ports: [{port: 9090, targetPort: 9090}]
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  selector: {app: grafana}
+  ports: [{port: 3000, targetPort: 3000}]
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: grafana}}
+  template:
+    metadata: {labels: {app: grafana}}
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:11.1.0
+          ports: [{containerPort: 3000}]
+          env:
+            - {name: GF_SECURITY_ADMIN_PASSWORD, value: "change-me"}

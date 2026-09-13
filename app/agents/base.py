@@ -22,7 +22,7 @@ from loguru import logger
 
 from app.agents.graphs.state import AgentState
 from app.config.settings import settings
-from app.core.llm import get_llm
+from app.core.llm import get_llm_for_task
 
 perf_logger = logger.bind(name="perf")
 
@@ -139,7 +139,7 @@ class BaseAgent(ABC):
         - tools：register_tools() 返回的工具列表
         - llm_with_tools：绑定了工具描述的 LLM（云端 tool-calling 专用）
         """
-        self.llm = get_llm(max_tokens=self.max_tokens, task=self.name)
+        self.llm = get_llm_for_task(self.name, max_tokens=self.max_tokens)
         self.tools = self.register_tools()
         self.llm_with_tools = self.llm.bind_tools(self.tools) if self.tools else self.llm
 
@@ -160,9 +160,19 @@ class BaseAgent(ABC):
         返回：工具结果的字符串（JSON 或自然语言），失败返回错误提示，
         后续由 LLM 基于该结果组织客服话术。
         """
+        from app.agents.trace import get_current_trace_id, trace_store
+        from app.core.metrics import TOOL_ERRORS
+        from app.tools.registry import is_enabled
+
+        trace_id = get_current_trace_id()
         tool = next((t for t in self.tools if t.name == tc["name"]), None)
         if tool is None:
+            trace_store.record_tool(trace_id, tc["name"], tc.get("args"), "工具不存在", "error", 0)
+            TOOL_ERRORS.labels(tool=tc["name"]).inc()
             return f"未找到工具: {tc['name']}"
+        if not is_enabled(tc["name"]):
+            trace_store.record_tool(trace_id, tc["name"], tc.get("args"), "工具已停用", "disabled", 0)
+            return f"工具 {tc['name']} 已停用，请改用其他方式处理。"
         try:
             t0 = time.perf_counter()
             result = str(await tool.ainvoke(tc["args"]))
@@ -171,9 +181,13 @@ class BaseAgent(ABC):
             from app.core.metrics import TOOL_CALLS, TOOL_DURATION
             TOOL_CALLS.labels(tool=tc["name"]).inc()
             TOOL_DURATION.labels(tool=tc["name"]).observe(elapsed)
+            trace_store.record_tool(trace_id, tc["name"], tc.get("args"), result, "ok", elapsed * 1000)
             perf_logger.info(f"[{self.name}] tool={tc['name']}: {elapsed * 1000:.0f}ms")
             return result
         except Exception as exc:
+            elapsed = (time.perf_counter() - t0) * 1000 if 't0' in locals() else 0.0
+            trace_store.record_tool(trace_id, tc["name"], tc.get("args"), str(exc), "error", elapsed)
+            TOOL_ERRORS.labels(tool=tc["name"]).inc()
             perf_logger.warning(f"[{self.name}] tool={tc['name']} FAILED: {exc}")
             return f"工具执行失败: {exc}"
 

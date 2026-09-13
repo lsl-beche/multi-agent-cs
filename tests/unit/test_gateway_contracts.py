@@ -23,7 +23,7 @@ def test_payment_gateway_calls_provider_url():
 
     response = MagicMock()
     response.json.return_value = {
-        "payment_no": "WX-001",
+        "code_url": "weixin://wxpay/bizpayurl?pr=test",
         "trade_no": "WXT-001",
         "amount": 99.0,
         "signature": "sig",
@@ -33,11 +33,13 @@ def test_payment_gateway_calls_provider_url():
         patch.object(settings, "wechat_pay_app_id", "app"),
         patch.object(settings, "wechat_pay_apiv3_key", "key"),
         patch("app.config.settings.settings.payment_gateway_url", "http://pay.local"),
-        patch("app.services.payment_gateway.httpx.post", return_value=response) as mock_post,
+        patch("app.core.security.wechat_build_authorization", return_value="fake-auth"),
+        patch("app.services.payment_gateway.httpx.request", return_value=response) as mock_request,
     ):
         result = WechatPayProvider().create_payment(FakeOrder())
-    assert result["payment_no"] == "WX-001"
-    assert mock_post.call_args[0][0].endswith("/payments")
+    assert result["payment_no"] == FakeOrder.order_no
+    assert result["code_url"] == "weixin://wxpay/bizpayurl?pr=test"
+    assert mock_request.call_args[0][1].endswith("/v3/pay/transactions/native")
 
 
 def test_logistics_provider_requires_api_key():

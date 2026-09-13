@@ -48,6 +48,8 @@ const menuItems = [
   { path: '/payments', title: '支付管理', icon: 'Money' },
   { path: '/shipments', title: '物流管理', icon: 'Van' },
   { path: '/reports', title: '客服看板', icon: 'Monitor' },
+  { path: '/agents', title: 'AI Agent', icon: 'Cpu' },
+  { path: '/openapi', title: '开放平台', icon: 'Link' },
   { path: '/tickets', title: '客服工单', icon: 'Headset' },
   { path: '/logs', title: '操作日志', icon: 'Notebook' },
 ]

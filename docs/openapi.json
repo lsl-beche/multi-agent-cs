@@ -3362,6 +3362,139 @@
         }
       }
     },
+    "/api/admin/agents/traces": {
+      "get": {
+        "tags": [
+          "Agent平台"
+        ],
+        "summary": "Agent 运行 trace 列表",
+        "operationId": "list_traces_api_admin_agents_traces_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/agents/traces/{run_id}": {
+      "get": {
+        "tags": [
+          "Agent平台"
+        ],
+        "summary": "Agent 运行 trace 详情",
+        "operationId": "trace_detail_api_admin_agents_traces__run_id__get",
+        "parameters": [
+          {
+            "name": "run_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Run Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/agents/tools/{name}/state": {
+      "put": {
+        "tags": [
+          "Agent平台"
+        ],
+        "summary": "启用/停用客服工具",
+        "operationId": "toggle_tool_api_admin_agents_tools__name__state_put",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/agents/stats": {
       "get": {
         "tags": [
@@ -3382,13 +3515,111 @@
         }
       }
     },
+    "/api/admin/risk/events": {
+      "get": {
+        "tags": [
+          "风控管理"
+        ],
+        "summary": "风险事件列表",
+        "operationId": "list_events_api_admin_risk_events_get",
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scene"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/risk/blacklist": {
+      "post": {
+        "tags": [
+          "风控管理"
+        ],
+        "summary": "添加黑名单",
+        "operationId": "add_blacklist_api_admin_risk_blacklist_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Req"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/privacy": {
       "get": {
         "tags": [
           "隐私合规"
         ],
         "summary": "隐私合规说明",
-        "description": "返回当前隐私配置：是否启用偏好/向量记忆，及遗忘权入口",
+        "description": "返回当前隐私政策版本、配置与遗忘权入口",
         "operationId": "privacy_api_privacy_get",
         "responses": {
           "200": {
@@ -3399,6 +3630,352 @@
                   "additionalProperties": true,
                   "type": "object",
                   "title": "Response Privacy Api Privacy Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/privacy/consent": {
+      "get": {
+        "tags": [
+          "隐私合规"
+        ],
+        "summary": "查询授权记录",
+        "operationId": "get_consent_api_privacy_consent_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "隐私合规"
+        ],
+        "summary": "记录隐私授权",
+        "description": "记录用户对隐私政策的同意（注册/首次使用客服时调用）",
+        "operationId": "record_consent_api_privacy_consent_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/openapi/v1/health": {
+      "get": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "开放平台健康检查",
+        "operationId": "openapi_health_api_openapi_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/openapi/v1/tenant": {
+      "get": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "租户信息（需 X-API-Key）",
+        "operationId": "openapi_tenant_api_openapi_v1_tenant_get",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/openapi/v1/chat": {
+      "post": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "开放平台 AI 客服（需 X-API-Key）",
+        "operationId": "openapi_chat_api_openapi_v1_chat_post",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/openapi/keys": {
+      "get": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "API Key 列表",
+        "operationId": "list_keys_api_openapi_keys_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "创建 API Key",
+        "operationId": "create_key_api_openapi_keys_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Req"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/openapi/keys/{key_id}/revoke": {
+      "post": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "撤销 API Key",
+        "operationId": "revoke_key_api_openapi_keys__key_id__revoke_post",
+        "parameters": [
+          {
+            "name": "key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/openapi/tenants": {
+      "get": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "商户列表",
+        "operationId": "list_tenants_api_openapi_tenants_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "创建商户",
+        "operationId": "create_tenant_api_openapi_tenants_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Req"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/openapi/tenants/{tenant_id}": {
+      "put": {
+        "tags": [
+          "开放平台"
+        ],
+        "summary": "更新商户",
+        "operationId": "update_tenant_api_openapi_tenants__tenant_id__put",
+        "parameters": [
+          {
+            "name": "tenant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Req"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -4342,6 +4919,26 @@
         }
       }
     },
+    "/api/user": {
+      "delete": {
+        "tags": [
+          "C端用户"
+        ],
+        "summary": "注销账号（软注销 + 记忆清除）",
+        "description": "个保法注销权：账号软注销（status=banned），并联动清除客服记忆",
+        "operationId": "delete_account_api_user_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/payments/pay": {
       "post": {
         "tags": [
@@ -4435,6 +5032,418 @@
             "schema": {
               "type": "integer",
               "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/{channel}/callback": {
+      "post": {
+        "tags": [
+          "渠道回调"
+        ],
+        "summary": "Channel Callback",
+        "description": "微信/支付宝回调统一入口\n\n- wechat：Body 为 JSON，验签 header + 解密 resource\n- alipay：Body 为 form-urlencoded，按表单验签\n验签失败返回 4xx；成功且幂等返回成功（渠道要求 200/SUCCESS）。",
+        "operationId": "channel_callback_api_payments__channel__callback_post",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Channel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/{channel}/refund-callback": {
+      "post": {
+        "tags": [
+          "渠道回调"
+        ],
+        "summary": "Channel Refund Callback",
+        "description": "微信/支付宝退款异步通知：验签→识别退款单→幂等更新。",
+        "operationId": "channel_refund_callback_api_payments__channel__refund_callback_post",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Channel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/channel-callback/{channel}": {
+      "post": {
+        "tags": [
+          "渠道回调"
+        ],
+        "summary": "Channel Callback Legacy",
+        "operationId": "channel_callback_legacy_api_payments_channel_callback__channel__post",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Channel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payments/channel-callback/{channel}/refund": {
+      "post": {
+        "tags": [
+          "渠道回调"
+        ],
+        "summary": "Channel Refund Callback Legacy",
+        "operationId": "channel_refund_callback_legacy_api_payments_channel_callback__channel__refund_post",
+        "parameters": [
+          {
+            "name": "channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Channel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/invoices": {
+      "get": {
+        "tags": [
+          "电子发票"
+        ],
+        "summary": "我的发票",
+        "operationId": "list_invoices_api_invoices_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "电子发票"
+        ],
+        "summary": "申请发票",
+        "operationId": "create_invoice_api_invoices_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Req"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/invoices/admin/{inv_id}/issue": {
+      "post": {
+        "tags": [
+          "电子发票"
+        ],
+        "summary": "管理端开具（模拟服务商）",
+        "operationId": "issue_invoice_api_invoices_admin__inv_id__issue_post",
+        "parameters": [
+          {
+            "name": "inv_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Inv Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/disputes": {
+      "post": {
+        "tags": [
+          "售后仲裁"
+        ],
+        "summary": "发起仲裁（退款被拒后）",
+        "operationId": "create_dispute_api_disputes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Req"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/disputes/admin/pending": {
+      "get": {
+        "tags": [
+          "售后仲裁"
+        ],
+        "summary": "待判仲裁",
+        "operationId": "list_pending_api_disputes_admin_pending_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/disputes/admin/{dispute_id}/resolve": {
+      "post": {
+        "tags": [
+          "售后仲裁"
+        ],
+        "summary": "判定仲裁（联动退款）",
+        "operationId": "resolve_dispute_api_disputes_admin__dispute_id__resolve_post",
+        "parameters": [
+          {
+            "name": "dispute_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Dispute Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Req"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/disputes/{dispute_no}": {
+      "get": {
+        "tags": [
+          "售后仲裁"
+        ],
+        "summary": "仲裁进度",
+        "operationId": "get_dispute_api_disputes__dispute_no__get",
+        "parameters": [
+          {
+            "name": "dispute_no",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dispute No"
             }
           }
         ],

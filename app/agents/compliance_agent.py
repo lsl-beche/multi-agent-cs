@@ -9,7 +9,7 @@ from langchain_core.tools import BaseTool
 
 from app.agents.base import BaseAgent
 from app.agents.graphs.state import AgentState
-from app.core.llm import get_llm
+from app.core.llm import get_llm_for_task
 
 # 关键词快速预筛：广告法极限词 + 敏感词
 _FAST_FILTER_WORDS = [
@@ -66,7 +66,7 @@ class ComplianceAgent(BaseAgent):
 
         # ── 阶段二：LLM 语义审核（仅预筛命中时触发）──
         try:
-            llm = get_llm(max_tokens=64)
+            llm = get_llm_for_task("compliance_agent", max_tokens=64)
             prompt_content = _COMPLIANCE_PROMPT.format(content=content[:800])
             resp = await llm.ainvoke([
                 SystemMessage(content="你是内容安全审核助手，请严格按规则审核。直接回答，不要使用 <think> 标签。"),

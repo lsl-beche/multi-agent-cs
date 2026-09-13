@@ -85,6 +85,7 @@ def main() -> int:
     parser.add_argument("--full", type=int, default=0, help="前N条走完整工作流")
     parser.add_argument("--threshold", type=float, default=0.7)
     parser.add_argument("--cases", default="data/eval/dialogue_cases.json")
+    parser.add_argument("--output", default="data/eval/reports/dialogue_report.json")
     args = parser.parse_args()
 
     cases = load_cases(args.cases)
@@ -95,7 +96,11 @@ def main() -> int:
         report["accuracy"] = full["accuracy"]
         report["passed"] = full["passed"]
         report["total"] = full["total"]
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    text = json.dumps(report, ensure_ascii=False, indent=2)
+    print(text)
+    out = Path(args.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(text, encoding="utf-8")
     acc = report.get("full_flow", {}).get("accuracy", report["accuracy"])
     return 0 if acc >= args.threshold else 1
 

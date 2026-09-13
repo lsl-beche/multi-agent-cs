@@ -33,6 +33,17 @@ async_engine = create_async_engine(
     pool_timeout=10,
 )
 
+# 只读副本（读写分离）：报表/看板查询走副本，主库只服务交易写路径
+_reader_url = make_url(settings.pg_replica_url or settings.postgres_url).set(drivername="postgresql+asyncpg")
+async_reader_engine = create_async_engine(
+    _reader_url,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    pool_size=10,
+    max_overflow=5,
+    pool_timeout=10,
+)
+
 
 # 连接池可观测：checkout/checkin 计数（Prometheus gauge/counter）
 @event.listens_for(engine, "checkout")
@@ -57,6 +68,11 @@ AsyncSessionLocal = async_sessionmaker(
     autoflush=False,
     expire_on_commit=False,
 )
+AsyncReaderSessionLocal = async_sessionmaker(
+    bind=async_reader_engine,
+    autoflush=False,
+    expire_on_commit=False,
+)
 
 
 class Base(DeclarativeBase):
@@ -75,4 +91,10 @@ def get_db() -> Generator[Session, None, None]:
 async def get_async_db() -> Generator[AsyncSession, None, None]:
     """异步 FastAPI 依赖注入用的 DB 会话"""
     async with AsyncSessionLocal() as db:
+        yield db
+
+
+async def get_async_reader_db() -> Generator[AsyncSession, None, None]:
+    """只读副本会话（报表/看板查询，配置 PG_REPLICA_URL 后自动生效）"""
+    async with AsyncReaderSessionLocal() as db:
         yield db

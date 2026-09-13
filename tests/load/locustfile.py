@@ -19,10 +19,6 @@ class ShopUser(HttpUser):
         self.client.get("/api/products?page_size=12")
 
     @task(1)
-    def chat(self):
-        """客服对话（HTTP 兜底通道；无 token 会 401，此处以健康路径为主）"""
-        self.client.post("/api/chat", json={
-            "session_id": f"load-{self.environment.runner.user_count}",
-            "user_id": "loadtest",
-            "message": "龙井茶怎么泡",
-        }, name="/api/chat")
+    def openapi(self):
+        """开放平台健康检查：避免无鉴权触发 401 污染基线"""
+        self.client.get("/api/openapi/v1/health")

@@ -11,6 +11,106 @@ from cryptography.fernet import Fernet
 
 from app.config.settings import settings
 
+# ── 微信支付 APIv3 安全工具（请求签名 / 回调验签 / 回调解密）──
+
+def _load_pem(path: str) -> bytes:
+    from pathlib import Path
+    return Path(path).read_bytes()
+
+
+def wechat_build_authorization(method: str, path: str, body: str) -> str:
+    """构造 APIv3 请求头 Authorization（SHA256-RSA2048 商户签名）"""
+    import base64
+    import uuid
+
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import padding
+    ts = str(int(__import__("time").time()))
+    nonce = uuid.uuid4().hex
+    message = f"{method}\n{path}\n{ts}\n{nonce}\n{body}\n"
+    private_key = serialization.load_pem_private_key(_load_pem(settings.wechat_pay_private_key_path), password=None)
+    signature = base64.b64encode(private_key.sign(message.encode(), padding.PKCS1v15(), hashes.SHA256())).decode()
+    serial_no = settings.wechat_pay_cert_serial or settings.wechat_pay_mch_id
+    return (
+        f'WECHATPAY2-SHA256-RSA2048 mchid="{settings.wechat_pay_mch_id}",'
+        f'nonce_str="{nonce}",signature="{signature}",timestamp="{ts}",serial_no="{serial_no}"'
+    )
+
+
+def wechat_verify_signature(headers: dict, body: bytes) -> bool:
+    """回调验签：用平台证书验证 Wechatpay-Signature（生产必需）"""
+    import base64
+
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import padding
+    try:
+        header_map = {str(k).lower(): v for k, v in headers.items()}
+        signature = header_map.get("wechatpay-signature", "")
+        timestamp = header_map.get("wechatpay-timestamp", "")
+        nonce = header_map.get("wechatpay-nonce", "")
+        message = f"{timestamp}\n{nonce}\n{body.decode()}\n"
+        cert = serialization.load_pem_x509_certificate(_load_pem(settings.wechat_pay_platform_cert_path))
+        cert.public_key().verify(base64.b64decode(signature), message.encode(), padding.PKCS1v15(), hashes.SHA256())
+        return True
+    except Exception:
+        return False
+
+
+def wechat_decrypt_resource(body: bytes, apiv3_key: str) -> dict:
+    """回调 resource 解密：AES-256-GCM（APIv3 密钥）"""
+    import json
+
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    data = json.loads(body)
+    resource = data.get("resource", {})
+    ciphertext = __import__("base64").b64decode(resource.get("ciphertext", ""))
+    associated = resource.get("associated_data", "").encode()
+    nonce = resource.get("nonce", "").encode()
+    plain = AESGCM(apiv3_key.encode().ljust(32, b"0")[:32]).decrypt(nonce, ciphertext, associated)
+    result = json.loads(plain)
+    result["event_type"] = data.get("event_type", "")
+    return result
+
+
+# ── 支付宝 安全工具（RSA2 请求签名 / 回调验签）──
+
+def _alipay_private_key():
+    from cryptography.hazmat.primitives import serialization
+    return serialization.load_pem_private_key(_load_pem(settings.alipay_private_key_path), password=None)
+
+
+def _alipay_public_key():
+    from cryptography.hazmat.primitives import serialization
+    return serialization.load_pem_public_key(_load_pem(settings.alipay_public_key_path))
+
+
+def alipay_sign(params: dict) -> str:
+    """支付宝请求签名：剔除 sign/sign_type 后按键排序拼接，RSA2 签名"""
+    import base64
+
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import padding
+    items = sorted((k, v) for k, v in params.items() if k not in ("sign", "sign_type") and v is not None)
+    content = "&".join(f"{k}={v}" for k, v in items)
+    sig = _alipay_private_key().sign(content.encode(), padding.PKCS1v15(), hashes.SHA256())
+    return base64.b64encode(sig).decode()
+
+
+def alipay_verify(form: dict) -> bool:
+    """支付宝异步通知验签：用支付宝公钥验证 RSA2 签名"""
+    import base64
+
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import padding
+    try:
+        sign = form.pop("sign", "")
+        form.pop("sign_type", None)
+        content = "&".join(f"{k}={v}" for k, v in sorted(form.items()) if v is not None)
+        _alipay_public_key().verify(base64.b64decode(sign), content.encode(), padding.PKCS1v15(), hashes.SHA256())
+        return True
+    except Exception:
+        return False
+
 _fernet: Fernet | None = None
 _legacy_fernet: Fernet | None = None
 

@@ -7,10 +7,13 @@
 - [x] JWT、RBAC、HMAC、会话归属校验；
 - [x] 统一错误响应，生产不泄漏堆栈；
 - [x] PII 字段使用 Fernet 加密；
-- [x] 安全响应头：HSTS、X-Frame-Options、X-Content-Type-Options、Referrer-Policy；
+- [x] 安全响应头：HSTS、X-Frame-Options、X-Content-Type-Options、Referrer-Policy、CSP；
 - [ ] 默认弱口令数据库；
 - [ ] refresh token 吊销/轮换；
-- [ ] 权限缓存与即时失效；
+- [x] 权限缓存与即时失效；
+- [x] 敏感操作审计日志（退款/发票/仲裁/风控/用户/隐私）；
+- [x] 开放平台 API Key 摘要存储与撤销；
+- [x] LLM 用户日配额；
 
 ## PIPL 合规
 
@@ -42,4 +45,3 @@
 - [ ] 镜像安全扫描；
 - [ ] 阿里云 RDS/Tair 加密；
 - [ ] 日志保留期和审计留存。
-

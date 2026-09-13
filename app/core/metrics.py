@@ -26,6 +26,20 @@ LLM_TOKENS = Counter("csagent_llm_tokens_total", "LLM 生成 token 数（估算�
 # ── 工具调用 ──
 TOOL_CALLS = Counter("csagent_tool_calls_total", "客服工具调用次数", ["tool"])
 TOOL_DURATION = Histogram("csagent_tool_duration_seconds", "客服工具耗时", ["tool"])
+TOOL_ERRORS = Counter("csagent_tool_errors_total", "客服工具失败次数", ["tool"])
+
+# ── Agent 运行平台 ──
+AGENT_TRACES = Counter("csagent_agent_traces_total", "Agent 运行 trace 数", ["status"])
+AGENT_NODES = Counter("csagent_agent_nodes_total", "Agent 节点执行次数", ["node", "status"])
+AGENT_TRACE_DURATION = Histogram(
+    "csagent_agent_trace_duration_seconds",
+    "Agent 单轮运行耗时",
+    ["intent"],
+    buckets=(1, 3, 6, 10, 20, 40, 60, 90, 120),
+)
+
+# ── 模型路由 ──
+MODEL_ROUTED = Counter("csagent_model_routed_total", "模型分层路由次数", ["task", "tier"])
 
 # ── 业务事件 ──
 ORDERS_CREATED = Counter("csagent_orders_created_total", "创建订单数")
@@ -46,6 +60,11 @@ PG_POOL_CHECKED_OUT = Gauge("csagent_pg_pool_checked_out", "PG 当前借出连�
 
 # ── 客服聊天限流 ──
 CHAT_RATE_BLOCKED = Counter("csagent_chat_rate_blocked_total", "聊天接口被限流次数")
+QUOTA_BLOCKED = Counter("csagent_llm_quota_blocked_total", "用户 AI 日配额拦截数")
+
+# ── 风控 ──
+RISK_EVENTS = Counter("csagent_risk_events_total", "风控判定次数", ["action"])
+RISK_BLOCKED = Counter("csagent_risk_blocked_total", "风控拦截次数", ["scene"])
 
 # ── 后台记忆任务 ──
 MEMORY_TASKS = Counter("csagent_memory_tasks_total", "后台记忆任务数", ["result"])

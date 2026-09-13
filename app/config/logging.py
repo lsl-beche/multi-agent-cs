@@ -3,17 +3,17 @@ import sys
 
 from loguru import logger
 
+from app.api.middleware.trace import current_trace_id
 from app.config.settings import settings
+
+# 全局日志统一注入 trace_id（patch 返回新 logger，因此必须在模块导入时立即应用）
+logger = logger.patch(lambda record: record["extra"].update(trace_id=current_trace_id()))
 
 
 def setup_logging() -> None:
     from loguru import logger as _logger
 
-    from app.api.middleware.trace import current_trace_id
-
     _logger.remove()
-    # 日志记录注入 trace_id（全链路可观测）
-    _logger = _logger.patch(lambda record: record["extra"].update(trace_id=current_trace_id()))
     _logger.add(
         sys.stderr,
         level=settings.log_level,

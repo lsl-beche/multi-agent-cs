@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import current_user, get_db
 from app.core.db import AsyncSessionLocal
+from app.core.quota import allowed_async
 from app.dialogue.chat_pipeline import chat_rate_ok, persist_turn, run_agent, stream_agent, validate_input
 from app.dialogue.memory import SessionMemory
 from app.models.schemas import ChatRequest, ChatResponse
@@ -73,6 +74,13 @@ async def chat(
         return ChatResponse(session_id=req.session_id, answer="无权访问该会话", intent="", need_human=True)
     if not chat_rate_ok(user_id):
         return ChatResponse(session_id=req.session_id, answer="消息发送过于频繁，请稍后再试。", intent="", need_human=False)
+    quota_ok, _, quota_limit = await allowed_async(user_id)
+    if not quota_ok:
+        return ChatResponse(
+            session_id=req.session_id,
+            answer=f"今日 AI 对话次数已达上限（{quota_limit}），请明天再试或转人工客服。",
+            intent="", need_human=True,
+        )
     result = await run_agent(req.session_id, user_id, req.message)
     return ChatResponse(session_id=req.session_id, **result)
 

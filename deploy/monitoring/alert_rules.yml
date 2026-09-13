@@ -37,3 +37,21 @@ groups:
         for: 10m
         labels: {severity: warning}
         annotations: {summary: "聊天批量限流", description: "疑似刷接口，检查风控策略"}
+
+      - alert: LlmQuotaBlocked
+        expr: increase(csagent_llm_quota_blocked_total[1h]) > 100
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "用户 AI 配额大量触发", description: "可能是恶意刷量或配额配置过小"}
+
+      - alert: LlmTokensHigh
+        expr: increase(csagent_llm_tokens_total[1h]) > 100000
+        for: 15m
+        labels: {severity: warning}
+        annotations: {summary: "LLM token 消耗激增", description: "检查缓存命中率与模型分层路由"}
+
+      - alert: AgentTraceErrors
+        expr: increase(csagent_agent_traces_total{status="error"}[1h]) > 20
+        for: 10m
+        labels: {severity: warning}
+        annotations: {summary: "Agent 运行错误增多", description: "查看 Trace 详情与 LLM 健康状态"}

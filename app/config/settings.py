@@ -1,9 +1,17 @@
 """全局配置：通过 pydantic-settings 从 .env 读取"""
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=str(_PROJECT_ROOT / ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     # ===== 环境 =====
     app_env: str = "development"  # development | staging | production
@@ -16,6 +24,10 @@ class Settings(BaseSettings):
     llm_vllm_url: str = ""  # LLM_PROVIDER=vllm 时的推理集群地址
     llm_fast_model: str = ""  # 云端小模型（意图/摘要/偏好）
     llm_large_model: str = ""  # 云端大模型（复杂对话）
+    llm_fast_base_url: str = ""  # 小模型专属兼容接口（可选，默认主 URL）
+    llm_large_base_url: str = ""  # 大模型专属兼容接口（可选，默认主 URL）
+    llm_fast_api_key: str = ""  # 小模型独立 Key（可选）
+    llm_large_api_key: str = ""  # 大模型独立 Key（可选）
     # 自动降级：主 LLM 失败时切换的备用 OpenAI 兼容渠道（如云端 API）
     llm_fallback_url: str = ""
     llm_fallback_key: str = ""
@@ -44,12 +56,16 @@ class Settings(BaseSettings):
 
     # ===== Agent 并发 =====
     agent_max_concurrency: int = 4     # 客服工作流并发上限（保护LLM）
+    llm_daily_quota: int = 200         # 每用户每日 AI 对话次数
+    llm_quota_window_hours: int = 24   # 配额统计窗口
+    llm_request_max_tokens: int = 512  # 单次回复最大生成 token 上界
 
     # ===== 客服成本 =====
     llm_cost_per_1k_tokens: float = 0.001  # 单千token成本估算（元），用于成本看板
 
     # ===== 存储 =====
     postgres_url: str = "postgresql+psycopg://postgres:password@localhost:5432/csagent"
+    pg_replica_url: str = ""  # 只读副本（读写分离）；为空时读路径回退主库
     # 分库分表：按 user_id 哈希路由；开发环境单库（1 个 shard）行为不变
     pg_shard_urls: list[str] = []  # 生产：[url0, url1, ...]，为空时退化为 postgres_url
     redis_url: str = "redis://localhost:6379/0"
@@ -87,6 +103,10 @@ class Settings(BaseSettings):
     wechat_pay_mch_id: str = ""                # 微信商户号
     wechat_pay_app_id: str = ""                # 微信 AppID
     wechat_pay_apiv3_key: str = ""             # APIv3 密钥
+    wechat_pay_private_key_path: str = ""      # 商户 API 私钥路径（PEM）
+    wechat_pay_platform_cert_path: str = ""    # 平台证书路径（回调验签）
+    wechat_pay_cert_serial: str = ""           # 商户 API 证书序列号（请求签名 serial_no）
+    payment_notify_url: str = ""               # 渠道回调地址（如 https://mall.example.com/api/payments/{channel}/callback）
     alipay_app_id: str = ""                    # 支付宝应用ID
     alipay_private_key_path: str = ""          # 应用私钥路径
     alipay_public_key_path: str = ""           # 支付宝公钥路径
@@ -114,6 +134,30 @@ class Settings(BaseSettings):
     logistics_provider: str = "sandbox"  # sandbox | kuaidi100 | cainiao（生产接入）
     logistics_api_url: str = ""              # 真实物流渠道 API 地址
     logistics_api_key: str = ""              # 物流渠道 API Key
+
+    def model_post_init(self, __context) -> None:
+        """把相对路径统一解析到项目根目录，保证从任意子目录启动也一致。"""
+        def resolve(value: str) -> str:
+            if not value:
+                return value
+            p = Path(value)
+            if p.is_absolute() or "://" in value or "/" not in value:
+                return value
+            if value.startswith(("./", "../")) or (_PROJECT_ROOT / value).exists():
+                return str((_PROJECT_ROOT / value).resolve())
+            return value
+
+        for field in {
+            "local_llm_model_path",
+            "chroma_persist_dir",
+            "embedding_model",
+            "rerank_model",
+            "wechat_pay_private_key_path",
+            "wechat_pay_platform_cert_path",
+            "alipay_private_key_path",
+            "alipay_public_key_path",
+        }:
+            object.__setattr__(self, field, resolve(getattr(self, field, "")))
 
 
 settings = Settings()

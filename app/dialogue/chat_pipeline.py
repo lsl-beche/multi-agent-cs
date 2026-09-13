@@ -137,8 +137,8 @@ def maybe_update_summary(session_id: str) -> None:
     old = memory.get_summary(session_id)
     text = "\n".join(f"{'用户' if h['role'] == 'user' else '客服'}：{h['content'][:150]}" for h in new_parts)
     try:
-        from app.core.llm import get_llm
-        llm = get_llm(max_tokens=200, streaming=False)
+        from app.core.llm import get_llm_for_task
+        llm = get_llm_for_task("summary", max_tokens=200, streaming=False)
         resp = llm.invoke([
             SystemMessage(content="你是对话摘要助手，把对话压缩成简洁中文摘要，保留关键事实、用户偏好与未完成事项，不超过150字。"),
             HumanMessage(content=f"已有摘要：{old or '无'}\n\n需折叠的对话：\n{text}"),
@@ -209,11 +209,22 @@ async def fallback_reply(message: str) -> dict:
 
 async def run_agent(session_id: str, user_id: str, message: str) -> dict:
     t_start = time.perf_counter()
+    from app.agents.trace import trace_store
+    trace_id = trace_store.start(session_id, user_id, message)
     cached = get_cached_answer(message)
     if cached is not None:
+        trace_store.finish(trace_id, answer="[语义缓存命中]", status="cached")
         return {"answer": cached, "intent": "", "need_human": False, "cached": True}
     if not llm_reachable():
-        return await fallback_reply(message)
+        result = await fallback_reply(message)
+        trace_store.finish(trace_id, intent=result["intent"], need_human=result["need_human"],
+                           answer=result["answer"], status="fallback")
+        return result
+    from app.core.quota import consume_async
+    if not await consume_async(user_id):
+        message_text = "今日 AI 对话次数已达上限，请明天再试或转人工客服。"
+        trace_store.finish(trace_id, answer=message_text, status="fallback")
+        return {"answer": message_text, "intent": "", "need_human": True}
     try:
         from app.agents.graphs.workflow import get_workflow
         workflow = get_workflow()
@@ -227,19 +238,36 @@ async def run_agent(session_id: str, user_id: str, message: str) -> dict:
             messages = [HumanMessage(content=message)]
         async with _agent_semaphore:
             result = await asyncio.wait_for(
-                workflow.ainvoke({"messages": messages, "session_id": session_id, "user_id": user_id, "slots": {}}),
+                workflow.ainvoke({
+                    "messages": messages,
+                    "session_id": session_id,
+                    "user_id": user_id,
+                    "slots": {},
+                    "trace_id": trace_id,
+                }),
                 timeout=90.0,
             )
         answer = result["messages"][-1].content if result.get("messages") else "抱歉，暂时无法回复。"
+        intent = result.get("intent", "")
+        need_human = result.get("need_human", False)
+        finish_status = "fallback" if "抱歉，暂时无法回复" in answer else "success"
+        trace_store.finish(trace_id, intent=intent, need_human=need_human,
+                           answer=answer, status=finish_status)
         _memory_executor.submit(persist_turn, session_id, user_id, message, answer)
-        if cacheable(message, answer, result.get("intent"), result.get("need_human")):
+        if cacheable(message, answer, intent, need_human):
             _memory_executor.submit(cache_answer, message, answer)
-        return {"answer": answer, "intent": result.get("intent"), "need_human": result.get("need_human", False)}
+        return {"answer": answer, "intent": intent, "need_human": need_human}
     except asyncio.TimeoutError:
+        trace_store.finish(trace_id, answer="回复超时", status="fallback", error="timeout>90s")
         return {"answer": "抱歉，当前回复较慢，请稍后再试。", "intent": "", "need_human": False}
     except Exception:
-        perf_logger.error(f"[_run_agent] ERROR after {(time.perf_counter() - t_start) * 1000:.0f}ms: {traceback.format_exc()}")
-        return await fallback_reply(message)
+        error_text = traceback.format_exc()
+        perf_logger.error(f"[_run_agent] ERROR after {(time.perf_counter() - t_start) * 1000:.0f}ms: {error_text}")
+        trace_store.finish(trace_id, status="error", error=error_text[-500:])
+        result = await fallback_reply(message)
+        trace_store.finish(trace_id, intent=result["intent"], need_human=result["need_human"],
+                           answer=result["answer"], status="fallback")
+        return result
 
 
 def _clean_think(text: str) -> str:
@@ -253,64 +281,79 @@ async def stream_agent(session_id: str, user_id: str, message: str):
     kind: "chunk" 表示文本增量；"done" 表示最终完整回复。
     """
     from app.agents.graphs.workflow import get_workflow
+    from app.agents.trace import trace_store
 
-    messages = await asyncio.get_running_loop().run_in_executor(
-        _memory_executor, build_messages, session_id, user_id, message
-    )
-    workflow = get_workflow()
-    root_run_id: str | None = None
-    full_answer = ""
-    stream_buf = ""
-    sent_len = 0
-    in_think = False
-    tool_call_seen = False
-    final_content = ""
+    trace_id = trace_store.start(session_id, user_id, message)
+    try:
+        from app.core.quota import allowed_async, consume_async
+        quota_ok, _, quota_limit = await allowed_async(user_id)
+        if not quota_ok:
+            trace_store.finish(trace_id, answer="今日 AI 对话次数已达上限", status="fallback")
+            yield ("done", f"今日 AI 对话次数已达上限（{quota_limit}），请明天再试或转人工客服。")
+            return
+        await consume_async(user_id)
+        messages = await asyncio.get_running_loop().run_in_executor(
+            _memory_executor, build_messages, session_id, user_id, message
+        )
+        workflow = get_workflow()
+        root_run_id: str | None = None
+        full_answer = ""
+        stream_buf = ""
+        sent_len = 0
+        in_think = False
+        tool_call_seen = False
+        final_content = ""
 
-    async for event in workflow.astream_events(
-        {"messages": messages, "session_id": session_id, "user_id": user_id, "slots": {}},
-        version="v2",
-    ):
-        if root_run_id is None:
-            root_run_id = event.get("run_id", "")
-        kind = event["event"]
+        async for event in workflow.astream_events(
+            {"messages": messages, "session_id": session_id, "user_id": user_id,
+             "slots": {}, "trace_id": trace_id},
+            version="v2",
+        ):
+            if root_run_id is None:
+                root_run_id = event.get("run_id", "")
+            kind = event["event"]
 
-        if kind == "on_chat_model_stream":
-            chunk = event["data"]["chunk"]
-            if not hasattr(chunk, "content") or not chunk.content:
-                continue
-            token = chunk.content
-            if not isinstance(token, str):
-                continue
-            full_answer += token
-            stream_buf += token
+            if kind == "on_chat_model_stream":
+                chunk = event["data"]["chunk"]
+                if not hasattr(chunk, "content") or not chunk.content:
+                    continue
+                token = chunk.content
+                if not isinstance(token, str):
+                    continue
+                full_answer += token
+                stream_buf += token
 
-            if in_think:
-                if "</think>" in stream_buf:
-                    in_think = False
-                    stream_buf = _clean_think(stream_buf)
+                if in_think:
+                    if "</think>" in stream_buf:
+                        in_think = False
+                        stream_buf = _clean_think(stream_buf)
+                        sent_len = len(stream_buf)
+                        if stream_buf.strip() and not tool_call_seen:
+                            yield ("chunk", stream_buf)
+                    continue
+                if "<think" in stream_buf:
+                    in_think = True
+                    continue
+                visible = stream_buf[sent_len:]
+                if visible and not tool_call_seen:
+                    yield ("chunk", visible)
                     sent_len = len(stream_buf)
-                    if stream_buf.strip() and not tool_call_seen:
-                        yield ("chunk", stream_buf)
-                continue
-            if "<think" in stream_buf:
-                in_think = True
-                continue
-            visible = stream_buf[sent_len:]
-            if visible and not tool_call_seen:
-                yield ("chunk", visible)
-                sent_len = len(stream_buf)
 
-        elif kind == "on_chain_end" and event.get("run_id") == root_run_id:
-            output = event["data"].get("output", {})
-            msgs = output.get("messages", [])
-            if msgs:
-                final = msgs[-1]
-                final_content = getattr(final, "content", "") or ""
+            elif kind == "on_chain_end" and event.get("run_id") == root_run_id:
+                output = event["data"].get("output", {})
+                msgs = output.get("messages", [])
+                if msgs:
+                    final = msgs[-1]
+                    final_content = getattr(final, "content", "") or ""
 
-    final_content = _clean_think(final_content or full_answer)
-    if not final_content and full_answer:
-        final_content = _clean_think(full_answer)
-    if final_content and not tool_call_seen and stream_buf != final_content:
-        # 兜底：某些事件路径没有完整流式输出时一次性推送
-        yield ("chunk", final_content)
-    yield ("done", final_content)
+        final_content = _clean_think(final_content or full_answer)
+        if not final_content and full_answer:
+            final_content = _clean_think(full_answer)
+        if final_content and not tool_call_seen and stream_buf != final_content:
+            # 兜底：某些事件路径没有完整流式输出时一次性推送
+            yield ("chunk", final_content)
+        trace_store.finish(trace_id, answer=final_content or full_answer, status="success")
+        yield ("done", final_content)
+    except Exception as exc:
+        trace_store.finish(trace_id, status="error", error=str(exc)[:500])
+        yield ("done", "")

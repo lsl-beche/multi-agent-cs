@@ -19,7 +19,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.config.settings import settings
 from app.core.db import SessionLocal
-from app.core.llm import get_llm
+from app.core.llm import get_llm_for_task
 from app.core.redis_client import get_redis
 from app.dialogue.memory import SessionMemory
 from app.models.tables import UserPreference
@@ -111,7 +111,7 @@ def _extract_via_llm(text: str) -> dict:
     要求只输出 JSON；解析失败返回空字典（不影响主流程）。
     """
     try:
-        llm = get_llm(max_tokens=128, streaming=False)
+        llm = get_llm_for_task("preferences", max_tokens=128, streaming=False)
         resp = llm.invoke([
             SystemMessage(content="你是用户画像提取助手，只输出JSON。"),
             HumanMessage(content=_EXTRACT_PROMPT.format(text=text[:3000])),

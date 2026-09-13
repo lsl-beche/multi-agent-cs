@@ -25,6 +25,8 @@ class AgentState(TypedDict, total=False):
     # user_id 用于订单归属校验、用户偏好记忆、向量记忆
     session_id: str
     user_id: str
+    # Agent 运行 trace id（平台化：节点/工具/LLM 记录到同一 run）
+    trace_id: str
 
     # 意图与槽位（对话管理）：
     # intent        识别出的意图名（12 类）

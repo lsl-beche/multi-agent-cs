@@ -2,14 +2,17 @@
 import asyncio
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy import select
 
 from app.api.deps import current_user, get_db
+from app.core.audit import audit_async
 from app.models.schemas import (
     AddressCreateRequest,
     AddressUpdateRequest,
     PasswordChangeRequest,
     ProfileUpdateRequest,
 )
+from app.models.tables import User
 from app.services.user_service import UserService
 
 router = APIRouter()
@@ -73,9 +76,36 @@ async def change_password(body: PasswordChangeRequest, request: Request, db=Depe
 
 
 @router.delete("/memory", summary="清除我的客服记忆（遗忘权）")
-async def erase_memory(request: Request, db=Depends(get_db)):
+async def erase_memory(request: Request):
     user_id = await get_user_id(request)
     from app.services.privacy_service import erase_user_data
 
     result = await asyncio.to_thread(erase_user_data, user_id)
+    from app.api.deps import current_user
+    payload = await current_user(request)
+    await audit_async(
+        user_id=user_id, username=payload.get("username", ""), module="privacy", action="memory.erase",
+        target_id=str(user_id), detail=result,
+        ip_address=request.client.host if request.client else None,
+    )
     return {"code": 0, "data": result, "message": "客服记忆已清除"}
+
+
+@router.delete("", summary="注销账号（软注销 + 记忆清除）")
+async def delete_account(request: Request, db=Depends(get_db)):
+    """个保法注销权：账号软注销（status=banned），并联动清除客服记忆"""
+    user_id = await get_user_id(request)
+    from app.services.privacy_service import erase_user_data
+    await asyncio.to_thread(erase_user_data, user_id)
+    user = (await db.execute(select(User).where(User.id == user_id))).scalar_one_or_none()
+    if user:
+        user.status = "banned"
+        await db.commit()
+        from app.api.deps import current_user
+        payload = await current_user(request)
+        await audit_async(
+            user_id=user_id, username=payload.get("username", ""), module="privacy", action="account.delete",
+            target_id=str(user_id), detail={"status": user.status},
+            ip_address=request.client.host if request.client else None,
+        )
+    return {"code": 0, "message": "账号已注销，客服记忆已清除"}

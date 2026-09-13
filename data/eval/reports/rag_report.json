@@ -1,0 +1,10 @@
+{
+  "total": 200,
+  "hits": 200,
+  "hit_rate": 1.0,
+  "avg_latency_ms": 286.1,
+  "p95_latency_ms": 322.9,
+  "total_seconds": 57.22,
+  "top_k": 5,
+  "sample_failures": []
+}

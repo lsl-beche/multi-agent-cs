@@ -6,7 +6,17 @@ metadata:
   labels:
     app: csagent
 spec:
-  replicas: 2
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  revisionHistoryLimit: 10
+  # 优雅停窗：给 preStop 和 HTTP 请求排空留足时间
+  minReadySeconds: 10
+  # 让 Pod 有足够时间处理在途请求后再被 K8s 终结
+  progressDeadlineSeconds: 600
   selector:
     matchLabels:
       app: csagent
@@ -15,6 +25,24 @@ spec:
       labels:
         app: csagent
     spec:
+      # 多可用区：打散副本，避免单 AZ 故障整体不可用
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: csagent
+      # 反亲和：尽量不把 Pod 放到同一节点
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: csagent
       containers:
         - name: csagent
           image: csagent:0.1.0   # TODO: 替换为镜像仓库地址
@@ -22,7 +50,7 @@ spec:
             - containerPort: 8000
           envFrom:
             - secretRef:
-                name: csagent-secret   # TODO: kubectl create secret（LLM_API_KEY/DB连接串等）
+                name: csagent-secrets
           resources:
             requests:
               cpu: "500m"
@@ -42,6 +70,27 @@ spec:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 30
+          # 优雅下线：先摘流量再退出（连接排空）
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]
+          volumeMounts:
+            - name: csagent-data
+              mountPath: /app/data
+      volumes:
+        - name: csagent-data
+          persistentVolumeClaim:
+            claimName: csagent-data
 ---
 apiVersion: v1
 kind: Service
@@ -54,22 +103,3 @@ spec:
     - port: 80
       targetPort: 8000
   type: ClusterIP
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: csagent-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: csagent
-  minReplicas: 2
-  maxReplicas: 20   # 大促期间弹性扩容
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70

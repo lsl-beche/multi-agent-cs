@@ -1,42 +1,1442 @@
 [
-  {"id": "ord-01", "message": "帮我查一下订单 SO2024001 的状态", "expect_intent": "query_order", "category": "订单"},
-  {"id": "ord-02", "message": "我的订单到哪里了", "expect_intent": "query_order", "category": "订单"},
-  {"id": "ord-03", "message": "帮我取消订单 SO2024002", "expect_intent": "query_order", "category": "订单/写操作"},
-  {"id": "ord-04", "message": "确认收货 SO2024003", "expect_intent": "query_order", "category": "订单/写操作"},
-  {"id": "ord-05", "message": "把订单地址改成上海市浦东新区", "expect_intent": "query_order", "category": "订单/写操作"},
-  {"id": "log-01", "message": "我的快递到哪了", "expect_intent": "track_logistics", "category": "物流"},
-  {"id": "log-02", "message": "包裹什么时候能送到", "expect_intent": "track_logistics", "category": "物流"},
-  {"id": "log-03", "message": "物流好几天没更新了怎么办", "expect_intent": "track_logistics", "category": "物流"},
-  {"id": "ret-01", "message": "我想退货", "expect_intent": "return_goods", "category": "售后"},
-  {"id": "ret-02", "message": "七天无理由退货怎么申请", "expect_intent": "return_goods", "category": "售后"},
-  {"id": "ret-03", "message": "帮我申请退款 SO2024003", "expect_intent": "return_goods", "category": "售后/写操作"},
-  {"id": "ret-04", "message": "退款多久能到账", "expect_intent": "return_goods", "category": "售后"},
-  {"id": "exc-01", "message": "收到货不对，想换一件", "expect_intent": "exchange_goods", "category": "售后"},
-  {"id": "exc-02", "message": "可以换货吗", "expect_intent": "exchange_goods", "category": "售后"},
-  {"id": "pro-01", "message": "龙井茶怎么泡", "expect_intent": "product_consult", "category": "商品"},
-  {"id": "pro-02", "message": "铁观音和乌龙茶有什么区别", "expect_intent": "product_consult", "category": "商品"},
-  {"id": "pro-03", "message": "茶叶怎么保存", "expect_intent": "product_consult", "category": "商品"},
-  {"id": "pro-04", "message": "有没有适合送礼的茶", "expect_intent": "product_consult", "category": "商品"},
-  {"id": "pri-01", "message": "这茶多少钱一斤", "expect_intent": "price_inquiry", "category": "价格"},
-  {"id": "pri-02", "message": "有没有优惠", "expect_intent": "promotion_consult", "category": "促销"},
-  {"id": "prm-01", "message": "有什么优惠券可以领", "expect_intent": "promotion_consult", "category": "促销"},
-  {"id": "prm-02", "message": "我的积分有多少", "expect_intent": "promotion_consult", "category": "促销"},
-  {"id": "prm-03", "message": "帮我领取优惠券 6", "expect_intent": "promotion_consult", "category": "促销"},
-  {"id": "pay-01", "message": "支付失败了怎么办", "expect_intent": "payment_issue", "category": "支付"},
-  {"id": "pay-02", "message": "扣款了但订单没成功", "expect_intent": "payment_issue", "category": "支付"},
-  {"id": "pay-03", "message": "可以开发票吗", "expect_intent": "payment_issue", "category": "支付"},
-  {"id": "app-01", "message": "页面打不开怎么办", "expect_intent": "app_usage", "category": "使用"},
-  {"id": "app-02", "message": "收不到验证码", "expect_intent": "app_usage", "category": "使用"},
-  {"id": "app-03", "message": "登录不上", "expect_intent": "app_usage", "category": "使用"},
-  {"id": "cmp-01", "message": "我要投诉，服务太差了", "expect_intent": "complaint", "category": "投诉"},
-  {"id": "cmp-02", "message": "你们的茶质量太差了", "expect_intent": "complaint", "category": "投诉"},
-  {"id": "hum-01", "message": "转人工客服", "expect_intent": "human_service", "category": "转人工"},
-  {"id": "hum-02", "message": "我要找真人客服", "expect_intent": "human_service", "category": "转人工"},
-  {"id": "cha-01", "message": "你好呀", "expect_intent": "chitchat", "category": "闲聊"},
-  {"id": "cha-02", "message": "谢谢", "expect_intent": "chitchat", "category": "闲聊"},
-  {"id": "kno-01", "message": "白茶怎么存放才能越存越好", "expect_intent": "product_consult", "category": "知识"},
-  {"id": "kno-02", "message": "普洱生茶和熟茶有什么区别", "expect_intent": "product_consult", "category": "知识"},
-  {"id": "kno-03", "message": "空腹喝茶对身体好吗", "expect_intent": "product_consult", "category": "知识"},
-  {"id": "gif-01", "message": "送长辈什么茶合适", "expect_intent": "product_consult", "category": "知识"},
-  {"id": "sto-01", "message": "这个茶有库存吗", "expect_intent": "product_consult", "category": "商品"}
+  {
+    "id": "ord-01",
+    "message": "帮我查一下订单 SO2024001 的状态",
+    "expect_intent": "query_order",
+    "category": "订单"
+  },
+  {
+    "id": "ord-02",
+    "message": "我的订单到哪里了",
+    "expect_intent": "query_order",
+    "category": "订单"
+  },
+  {
+    "id": "ord-03",
+    "message": "帮我取消订单 SO2024002",
+    "expect_intent": "query_order",
+    "category": "订单/写操作"
+  },
+  {
+    "id": "ord-04",
+    "message": "确认收货 SO2024003",
+    "expect_intent": "query_order",
+    "category": "订单/写操作"
+  },
+  {
+    "id": "ord-05",
+    "message": "把订单地址改成上海市浦东新区",
+    "expect_intent": "query_order",
+    "category": "订单/写操作"
+  },
+  {
+    "id": "log-01",
+    "message": "我的快递到哪了",
+    "expect_intent": "track_logistics",
+    "category": "物流"
+  },
+  {
+    "id": "log-02",
+    "message": "包裹什么时候能送到",
+    "expect_intent": "track_logistics",
+    "category": "物流"
+  },
+  {
+    "id": "log-03",
+    "message": "物流好几天没更新了怎么办",
+    "expect_intent": "track_logistics",
+    "category": "物流"
+  },
+  {
+    "id": "ret-01",
+    "message": "我想退货",
+    "expect_intent": "return_goods",
+    "category": "售后"
+  },
+  {
+    "id": "ret-02",
+    "message": "七天无理由退货怎么申请",
+    "expect_intent": "return_goods",
+    "category": "售后"
+  },
+  {
+    "id": "ret-03",
+    "message": "帮我申请退款 SO2024003",
+    "expect_intent": "return_goods",
+    "category": "售后/写操作"
+  },
+  {
+    "id": "ret-04",
+    "message": "退款多久能到账",
+    "expect_intent": "return_goods",
+    "category": "售后"
+  },
+  {
+    "id": "exc-01",
+    "message": "收到货不对，想换一件",
+    "expect_intent": "exchange_goods",
+    "category": "售后"
+  },
+  {
+    "id": "exc-02",
+    "message": "可以换货吗",
+    "expect_intent": "exchange_goods",
+    "category": "售后"
+  },
+  {
+    "id": "pro-01",
+    "message": "龙井茶怎么泡",
+    "expect_intent": "product_consult",
+    "category": "商品"
+  },
+  {
+    "id": "pro-02",
+    "message": "铁观音和乌龙茶有什么区别",
+    "expect_intent": "product_consult",
+    "category": "商品"
+  },
+  {
+    "id": "pro-03",
+    "message": "茶叶怎么保存",
+    "expect_intent": "product_consult",
+    "category": "商品"
+  },
+  {
+    "id": "pro-04",
+    "message": "有没有适合送礼的茶",
+    "expect_intent": "product_consult",
+    "category": "商品"
+  },
+  {
+    "id": "pri-01",
+    "message": "这茶多少钱一斤",
+    "expect_intent": "price_inquiry",
+    "category": "价格"
+  },
+  {
+    "id": "pri-02",
+    "message": "有没有优惠",
+    "expect_intent": "promotion_consult",
+    "category": "促销"
+  },
+  {
+    "id": "prm-01",
+    "message": "有什么优惠券可以领",
+    "expect_intent": "promotion_consult",
+    "category": "促销"
+  },
+  {
+    "id": "prm-02",
+    "message": "我的积分有多少",
+    "expect_intent": "promotion_consult",
+    "category": "促销"
+  },
+  {
+    "id": "prm-03",
+    "message": "帮我领取优惠券 6",
+    "expect_intent": "promotion_consult",
+    "category": "促销"
+  },
+  {
+    "id": "pay-01",
+    "message": "支付失败了怎么办",
+    "expect_intent": "payment_issue",
+    "category": "支付"
+  },
+  {
+    "id": "pay-02",
+    "message": "扣款了但订单没成功",
+    "expect_intent": "payment_issue",
+    "category": "支付"
+  },
+  {
+    "id": "pay-03",
+    "message": "可以开发票吗",
+    "expect_intent": "payment_issue",
+    "category": "支付"
+  },
+  {
+    "id": "app-01",
+    "message": "页面打不开怎么办",
+    "expect_intent": "app_usage",
+    "category": "使用"
+  },
+  {
+    "id": "app-02",
+    "message": "收不到验证码",
+    "expect_intent": "app_usage",
+    "category": "使用"
+  },
+  {
+    "id": "app-03",
+    "message": "登录不上",
+    "expect_intent": "app_usage",
+    "category": "使用"
+  },
+  {
+    "id": "cmp-01",
+    "message": "我要投诉，服务太差了",
+    "expect_intent": "complaint",
+    "category": "投诉"
+  },
+  {
+    "id": "cmp-02",
+    "message": "你们的茶质量太差了",
+    "expect_intent": "complaint",
+    "category": "投诉"
+  },
+  {
+    "id": "hum-01",
+    "message": "转人工客服",
+    "expect_intent": "human_service",
+    "category": "转人工"
+  },
+  {
+    "id": "hum-02",
+    "message": "我要找真人客服",
+    "expect_intent": "human_service",
+    "category": "转人工"
+  },
+  {
+    "id": "cha-01",
+    "message": "你好呀",
+    "expect_intent": "chitchat",
+    "category": "闲聊"
+  },
+  {
+    "id": "cha-02",
+    "message": "谢谢",
+    "expect_intent": "chitchat",
+    "category": "闲聊"
+  },
+  {
+    "id": "kno-01",
+    "message": "白茶怎么存放才能越存越好",
+    "expect_intent": "product_consult",
+    "category": "知识"
+  },
+  {
+    "id": "kno-02",
+    "message": "普洱生茶和熟茶有什么区别",
+    "expect_intent": "product_consult",
+    "category": "知识"
+  },
+  {
+    "id": "kno-03",
+    "message": "空腹喝茶对身体好吗",
+    "expect_intent": "product_consult",
+    "category": "知识"
+  },
+  {
+    "id": "gif-01",
+    "message": "送长辈什么茶合适",
+    "expect_intent": "product_consult",
+    "category": "知识"
+  },
+  {
+    "id": "sto-01",
+    "message": "这个茶有库存吗",
+    "expect_intent": "product_consult",
+    "category": "商品"
+  },
+  {
+    "id": "stage3-0041",
+    "message": "绿茶、红茶、乌龙茶、白茶、普洱茶有什么区别",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0042",
+    "message": "什么是明前茶，为什么明前茶比较贵",
+    "expect_intent": "price_inquiry",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0043",
+    "message": "古树茶和台地茶有什么不同",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0044",
+    "message": "大红袍和铁观音都是乌龙茶，有什么区别",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0045",
+    "message": "什么是普洱生茶和熟茶，两者有什么不同",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0046",
+    "message": "白毫银针、白牡丹、寿眉有什么区别",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0047",
+    "message": "什么是山头茶，为什么老班章那么有名",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0048",
+    "message": "春茶、夏茶、秋茶哪个季节的茶最好",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0049",
+    "message": "龙井茶有什么特征，怎么分辨正宗西湖龙井",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0050",
+    "message": "什么是茉莉花茶，花茶和绿茶是什么关系",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0051",
+    "message": "什么是金骏眉，为什么价格高",
+    "expect_intent": "price_inquiry",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0052",
+    "message": "茶饼、沱茶、砖茶有什么区别",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0053",
+    "message": "茶叶有保质期吗，老茶真的越老越好吗",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0054",
+    "message": "茶叶怎么保存，要不要放冰箱",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0055",
+    "message": "普洱茶饼如何存放和醒茶",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0056",
+    "message": "茶叶受潮了怎么办，还能喝吗",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0057",
+    "message": "紫砂壶应该怎么养壶",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0058",
+    "message": "盖碗怎么用，会被烫手怎么办",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0059",
+    "message": "泡红茶应该用多少度的水",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0060",
+    "message": "绿茶冲泡有什么讲究，为什么不能用沸水",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0061",
+    "message": "普洱茶应该怎么泡，为什么很多人用紫砂壶",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0062",
+    "message": "泡白茶用什么水温和器皿",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0063",
+    "message": "好的大红袍怎么泡才不浪费",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0064",
+    "message": "功夫茶和日常泡茶有什么不同",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0065",
+    "message": "第一泡要不要倒掉",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0066",
+    "message": "喝茶时为什么说头泡醒、二泡香、三泡四泡是精华",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0067",
+    "message": "怎么泡茶才不苦",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0068",
+    "message": "用什么水泡茶最好",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0069",
+    "message": "什么是冷泡茶，怎么泡",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0070",
+    "message": "为什么泡茶要有公道杯",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0071",
+    "message": "煮茶和泡茶有什么区别，哪些茶适合煮",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0072",
+    "message": "茶具买了一套怎么开壶开杯",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0073",
+    "message": "不同的人每天喝多少茶比较合适",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0074",
+    "message": "喝茶真的能减肥吗",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0075",
+    "message": "晚上喝茶会影响睡眠吗",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0076",
+    "message": "胃不好的人适合喝什么茶",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0077",
+    "message": "喝茶能降血糖和降血压吗",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0078",
+    "message": "不同季节应该喝什么茶",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0079",
+    "message": "隔夜茶到底能不能喝",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0080",
+    "message": "孕妇和哺乳期能喝茶吗",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0081",
+    "message": "怎样品鉴一杯茶的好坏",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0082",
+    "message": "什么是回甘，回甘好的茶才算好茶吗",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0083",
+    "message": "什么是茶气",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0084",
+    "message": "什么是岩韵",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0085",
+    "message": "为什么老茶的陈香和新茶的青味不一样",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0086",
+    "message": "新手如何建立自己的品茶标准",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0087",
+    "message": "为什么有些茶泡出来是浑浊的",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0088",
+    "message": "为什么喝茶会口干，有没有不锁喉的茶",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0089",
+    "message": "送礼送什么茶合适",
+    "expect_intent": "product_consult",
+    "category": "gift"
+  },
+  {
+    "id": "stage3-0090",
+    "message": "送茶叶礼盒有配套的礼品袋和贺卡吗",
+    "expect_intent": "product_consult",
+    "category": "gift"
+  },
+  {
+    "id": "stage3-0091",
+    "message": "100元的茶叶和1000元的茶叶，真正差别在哪里",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0092",
+    "message": "怎么辨别新茶和陈茶",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0093",
+    "message": "网上买茶叶靠不靠谱",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0094",
+    "message": "买普洱茶是买新茶还是买老茶",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0095",
+    "message": "散茶和茶饼怎么选",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0096",
+    "message": "为什么同一款茶叶每次买味道不一样",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0097",
+    "message": "泡茶比例和投茶量怎么确定",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0098",
+    "message": "茶叶有添加剂吗，你们的茶有没有加香精",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0099",
+    "message": "刚收到的新茶为什么没有想象中好喝",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0100",
+    "message": "你们的茶叶产地在哪里，有产地证明吗",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0101",
+    "message": "什么是单株茶",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0102",
+    "message": "泡完的茶叶有什么用",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0103",
+    "message": "你们的包装密实吗，快递中会不会压碎",
+    "expect_intent": "return_goods",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0104",
+    "message": "一次买很多茶叶，会有特别的优惠吗",
+    "expect_intent": "promotion_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0105",
+    "message": "过期的茶叶还能喝吗",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0106",
+    "message": "茶叶能不能放冰箱冻",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0107",
+    "message": "普洱生茶怎么判断已经转化到位了",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0108",
+    "message": "你们店铺支持货到付款吗",
+    "expect_intent": "payment_issue",
+    "category": "payment"
+  },
+  {
+    "id": "stage3-0109",
+    "message": "小青柑是什么茶",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0110",
+    "message": "小孩能喝茶吗",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0111",
+    "message": "空腹能不能喝茶",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0112",
+    "message": "茶垢要不要洗",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0113",
+    "message": "刚烧开的沸水可以直接泡普洱茶吗",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0114",
+    "message": "喝茶会不会导致牙齿变黄",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0115",
+    "message": "为什么有的茶叶片完整，有的很碎",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0116",
+    "message": "茶道六君子是什么",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0117",
+    "message": "怎样判断茶叶有没有发霉",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0118",
+    "message": "冰岛茶为什么那么贵",
+    "expect_intent": "price_inquiry",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0119",
+    "message": "什么是干仓和湿仓普洱茶",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0120",
+    "message": "茶叶出汤以后盖上盖子会不会闷坏",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0121",
+    "message": "碎银子是什么茶",
+    "expect_intent": "product_consult",
+    "category": "tea_variety"
+  },
+  {
+    "id": "stage3-0122",
+    "message": "茶叶可以带上飞机吗",
+    "expect_intent": "product_consult",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0123",
+    "message": "茶叶苦是不是代表品质不好",
+    "expect_intent": "product_consult",
+    "category": "tasting"
+  },
+  {
+    "id": "stage3-0124",
+    "message": "喝茶会导致失眠和心悸吗",
+    "expect_intent": "product_consult",
+    "category": "health"
+  },
+  {
+    "id": "stage3-0125",
+    "message": "你们家的招牌茶是什么",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0126",
+    "message": "茶叶开封后多久喝完比较好",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0127",
+    "message": "南北方存茶有什么差异",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0128",
+    "message": "茶叶礼盒能定制多少数量起",
+    "expect_intent": "product_consult",
+    "category": "gift"
+  },
+  {
+    "id": "stage3-0129",
+    "message": "我买到的茶叶少了重量",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0130",
+    "message": "收到茶叶包装破损怎么办",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0131",
+    "message": "茶叶口感不对申请退货流程",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0132",
+    "message": "发票可以开礼品发票吗",
+    "expect_intent": "payment_issue",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0133",
+    "message": "可以指定物流公司吗",
+    "expect_intent": "track_logistics",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0134",
+    "message": "礼品茶可以匿名购买直接寄给收礼人吗",
+    "expect_intent": "product_consult",
+    "category": "gift"
+  },
+  {
+    "id": "stage3-0135",
+    "message": "茶叶的评测和评分是怎么得出的",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0136",
+    "message": "为什么你们店的某些茶叶不能长时间有货",
+    "expect_intent": "product_consult",
+    "category": "purchase"
+  },
+  {
+    "id": "stage3-0137",
+    "message": "你们可不可以代存茶",
+    "expect_intent": "product_consult",
+    "category": "storage"
+  },
+  {
+    "id": "stage3-0138",
+    "message": "如何成为店里的会员",
+    "expect_intent": "promotion_consult",
+    "category": "general"
+  },
+  {
+    "id": "stage3-0139",
+    "message": "你们招聘茶艺师吗",
+    "expect_intent": "product_consult",
+    "category": "general"
+  },
+  {
+    "id": "stage3-0140",
+    "message": "茶宠怎么养，有什么讲究",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0141",
+    "message": "下单后多久发货",
+    "expect_intent": "track_logistics",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0142",
+    "message": "快递一般几天能到",
+    "expect_intent": "track_logistics",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0143",
+    "message": "店铺发什么快递，可以指定快递吗",
+    "expect_intent": "track_logistics",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0144",
+    "message": "满多少钱包邮",
+    "expect_intent": "price_inquiry",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0145",
+    "message": "物流信息好几天没有更新怎么办",
+    "expect_intent": "track_logistics",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0146",
+    "message": "下单后还能修改收货地址吗",
+    "expect_intent": "query_order",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0147",
+    "message": "签收快递时需要注意什么",
+    "expect_intent": "track_logistics",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0148",
+    "message": "怎么查询我的订单状态",
+    "expect_intent": "query_order",
+    "category": "order"
+  },
+  {
+    "id": "stage3-0149",
+    "message": "如何取消订单",
+    "expect_intent": "query_order",
+    "category": "order"
+  },
+  {
+    "id": "stage3-0150",
+    "message": "下单后未付款，订单会保留多久",
+    "expect_intent": "query_order",
+    "category": "order"
+  },
+  {
+    "id": "stage3-0151",
+    "message": "一个订单里的商品可以分开发货吗",
+    "expect_intent": "track_logistics",
+    "category": "order"
+  },
+  {
+    "id": "stage3-0152",
+    "message": "下单后想更换商品颜色或尺码怎么办",
+    "expect_intent": "exchange_goods",
+    "category": "order"
+  },
+  {
+    "id": "stage3-0153",
+    "message": "支持7天无理由退货吗",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0154",
+    "message": "退货的具体流程是什么",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0155",
+    "message": "退货的运费谁来承担",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0156",
+    "message": "可以换货吗，换货流程是什么",
+    "expect_intent": "exchange_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0157",
+    "message": "收到商品有质量问题怎么处理",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0158",
+    "message": "哪些商品不支持7天无理由退货",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0159",
+    "message": "收到的商品少发、漏发或发错了怎么办",
+    "expect_intent": "exchange_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0160",
+    "message": "支持哪些支付方式",
+    "expect_intent": "payment_issue",
+    "category": "payment"
+  },
+  {
+    "id": "stage3-0161",
+    "message": "支付时提示失败怎么办",
+    "expect_intent": "payment_issue",
+    "category": "payment"
+  },
+  {
+    "id": "stage3-0162",
+    "message": "支付时重复扣款了怎么办",
+    "expect_intent": "payment_issue",
+    "category": "payment"
+  },
+  {
+    "id": "stage3-0163",
+    "message": "支持分期付款吗，有手续费吗",
+    "expect_intent": "payment_issue",
+    "category": "payment"
+  },
+  {
+    "id": "stage3-0164",
+    "message": "优惠券怎么使用，有什么限制",
+    "expect_intent": "promotion_consult",
+    "category": "promotion"
+  },
+  {
+    "id": "stage3-0165",
+    "message": "满减活动是怎么算的",
+    "expect_intent": "promotion_consult",
+    "category": "promotion"
+  },
+  {
+    "id": "stage3-0166",
+    "message": "下单时优惠券没有抵扣成功怎么办",
+    "expect_intent": "query_order",
+    "category": "promotion"
+  },
+  {
+    "id": "stage3-0167",
+    "message": "刚买完就降价了，有价格保护吗",
+    "expect_intent": "price_inquiry",
+    "category": "promotion"
+  },
+  {
+    "id": "stage3-0168",
+    "message": "会员有什么优惠",
+    "expect_intent": "promotion_consult",
+    "category": "promotion"
+  },
+  {
+    "id": "stage3-0169",
+    "message": "商品是正品吗",
+    "expect_intent": "product_consult",
+    "category": "product"
+  },
+  {
+    "id": "stage3-0170",
+    "message": "衣服尺码怎么选，尺码标准吗",
+    "expect_intent": "product_consult",
+    "category": "product"
+  },
+  {
+    "id": "stage3-0171",
+    "message": "显示有货但拍下后说缺货怎么办",
+    "expect_intent": "product_consult",
+    "category": "product"
+  },
+  {
+    "id": "stage3-0172",
+    "message": "食品的保质期和新鲜度如何保证",
+    "expect_intent": "product_consult",
+    "category": "product"
+  },
+  {
+    "id": "stage3-0173",
+    "message": "商品页面标的材质和实际一致吗",
+    "expect_intent": "app_usage",
+    "category": "product"
+  },
+  {
+    "id": "stage3-0174",
+    "message": "APP经常闪退或卡顿怎么办",
+    "expect_intent": "product_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0175",
+    "message": "登录不上账号怎么办",
+    "expect_intent": "app_usage",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0176",
+    "message": "收不到手机验证码怎么办",
+    "expect_intent": "return_goods",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0177",
+    "message": "客服的工作时间是什么时候",
+    "expect_intent": "product_consult",
+    "category": "general"
+  },
+  {
+    "id": "stage3-0178",
+    "message": "怎么联系人工客服",
+    "expect_intent": "human_service",
+    "category": "general"
+  },
+  {
+    "id": "stage3-0179",
+    "message": "预售商品什么时候发货",
+    "expect_intent": "track_logistics",
+    "category": "order"
+  },
+  {
+    "id": "stage3-0180",
+    "message": "大促期间发货慢怎么办",
+    "expect_intent": "track_logistics",
+    "category": "logistics"
+  },
+  {
+    "id": "stage3-0181",
+    "message": "可以货到付款吗",
+    "expect_intent": "payment_issue",
+    "category": "payment"
+  },
+  {
+    "id": "stage3-0182",
+    "message": "退货后优惠券会退回吗",
+    "expect_intent": "return_goods",
+    "category": "promotion"
+  },
+  {
+    "id": "stage3-0183",
+    "message": "商品有保修吗，保修多久",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0184",
+    "message": "七天无理由退货的具体规则是什么",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0185",
+    "message": "茶叶是食品，还能七天无理由退货吗",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0186",
+    "message": "商品有质量问题怎么申请售后",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0187",
+    "message": "退货需要保留原包装吗",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0188",
+    "message": "退货寄到哪个地址",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0189",
+    "message": "退款一般多久到账",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0190",
+    "message": "换货的流程是什么",
+    "expect_intent": "exchange_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0191",
+    "message": "收到包裹破损怎么办",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0192",
+    "message": "少发漏发怎么处理",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0193",
+    "message": "发错货了怎么办",
+    "expect_intent": "exchange_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0194",
+    "message": "茶叶喝起来有异味能退吗",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0195",
+    "message": "收货时要注意什么",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0196",
+    "message": "可以直接拒收包裹吗",
+    "expect_intent": "track_logistics",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0197",
+    "message": "售后申请的有效期是多久",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0198",
+    "message": "退货时赠品需要一起退回吗",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0199",
+    "message": "退货后会员积分会退吗",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0200",
+    "message": "发票开错了可以重开吗",
+    "expect_intent": "payment_issue",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0201",
+    "message": "评价了还能修改吗",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0202",
+    "message": "对商品不满意怎么给差评",
+    "expect_intent": "complaint",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0203",
+    "message": "人工客服的工作时间是几点",
+    "expect_intent": "human_service",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0204",
+    "message": "售后投诉有哪些渠道",
+    "expect_intent": "complaint",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0205",
+    "message": "茶叶有保质期吗，过期了能退吗",
+    "expect_intent": "product_consult",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0206",
+    "message": "退货会影响下次购买吗",
+    "expect_intent": "return_goods",
+    "category": "aftersale"
+  },
+  {
+    "id": "stage3-0207",
+    "message": "商城页面打开很慢怎么办",
+    "expect_intent": "app_usage",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0208",
+    "message": "搜索不到想买的茶怎么办",
+    "expect_intent": "product_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0209",
+    "message": "加入购物车失败是什么原因",
+    "expect_intent": "product_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0210",
+    "message": "支付页面白屏怎么办",
+    "expect_intent": "payment_issue",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0211",
+    "message": "收不到验证码怎么办",
+    "expect_intent": "app_usage",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0212",
+    "message": "登录失败是什么原因",
+    "expect_intent": "app_usage",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0213",
+    "message": "忘记密码怎么找回",
+    "expect_intent": "product_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0214",
+    "message": "支持微信快捷登录吗",
+    "expect_intent": "app_usage",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0215",
+    "message": "领取的优惠券没有到账怎么办",
+    "expect_intent": "promotion_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0216",
+    "message": "收不到订单通知怎么办",
+    "expect_intent": "query_order",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0217",
+    "message": "商品图片加载不出来",
+    "expect_intent": "app_usage",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0218",
+    "message": "添加收货地址失败怎么办",
+    "expect_intent": "query_order",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0219",
+    "message": "手机号怎么换绑",
+    "expect_intent": "product_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0220",
+    "message": "怎么获取商城最新版本",
+    "expect_intent": "product_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0221",
+    "message": "客服对话发送失败怎么办",
+    "expect_intent": "product_consult",
+    "category": "app_usage"
+  },
+  {
+    "id": "stage3-0222",
+    "message": "泡绿茶一般用多少度的水合适",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0223",
+    "message": "为什么泡茶的水不能直接用滚烫的沸水",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0224",
+    "message": "泡龙井茶用什么茶具最好",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0225",
+    "message": "盖碗和紫砂壶泡茶有什么区别",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0226",
+    "message": "泡茶时茶叶和水的比例是多少",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0227",
+    "message": "功夫茶泡法是什么",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0228",
+    "message": "第一泡茶要不要倒掉",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0229",
+    "message": "洗茶和醒茶是一回事吗",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0230",
+    "message": "茶叶一般可以泡几泡",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0231",
+    "message": "泡茶每一泡要等多久",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0232",
+    "message": "为什么我泡的茶总是很苦",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0233",
+    "message": "为什么我泡的茶没有香气",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0234",
+    "message": "茶汤泡出来颜色很淡是什么原因",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0235",
+    "message": "泡红茶一般多少度水温",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0236",
+    "message": "泡乌龙茶用什么水温",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0237",
+    "message": "泡普洱茶用什么水温",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0238",
+    "message": "白茶怎么冲泡",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0239",
+    "message": "黑茶怎么泡才好喝",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  },
+  {
+    "id": "stage3-0240",
+    "message": "冷泡茶怎么做",
+    "expect_intent": "product_consult",
+    "category": "brewing"
+  }
 ]

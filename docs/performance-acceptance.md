@@ -15,6 +15,12 @@ pip install locust
 locust -f tests/load/locustfile.py --host http://127.0.0.1:8000 --users 1000 --spawn-rate 100
 ```
 
+小规模基线（本地/CI）：
+
+```bash
+python scripts/run_load_test.py --users 20 --run-time 30s
+```
+
 ## 场景
 
 | 场景 | 配比 |
@@ -38,4 +44,3 @@ locust -f tests/load/locustfile.py --host http://127.0.0.1:8000 --users 1000 --s
 - APM 慢调用；
 - 容量建议；
 - 回滚/紧急降级方案。
-

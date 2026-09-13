@@ -16,6 +16,8 @@ from app.agents.order_agent import extract_order_id
 from app.config.settings import settings
 from app.tools.action_tools import propose_apply_refund
 from app.tools.aftersale_tools import get_refund_status, get_ticket_status
+from app.tools.dispute_tools import get_dispute_status
+from app.tools.invoice_tools import get_invoice_status, request_invoice
 from app.tools.policy_tools import check_return_policy
 from app.tools.ticket_tools import create_ticket
 
@@ -32,8 +34,9 @@ class AfterSaleAgent(BaseAgent):
     )
 
     def register_tools(self) -> list[BaseTool]:
-        """售后工具：政策查询、工单创建、退款进度、工单进度、退款申请提案"""
-        return [check_return_policy, create_ticket, get_refund_status, get_ticket_status, propose_apply_refund]
+        """售后工具：政策/退款/工单/发票/仲裁（本地规则+云端 tool-calling 共用）"""
+        return [check_return_policy, create_ticket, get_refund_status, get_ticket_status,
+                propose_apply_refund, request_invoice, get_invoice_status, get_dispute_status]
 
     async def run(self, state: AgentState) -> dict:
         if settings.llm_provider == "local":
@@ -53,6 +56,26 @@ class AfterSaleAgent(BaseAgent):
         intent = state.get("intent", "return_goods")
         user_id = str(state.get("user_id") or "")
         session_id = str(state.get("session_id") or "")
+
+        # 发票/仲裁类问题（本地规则直连）
+        if "发票" in query:
+            inv = await get_invoice_status.ainvoke({"user_id": user_id})
+            user_content = f"用户问题：{query}\n\n发票信息：{inv}"
+            prompt = [SystemMessage(content=self.system_prompt + "\n\n【重要】直接回答，不要使用 <think> 标签输出推理过程。"),
+                      HumanMessage(content=user_content)]
+            resp = await self.llm.ainvoke(prompt)
+            content = _strip_think_tags(resp.content or "")
+            return {"messages": [AIMessage(content=content or f"发票状态：{inv}")]}
+        if "仲裁" in query or "争议" in query:
+            m = re.search(r"DS[A-Z0-9_]{4,}", query or "")
+            if m:
+                ds = await get_dispute_status.ainvoke({"user_id": user_id, "dispute_no": m.group(0)})
+                user_content = f"用户问题：{query}\n\n仲裁进度：{ds}"
+                prompt = [SystemMessage(content=self.system_prompt + "\n\n【重要】直接回答，不要使用 <think> 标签输出推理过程。"),
+                          HumanMessage(content=user_content)]
+                resp = await self.llm.ainvoke(prompt)
+                content = _strip_think_tags(resp.content or "")
+                return {"messages": [AIMessage(content=content or f"仲裁进度：{ds}")]}
 
         # ── ① 退款申请（写操作，需确认）：优先处理 ──
         order_id_pre = extract_order_id(query)

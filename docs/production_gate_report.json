@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "compile",
+      "ok": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "pytest",
+      "ok": true,
+      "stdout": "efund.completed_at = datetime.utcnow()\n\ntests/unit/test_refund_callback.py::test_refund_callback_marks_completed_and_writes_ledger\n  E:\\CSagent\\app\\api\\routes\\channel_payments.py:56: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    ledger_date=datetime.utcnow(), channel=channel, type=\"refund\",\n\ntests/integration/test_agent_mock.py::test_workflow_mock\n  E:\\CSagent\\app\\knowledge\\vectordb.py:31: LangChainDeprecationWarning: The class `Chroma` was deprecated in LangChain 0.2.9 and will be removed in 1.0. An updated version of the class exists in the `langchain-chroma package and should be used instead. To use it run `pip install -U `langchain-chroma` and import as `from `langchain_chroma import Chroma``.\n    _vectorstore = Chroma(\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n28 passed, 8 warnings in 43.14s\n",
+      "stderr": ""
+    },
+    {
+      "name": "security",
+      "ok": true,
+      "stdout": "��ȫ����ͨ��\n",
+      "stderr": ""
+    },
+    {
+      "name": "admin-build",
+      "ok": true,
+      "stdout": "ssets/PaymentsView-7VT0k7wC.js              5.03 kB │ gzip:   1.92 kB\ndist/assets/ShipmentsView-BHikyHNG.js             5.39 kB │ gzip:   2.23 kB\ndist/assets/AgentPlatformView-C1vYybEm.js         5.49 kB │ gzip:   2.22 kB\ndist/assets/TicketsView-D3UNWUOY.js               5.86 kB │ gzip:   2.66 kB\ndist/assets/UsersView-FDEvKyCq.js                 6.46 kB │ gzip:   2.37 kB\ndist/assets/OrdersView-alYMoZ6k.js                6.73 kB │ gzip:   2.58 kB\ndist/assets/MarketingView-B1nHQXNH.js             9.83 kB │ gzip:   2.92 kB\ndist/assets/ProductsView-DFySY3-Y.js             11.96 kB │ gzip:   3.79 kB\ndist/assets/index-Cyp6JiH-.js                    15.72 kB │ gzip:   6.71 kB\ndist/assets/vendor-http-CzApALvg.js              48.54 kB │ gzip:  18.63 kB\ndist/assets/vendor-vue-CwlmB4xj.js              119.76 kB │ gzip:  46.35 kB\ndist/assets/vendor-charts-Bb6yjXMn.js         1,034.91 kB │ gzip: 343.41 kB\ndist/assets/vendor-element-plus-BM7kyyMd.js   1,063.76 kB │ gzip: 335.94 kB\n✓ built in 10.71s\n",
+      "stderr": "node_modules/@vueuse/core/dist/index.js (3362:0): A comment\n\n\"/* #__PURE__ */\"\n\nin \"node_modules/@vueuse/core/dist/index.js\" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.\nnode_modules/@vueuse/core/dist/index.js (5780:22): A comment\n\n\"/* #__PURE__ */\"\n\nin \"node_modules/@vueuse/core/dist/index.js\" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.\n"
+    }
+  ]
+}

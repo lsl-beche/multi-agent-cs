@@ -33,11 +33,16 @@ from app.api.routes import (
     admin_users,
     agent_admin,
     auth,
+    channel_payments,
     chat,
+    dispute,
     health,
+    invoice,
     knowledge,
     metrics,
+    openapi,
     privacy,
+    risk_admin,
     session,
     shop_cart,
     shop_coupons,
@@ -272,6 +277,12 @@ def create_app() -> FastAPI:
         response.headers.setdefault("X-Frame-Options", "DENY")
         response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
         response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        response.headers.setdefault(
+            "Content-Security-Policy",
+            "default-src 'self'; img-src 'self' data: blob: https:; "
+            "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https:; "
+            "connect-src 'self' https: wss:; font-src 'self' data:",
+        )
         if request.url.scheme == "https":
             response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
         return response
@@ -301,7 +312,9 @@ def create_app() -> FastAPI:
     app.include_router(admin_reports.router, prefix="/api/admin/reports", tags=["数据报表"])
     app.include_router(admin_logs.router, prefix="/api/admin/logs", tags=["操作日志"])
     app.include_router(agent_admin.router, prefix="/api/admin/agents", tags=["Agent平台"])
+    app.include_router(risk_admin.router, prefix="/api/admin/risk", tags=["风控管理"])
     app.include_router(privacy.router, prefix="/api", tags=["隐私合规"])
+    app.include_router(openapi.router, prefix="/api/openapi", tags=["开放平台"])
 
     # C 端商城
     app.include_router(shop_products.router, prefix="/api/products", tags=["C端商品"])
@@ -309,6 +322,9 @@ def create_app() -> FastAPI:
     app.include_router(shop_cart.router, prefix="/api/cart", tags=["C端购物车"])
     app.include_router(shop_user.router, prefix="/api/user", tags=["C端用户"])
     app.include_router(shop_payments.router, prefix="/api/payments", tags=["C端支付"])
+    app.include_router(channel_payments.router, prefix="/api/payments", tags=["渠道回调"])
+    app.include_router(invoice.router, prefix="/api/invoices", tags=["电子发票"])
+    app.include_router(dispute.router, prefix="/api/disputes", tags=["售后仲裁"])
     app.include_router(shop_reviews.router, tags=["C端评价"])
     app.include_router(shop_coupons.router, tags=["C端优惠券"])
 

@@ -15,11 +15,19 @@ from app.core.metrics import LLM_CALLS, LLM_DURATION, LLM_TOKENS
 # llama.cpp本地服务不校验Key，但OpenAI客户端要求非空
 _LOCAL_DUMMY_KEY = "sk-local-no-key-required"
 
+# 分层路由任务清单：按任务复杂度选择 fast / large / default 模型
+_FAST_TASKS = {"intent", "summary", "preferences", "sentiment", "classification", "tags"}
+_LARGE_TASKS = {
+    "supervisor", "knowledge_agent", "order_agent", "aftersale_agent",
+    "promotion_agent", "compliance_agent", "chat", "dialogue",
+}
+
 
 class MetricChatOpenAI(ChatOpenAI):
     """带指标采集的 ChatOpenAI：记录调用次数/耗时/估算token（按任务标签）"""
 
     task: str = "unknown"
+    tier: str = "default"
 
     async def ainvoke(self, input, config=None, **kwargs):
         t0 = time.perf_counter()
@@ -68,7 +76,16 @@ class MetricChatOpenAI(ChatOpenAI):
         LLM_CALLS.labels(task=self.task, provider=settings.llm_provider).inc()
         LLM_DURATION.labels(task=self.task).observe(time.perf_counter() - t0)
         content = getattr(resp, "content", "") or ""
-        LLM_TOKENS.labels(task=self.task).inc(max(1, len(str(content)) // 2))
+        tokens = max(1, len(str(content)) // 2)
+        LLM_TOKENS.labels(task=self.task).inc(tokens)
+        # Agent 平台 trace：把模型调用写入当前 run
+        try:
+            from app.agents.trace import get_current_trace_id, trace_store
+            run_id = get_current_trace_id()
+            if run_id:
+                trace_store.record_llm(run_id, self.task, (time.perf_counter() - t0) * 1000, tokens, self.tier)
+        except Exception:
+            pass
 
 
 def get_llm(streaming: bool = True, task: str = "unknown", **overrides) -> BaseChatModel:
@@ -109,4 +126,28 @@ def get_llm_for_task(task: str, **overrides):
 
     本地/单模型环境所有任务同一模型；云端可配置 LLM_FAST_MODEL / LLM_LARGE_MODEL。
     """
-    return get_llm(task=task, **overrides)
+    tier = "default"
+    model = settings.llm_model
+    base_url = settings.llm_base_url
+    api_key = settings.llm_api_key
+    if settings.llm_provider != "local":
+        if task in _FAST_TASKS and settings.llm_fast_model:
+            tier = "fast"
+            model = settings.llm_fast_model
+            base_url = settings.llm_fast_base_url or settings.llm_base_url
+            api_key = settings.llm_fast_api_key or settings.llm_api_key
+        elif task in _LARGE_TASKS and settings.llm_large_model:
+            tier = "large"
+            model = settings.llm_large_model
+            base_url = settings.llm_large_base_url or settings.llm_base_url
+            api_key = settings.llm_large_api_key or settings.llm_api_key
+    from app.core.metrics import MODEL_ROUTED
+    MODEL_ROUTED.labels(task=task, tier=tier).inc()
+    return get_llm(
+        task=task,
+        model=model,
+        base_url=base_url,
+        api_key=api_key,
+        tier=tier,
+        **overrides,
+    )

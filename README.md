@@ -98,6 +98,8 @@ app/
 - 分支保护规范：[docs/branch-protection.md](./docs/branch-protection.md)
 - 架构决策记录：[docs/adr/](./docs/adr/)
 - 企业级路线图：[docs/enterprise-l2-roadmap.md](./docs/enterprise-l2-roadmap.md)
+- AI 平台化进度：[docs/stage-c-ai-platform-progress.md](./docs/stage-c-ai-platform-progress.md)
+- 安全/开放/生产化进度：[docs/stage-de-production-progress.md](./docs/stage-de-production-progress.md)
 - 提交流程见 [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## 测试

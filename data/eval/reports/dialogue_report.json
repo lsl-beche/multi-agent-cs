@@ -1,0 +1,212 @@
+{
+  "mode": "intent",
+  "total": 240,
+  "passed": 211,
+  "accuracy": 0.8792,
+  "seconds": 40.33,
+  "failures": [
+    {
+      "id": "stage3-0042",
+      "message": "什么是明前茶，为什么明前茶比较贵",
+      "expect": "price_inquiry",
+      "got": "product_consult",
+      "conf": 0.5
+    },
+    {
+      "id": "stage3-0103",
+      "message": "你们的包装密实吗，快递中会不会压碎",
+      "expect": "return_goods",
+      "got": "track_logistics",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0104",
+      "message": "一次买很多茶叶，会有特别的优惠吗",
+      "expect": "promotion_consult",
+      "got": "product_consult",
+      "conf": 0.511
+    },
+    {
+      "id": "stage3-0118",
+      "message": "冰岛茶为什么那么贵",
+      "expect": "price_inquiry",
+      "got": "product_consult",
+      "conf": 0.5
+    },
+    {
+      "id": "stage3-0141",
+      "message": "下单后多久发货",
+      "expect": "track_logistics",
+      "got": "query_order",
+      "conf": 0.568
+    },
+    {
+      "id": "stage3-0150",
+      "message": "下单后未付款，订单会保留多久",
+      "expect": "query_order",
+      "got": "payment_issue",
+      "conf": 0.522
+    },
+    {
+      "id": "stage3-0151",
+      "message": "一个订单里的商品可以分开发货吗",
+      "expect": "track_logistics",
+      "got": "query_order",
+      "conf": 0.501
+    },
+    {
+      "id": "stage3-0157",
+      "message": "收到商品有质量问题怎么处理",
+      "expect": "product_consult",
+      "got": "exchange_goods",
+      "conf": 0.588
+    },
+    {
+      "id": "stage3-0159",
+      "message": "收到的商品少发、漏发或发错了怎么办",
+      "expect": "exchange_goods",
+      "got": "return_goods",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0166",
+      "message": "下单时优惠券没有抵扣成功怎么办",
+      "expect": "query_order",
+      "got": "promotion_consult",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0171",
+      "message": "显示有货但拍下后说缺货怎么办",
+      "expect": "product_consult",
+      "got": "exchange_goods",
+      "conf": 0.528
+    },
+    {
+      "id": "stage3-0173",
+      "message": "商品页面标的材质和实际一致吗",
+      "expect": "app_usage",
+      "got": "product_consult",
+      "conf": 0.5
+    },
+    {
+      "id": "stage3-0174",
+      "message": "APP经常闪退或卡顿怎么办",
+      "expect": "product_consult",
+      "got": "app_usage",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0176",
+      "message": "收不到手机验证码怎么办",
+      "expect": "return_goods",
+      "got": "app_usage",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0177",
+      "message": "客服的工作时间是什么时候",
+      "expect": "product_consult",
+      "got": "human_service",
+      "conf": 0.528
+    },
+    {
+      "id": "stage3-0179",
+      "message": "预售商品什么时候发货",
+      "expect": "track_logistics",
+      "got": "query_order",
+      "conf": 0.75
+    },
+    {
+      "id": "stage3-0180",
+      "message": "大促期间发货慢怎么办",
+      "expect": "track_logistics",
+      "got": "exchange_goods",
+      "conf": 0.534
+    },
+    {
+      "id": "stage3-0183",
+      "message": "商品有保修吗，保修多久",
+      "expect": "product_consult",
+      "got": "price_inquiry",
+      "conf": 0.519
+    },
+    {
+      "id": "stage3-0186",
+      "message": "商品有质量问题怎么申请售后",
+      "expect": "product_consult",
+      "got": "return_goods",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0191",
+      "message": "收到包裹破损怎么办",
+      "expect": "return_goods",
+      "got": "track_logistics",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0192",
+      "message": "少发漏发怎么处理",
+      "expect": "return_goods",
+      "got": "product_consult",
+      "conf": 0.5
+    },
+    {
+      "id": "stage3-0193",
+      "message": "发错货了怎么办",
+      "expect": "exchange_goods",
+      "got": "return_goods",
+      "conf": 0.9
+    },
+    {
+      "id": "stage3-0200",
+      "message": "发票开错了可以重开吗",
+      "expect": "payment_issue",
+      "got": "exchange_goods",
+      "conf": 0.537
+    },
+    {
+      "id": "stage3-0209",
+      "message": "加入购物车失败是什么原因",
+      "expect": "product_consult",
+      "got": "payment_issue",
+      "conf": 0.512
+    },
+    {
+      "id": "stage3-0214",
+      "message": "支持微信快捷登录吗",
+      "expect": "app_usage",
+      "got": "product_consult",
+      "conf": 0.5
+    },
+    {
+      "id": "stage3-0217",
+      "message": "商品图片加载不出来",
+      "expect": "app_usage",
+      "got": "product_consult",
+      "conf": 0.5
+    },
+    {
+      "id": "stage3-0218",
+      "message": "添加收货地址失败怎么办",
+      "expect": "query_order",
+      "got": "app_usage",
+      "conf": 0.566
+    },
+    {
+      "id": "stage3-0219",
+      "message": "手机号怎么换绑",
+      "expect": "product_consult",
+      "got": "exchange_goods",
+      "conf": 0.527
+    },
+    {
+      "id": "stage3-0221",
+      "message": "客服对话发送失败怎么办",
+      "expect": "product_consult",
+      "got": "human_service",
+      "conf": 0.555
+    }
+  ]
+}

@@ -1,7 +1,8 @@
-"""支付对账：本地支付/退款流水一致性核验（沙箱渠道）
+"""支付对账：本地流水一致性 + 本地 ↔ 渠道账本双侧比对
 
-目标：每日跑一次，发现"本地记录 vs 订单状态"不一致项，
-防范丢单/错单/重复支付。真实渠道接入后，provider 侧补渠道流水比对。
+- 单侧：支付/退款状态 vs 订单状态（已有）
+- 双侧：本地 payments/refunds 与 channel_ledgers（渠道账单）按单号比对，
+  金额/状态/时间一致才算通过；真实渠道由账单下载任务写入 channel_ledgers
 """
 import logging
 from datetime import datetime, timedelta
@@ -9,7 +10,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import select
 
 from app.core.db import SessionLocal
-from app.models.tables import Order, Payment, Refund
+from app.models.tables import ChannelLedger, Order, Payment, Refund
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +26,16 @@ def reconcile(window_hours: int = 24) -> dict:
         refunds = db.execute(
             select(Refund).where(Refund.created_at >= since).order_by(Refund.id)
         ).scalars().all()
+        ledgers = db.execute(
+            select(ChannelLedger).where(ChannelLedger.created_at >= since)
+        ).scalars().all()
         orders = {o.id: o for o in db.execute(select(Order)).scalars().all()}
 
         mismatches = []
         checked = 0
+        ledger_map = {}
+        for lg in ledgers:
+            ledger_map.setdefault(lg.out_no, []).append(lg)
         for p in payments:
             checked += 1
             o = orders.get(p.order_id)
@@ -45,6 +52,15 @@ def reconcile(window_hours: int = 24) -> dict:
             elif p.status == "pending":
                 if o.pay_status != "unpaid":
                     mismatches.append(f"PAY {p.payment_no}: 待支付但订单 {o.order_no} pay_status={o.pay_status}")
+            # 双侧比对：本地已支付 ↔ 渠道账本存在同单号同金额同状态
+            if p.status == "paid":
+                lg = ledger_map.get(o.order_no, [])
+                if not lg:
+                    mismatches.append(f"PAY {p.payment_no}: 本地已支付但渠道账本缺失 {o.order_no}")
+                else:
+                    for item in lg:
+                        if item.type == "payment" and abs(float(item.amount) - float(p.amount)) > 0.01:
+                            mismatches.append(f"PAY {p.payment_no}: 金额不一致 本地 {float(p.amount)} vs 渠道 {float(item.amount)}")
 
         for r in refunds:
             checked += 1
@@ -56,6 +72,10 @@ def reconcile(window_hours: int = 24) -> dict:
                 mismatches.append(f"RF {r.refund_no}: 退款 {r.status} 但订单 {o.order_no} pay_status={o.pay_status}")
             if r.status == "completed" and not r.completed_at:
                 mismatches.append(f"RF {r.refund_no}: 已到账但缺 completed_at")
+            lg = ledger_map.get(o.order_no, [])
+            if r.status == "completed":
+                if not [x for x in lg if x.type == "refund"]:
+                    mismatches.append(f"RF {r.refund_no}: 本地已到账但渠道退款账本缺失 {o.order_no}")
 
         return {
             "window_hours": window_hours,

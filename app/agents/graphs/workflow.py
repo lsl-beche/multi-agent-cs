@@ -199,11 +199,28 @@ def _route_after_knowledge_agent(state: AgentState) -> str:
 def _timed(name: str, fn):
     """为 Agent 节点添加耗时日志的装饰器"""
     async def _wrapper(state: AgentState) -> dict:
+        from app.agents.trace import set_current_trace_id, trace_store
+        from app.core.metrics import AGENT_NODES
+
         t0 = time.perf_counter()
-        result = await fn(state)
-        elapsed = time.perf_counter() - t0
-        intent = state.get("intent", "")
-        perf_logger.info(f"[workflow] {name}: {elapsed * 1000:.0f}ms (intent={intent})")
+        trace_id = state.get("trace_id", "")
+        set_current_trace_id(trace_id)
+        node_status = "ok"
+        try:
+            result = await fn(state)
+        except Exception as exc:
+            node_status = "error"
+            trace_store.record_node(trace_id, name, "error",
+                                    (time.perf_counter() - t0) * 1000, str(exc)[:300])
+            AGENT_NODES.labels(node=name, status="error").inc()
+            raise
+        finally:
+            elapsed = time.perf_counter() - t0
+            intent = state.get("intent", "")
+            trace_store.record_node(trace_id, name, node_status, elapsed * 1000, intent)
+            AGENT_NODES.labels(node=name, status=node_status).inc()
+            perf_logger.info(f"[workflow] {name}: {elapsed * 1000:.0f}ms (intent={intent})")
+            set_current_trace_id("")
         return result
     return _wrapper
 

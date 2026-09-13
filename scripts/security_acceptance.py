@@ -20,6 +20,11 @@ def main() -> int:
     problems += check(".env\n" in gitignore or ".env" in gitignore, ".gitignore 未忽略 .env")
     problems += check("/models/\n" in gitignore, ".gitignore 未使用根目录 models 忽略规则")
 
+    main = (ROOT / "app" / "main.py").read_text(encoding="utf-8")
+    problems += check("Content-Security-Policy" in main, "未设置 CSP 安全响应头")
+    quota = (ROOT / "app" / "core" / "quota.py").read_text(encoding="utf-8")
+    problems += check("csagent:quota:llm:" in quota, "LLM 用户配额未实现")
+
     checks = [
         [sys.executable, "-m", "compileall", "-q", "app", "scripts"],
         [sys.executable, "-m", "ruff", "check", "app", "scripts", "tests"],

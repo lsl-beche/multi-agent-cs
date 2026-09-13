@@ -10,6 +10,8 @@
 
 手动执行：`bash scripts/backup_db.sh`（本机需 pg_dump；Deploy 容器亦内置）。
 
+恢复可用 `bash scripts/restore_db.sh backup/csagent-YYYYMMDDHHMM.sql.gz` 一键执行。
+
 ## 恢复演练（每季度一次）
 
 1. 创建临时库并恢复：

@@ -29,6 +29,11 @@ class CreateOrderBody(BaseModel):
 @router.post("", summary="创建订单")
 async def create_order(body: CreateOrderBody, request: Request, db=Depends(get_db)):
     uid = await _uid(request)
+    # 风控：下单频率/黑名单（金额在服务内计算，此处做主体级检查）
+    from app.core.risk import evaluate_async as risk_evaluate_async
+    risk = await risk_evaluate_async("order", {"user_id": uid, "ip": request.client.host if request.client else None})
+    if risk["action"] == "block":
+        raise HTTPException(403, detail="下单行为异常，请联系客服核实")
     try:
         result = await OrderService.create_order_async(
             db,
