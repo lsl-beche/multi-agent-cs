@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/order_service?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: ${DB_PASSWORD:order_dev_2026}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 3000
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000
+  sql:
+    init:
+      mode: never   # 建表由 Compose 的 docker-entrypoint-initdb.d 负责,应用不承担 DDL
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   # dev 可见 SQL,生产改 slf4j
+  global-config:
+    banner: false
+
+app:
+  debug-enabled: true   # 对拍演示接口开关(/api/debug/**),生产必须 false
+
+logging:
+  level:
+    com.csagent.order: INFO
