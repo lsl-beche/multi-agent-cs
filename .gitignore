@@ -59,3 +59,7 @@ Thumbs.db
 
 # ===== 本地临时文件 =====
 .tmp_pdf/
+
+# Java 交易服务(services/order-java)
+target/
+*.class

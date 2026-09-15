@@ -107,3 +107,26 @@ app/
 ```bash
 pytest tests/ -v
 ```
+
+## 系统架构:Python 智能层 + Java 交易层
+
+本仓库包含同一系统的两层实现,通过 REST + Idempotency-Key 集成:
+
+```
+Python 智能层(app/,本目录主体)
+  LLM 客服 Agent:意图识别 / RAG / 记忆 / 合规 / 人工转接
+        │ REST + Idempotency-Key(见 services/order-java/integration/agent_client.py)
+        ▼
+Java 交易层(services/order-java,Spring Boot 3)
+  订单查询 / 提案-确认-执行状态机 / 乐观锁扣减 / 幂等键
+```
+
+交易写链路独立成 Java 服务的原因:强一致与事务工具生态;智能层与交易层的
+集成契约见 `services/order-java/README.md`(含对拍测试与压测证据)。
+
+启动与测试:
+```bash
+cd services/order-java
+docker compose up -d          # MySQL + Redis(自动建表+种子)
+mvn test                      # 13 个集成用例(含 20 并发恰好一次、零超卖)
+```

@@ -6,8 +6,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.MountableFile;
 
-import java.nio.file.Paths;
-
 /**
  * 集成测试数据库策略(双路):
  * 1. -Dtestcontainers=true:单例 MySQL Testcontainers,挂载生产同源 db/schema.sql;
@@ -25,12 +23,14 @@ public abstract class IntegrationTestBase {
     static final MySQLContainer<?> MYSQL = USE_TESTCONTAINERS ? buildAndStart() : null;
 
     static MySQLContainer<?> buildAndStart() {
+        // schema 走 classpath(src/test/resources/order-schema.sql,与工作目录无关);
+        // 主副本在 db/schema.sql 供 compose init,两处需同步。
         MySQLContainer<?> container = new MySQLContainer<>("mysql:8.0")
                 .withDatabaseName("order_service")
                 .withUsername("root")
                 .withPassword("order_dev_2026")
                 .withCopyFileToContainer(
-                        MountableFile.forHostPath(Paths.get("db", "schema.sql")),
+                        MountableFile.forClasspathResource("order-schema.sql"),
                         "/docker-entrypoint-initdb.d/01-schema.sql");
         container.start();
         return container;

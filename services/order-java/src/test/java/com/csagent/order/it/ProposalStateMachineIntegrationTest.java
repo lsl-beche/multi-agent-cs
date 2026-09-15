@@ -3,6 +3,7 @@ package com.csagent.order.it;
 import com.csagent.order.common.ErrorCode;
 import com.csagent.order.common.exception.BusinessException;
 import com.csagent.order.service.ProposalService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,6 +29,13 @@ class ProposalStateMachineIntegrationTest extends com.csagent.order.support.Inte
 
     @Autowired
     JdbcTemplate jdbc;
+
+    /** 固定单号/会话 ID 的测试需要可重跑:每次先清掉本类的残留数据。 */
+    @BeforeEach
+    void cleanupResidue() {
+        jdbc.update("DELETE FROM pending_actions WHERE session_id LIKE 'it-%'");
+        jdbc.update("DELETE FROM orders WHERE order_no LIKE 'SO-IT-%'");
+    }
 
     private long insertOrder(String orderNo) {
         jdbc.update("INSERT INTO orders (order_no,user_id,total_amount,discount_amount,pay_amount,order_status) "
