@@ -30,7 +30,7 @@ mybatis-plus:
     banner: false
 
 app:
-  debug-enabled: true   # 对拍演示接口开关(/api/debug/**),生产必须 false
+  debug-enabled: false  # 对拍演示接口开关,演示时以 -Dapp.debug-enabled=true 临时开启
 
 logging:
   level:

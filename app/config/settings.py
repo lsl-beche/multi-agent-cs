@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     llm_fallback_url: str = ""
     llm_fallback_key: str = ""
     llm_fallback_model: str = ""
+    llm_timeout_sec: int = 60               # LLM 请求超时(秒),防模型挂起拖死请求链
     llm_temperature: float = 0.3
 
     # ===== 本地LLM（llama.cpp，免API Key）=====

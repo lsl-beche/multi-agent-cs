@@ -56,6 +56,7 @@ class MetricChatOpenAI(ChatOpenAI):
             base_url=settings.llm_fallback_url,
             temperature=settings.llm_temperature,
             max_retries=1,
+            timeout=settings.llm_timeout_sec,
         )
 
     def _fallback_invoke(self, input, config, kwargs):
@@ -103,6 +104,7 @@ def get_llm(streaming: bool = True, task: str = "unknown", **overrides) -> BaseC
             "temperature": settings.llm_temperature,
             "streaming": streaming,
             "max_retries": 1,
+            "timeout": settings.llm_timeout_sec,
             "extra_body": {
                 "enable_thinking": False,  # Qwen3 禁用推理链
                 "chat_template_kwargs": {"enable_thinking": False},  # 兼容旧版 llama.cpp
@@ -116,6 +118,7 @@ def get_llm(streaming: bool = True, task: str = "unknown", **overrides) -> BaseC
             "temperature": settings.llm_temperature,
             "streaming": streaming,
             "max_retries": 3,
+            "timeout": settings.llm_timeout_sec,
         }
     params.update(overrides)
     return MetricChatOpenAI(**params, task=task)

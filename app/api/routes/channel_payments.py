@@ -14,6 +14,9 @@ router = APIRouter()
 
 def _apply_paid(db, order, payment, trade_no: str, amount: float, channel: str) -> bool:
     """幂等标记支付成功，并写入渠道账本"""
+    if abs(amount - float(order.pay_amount)) > 0.01:
+        # 资损防护:回调金额与订单应付不符时拒绝入账(路由层转为 400,渠道会重试核对)
+        raise ValueError(f"回调金额 {amount} 与订单应付 {order.pay_amount} 不一致")
     if payment.status != "paid":
         payment.status = "paid"
         payment.paid_at = datetime.utcnow()
@@ -42,6 +45,8 @@ def _find(db, out_trade_no: str):
 
 def _apply_refunded(db, refund: Refund, order: Order, trade_no: str, amount: float, channel: str) -> bool:
     """幂等处理渠道退款回调：更新退款状态并写入渠道侧退款流水。"""
+    if abs(amount - float(refund.amount)) > 0.01:
+        raise ValueError(f"退款回调金额 {amount} 与退款单 {refund.amount} 不一致")
     if refund.status != "completed":
         refund.status = "completed"
         refund.completed_at = datetime.utcnow()

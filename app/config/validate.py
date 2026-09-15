@@ -4,7 +4,12 @@ from sqlalchemy.engine.url import make_url
 
 from app.config.settings import settings
 
-FORBIDDEN_DEFAULTS = {"change-me-in-production", "change-me-in-production-jwt-secret-key-at-least-32-chars"}
+FORBIDDEN_DEFAULTS = {
+    "change-me-in-production",
+    "change-me-in-production-jwt-secret-key-at-least-32-chars",
+    "stage-de-dev-secret",   # openapi_service 弱默认
+    "sandbox-dev-secret",    # payment_gateway 弱默认
+}
 
 
 def validate_security_config() -> None:
@@ -34,6 +39,9 @@ def validate_security_config() -> None:
 
         if not settings.cors_origins or "*" in settings.cors_origins:
             errors.append("生产环境 CORS 不允许使用通配符")
+
+        if not settings.payment_gateway_secret or settings.payment_gateway_secret in FORBIDDEN_DEFAULTS:
+            errors.append("生产环境必须配置显式 PAYMENT_GATEWAY_SECRET")
     else:
         # 开发环境仅提示
         if not settings.jwt_secret_key:

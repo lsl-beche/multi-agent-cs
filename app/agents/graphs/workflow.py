@@ -78,7 +78,13 @@ async def _run_pending_action(pending: dict) -> str:
     raw = "抱歉，未识别的操作。"
     try:
         if action == "cancel_order":
-            raw = await execute_cancel_order.ainvoke(params)
+            from app.integrations.order_java import cancel_order_via_java, java_write_enabled
+            if java_write_enabled():
+                # 写链路已切 Java 交易服务:原子状态机 + 幂等键(竞态缺陷在 Java 侧修复,对拍见其 README)
+                raw = cancel_order_via_java(str(params.get("order_id", "")),
+                                            str(params.get("user_id", "")) or "1")
+            else:
+                raw = await execute_cancel_order.ainvoke(params)
         elif action == "confirm_receipt":
             raw = await execute_confirm_receipt.ainvoke(params)
         elif action == "apply_refund":

@@ -29,6 +29,16 @@ public class OrderQueryService {
         return OrderVO.from(order);
     }
 
+    /** 按业务单号查询:供 Python 智能层(单号字符串)换算本服务数字主键。 */
+    public long getIdByOrderNo(String orderNo) {
+        Order order = orderMapper.selectOne(
+                new LambdaQueryWrapper<Order>().eq(Order::getOrderNo, orderNo));
+        if (order == null) {
+            throw new BusinessException(ErrorCode.ORDER_NOT_FOUND);
+        }
+        return order.getId();
+    }
+
     public PageResult<OrderVO> page(long userId, String orderStatus, String payStatus, int page, int size) {
         LambdaQueryWrapper<Order> qw = new LambdaQueryWrapper<Order>()
                 .eq(Order::getUserId, userId)

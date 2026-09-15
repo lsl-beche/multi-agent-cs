@@ -32,6 +32,12 @@ public class OrderController {
         return ApiResponse.ok(orderQueryService.getById(id));
     }
 
+    /** 按业务单号换算本服务订单 ID(Python 智能层单号为字符串)。 */
+    @GetMapping("/by-no/{orderNo}")
+    public ApiResponse<Long> idByOrderNo(@PathVariable String orderNo) {
+        return ApiResponse.ok(orderQueryService.getIdByOrderNo(orderNo));
+    }
+
     @GetMapping
     public ApiResponse<PageResult<OrderVO>> page(
             @RequestParam @Positive long userId,
