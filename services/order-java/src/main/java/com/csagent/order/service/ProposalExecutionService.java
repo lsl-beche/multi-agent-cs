@@ -1,10 +1,15 @@
 package com.csagent.order.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.csagent.order.common.exception.BusinessException;
 import com.csagent.order.common.ErrorCode;
+import com.csagent.order.entity.OrderItem;
 import com.csagent.order.entity.PendingAction;
+import com.csagent.order.mapper.OrderItemMapper;
 import com.csagent.order.mapper.OrderMapper;
 import com.csagent.order.mapper.PendingActionMapper;
+import com.csagent.order.mapper.SkuMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,8 @@ public class ProposalExecutionService {
 
     private final PendingActionMapper pendingActionMapper;
     private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
+    private final SkuMapper skuMapper;
 
     @Transactional
     public void executeClaimed(long actionId) {
@@ -35,7 +42,15 @@ public class ProposalExecutionService {
             pendingActionMapper.markFailedIfExecuting(actionId);
             throw new BusinessException(ErrorCode.ORDER_NOT_FOUND, "提案指向的订单不存在,已标 FAILED");
         }
-        orderMapper.cancelIfNotCancelled(action.getOrderId());
+        int cancelled = orderMapper.cancelIfNotCancelled(action.getOrderId());
+        if (cancelled == 1) {
+            // 同事务回补库存:取消生效才回补,重放天然幂等
+            List<OrderItem> items = orderItemMapper.selectList(
+                    new LambdaQueryWrapper<OrderItem>().eq(OrderItem::getOrderId, action.getOrderId()));
+            for (OrderItem item : items) {
+                skuMapper.restoreStock(item.getSkuId(), item.getQuantity());
+            }
+        }
         int marked = pendingActionMapper.markDoneIfExecuting(actionId);
         if (marked == 0) {
             // 抢占被超时回收抢走(副作用条件化,重放无害),此处仅告警

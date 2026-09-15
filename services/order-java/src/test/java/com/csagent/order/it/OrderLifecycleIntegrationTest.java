@@ -102,9 +102,9 @@ class OrderLifecycleIntegrationTest extends com.csagent.order.support.Integratio
     }
 
     @Test
-    void cancel_unpaid_via_proposal() {
+    void cancel_unpaid_via_proposal_restores_stock() {
         jdbc.update("UPDATE skus SET stock = 10 WHERE id = 1");
-        OrderVO order = create(1);
+        OrderVO order = create(2);                          // 创建扣减:10 → 8
         long orderId = jdbc.queryForObject(
                 "SELECT id FROM orders WHERE order_no = ?", Long.class, order.orderNo());
         long actionId = insertProposal(orderId, "it-lc1", "INTERVAL 10 MINUTE");
@@ -114,6 +114,9 @@ class OrderLifecycleIntegrationTest extends com.csagent.order.support.Integratio
         assertThat(jdbc.queryForObject(
                 "SELECT order_status FROM orders WHERE id = ?", String.class, orderId))
                 .isEqualTo("cancelled");
+        // 回补断言:取消必须把创建时扣掉的库存还回去(8 → 10)
+        Integer stock = jdbc.queryForObject("SELECT stock FROM skus WHERE id = 1", Integer.class);
+        assertThat(stock).isEqualTo(10);
     }
 
     @Autowired
