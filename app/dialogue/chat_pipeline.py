@@ -1,5 +1,7 @@
 """客服对话流水线：记忆构建、Agent 编排、缓存与持久化"""
 import asyncio
+
+from langgraph.errors import GraphRecursionError
 import concurrent.futures
 import logging
 import re
@@ -238,13 +240,16 @@ async def run_agent(session_id: str, user_id: str, message: str) -> dict:
             messages = [HumanMessage(content=message)]
         async with _agent_semaphore:
             result = await asyncio.wait_for(
-                workflow.ainvoke({
-                    "messages": messages,
-                    "session_id": session_id,
-                    "user_id": user_id,
-                    "slots": {},
-                    "trace_id": trace_id,
-                }),
+                workflow.ainvoke(
+                    {
+                        "messages": messages,
+                        "session_id": session_id,
+                        "user_id": user_id,
+                        "slots": {},
+                        "trace_id": trace_id,
+                    },
+                    config={"recursion_limit": 50},   # 预算控制：显式上限，超限转人工（fail-safe）
+                ),
                 timeout=90.0,
             )
         answer = result["messages"][-1].content if result.get("messages") else "抱歉，暂时无法回复。"
@@ -257,6 +262,11 @@ async def run_agent(session_id: str, user_id: str, message: str) -> dict:
         if cacheable(message, answer, intent, need_human):
             _memory_executor.submit(cache_answer, message, answer)
         return {"answer": answer, "intent": intent, "need_human": need_human}
+    except GraphRecursionError:
+        # 预算控制：轮次超限不静默失败，转人工兜底
+        fallback = "抱歉，本轮对话轮次超限，已为您转接人工客服。"
+        trace_store.finish(trace_id, need_human=True, answer=fallback, status="fallback")
+        return {"answer": fallback, "intent": "", "need_human": True}
     except asyncio.TimeoutError:
         trace_store.finish(trace_id, answer="回复超时", status="fallback", error="timeout>90s")
         return {"answer": "抱歉，当前回复较慢，请稍后再试。", "intent": "", "need_human": False}
@@ -307,6 +317,7 @@ async def stream_agent(session_id: str, user_id: str, message: str):
         async for event in workflow.astream_events(
             {"messages": messages, "session_id": session_id, "user_id": user_id,
              "slots": {}, "trace_id": trace_id},
+            config={"recursion_limit": 50},   # 预算控制：显式上限
             version="v2",
         ):
             if root_run_id is None:
@@ -354,6 +365,12 @@ async def stream_agent(session_id: str, user_id: str, message: str):
             yield ("chunk", final_content)
         trace_store.finish(trace_id, answer=final_content or full_answer, status="success")
         yield ("done", final_content)
+    except GraphRecursionError:
+        # 预算控制：流式路径轮次超限，转人工兜底
+        fallback = "抱歉，本轮对话轮次超限，已为您转接人工客服。"
+        trace_store.finish(trace_id, need_human=True, answer=fallback, status="fallback")
+        yield ("chunk", fallback)
+        yield ("done", fallback)
     except Exception as exc:
         trace_store.finish(trace_id, status="error", error=str(exc)[:500])
         yield ("done", "")

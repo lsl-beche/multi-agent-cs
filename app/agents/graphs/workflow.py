@@ -113,7 +113,7 @@ async def _run_pending_action(pending: dict) -> str:
 
 async def confirm_action_node(state: AgentState) -> dict:
     """确认节点：若会话有待确认动作且用户回复确认/取消，则执行或放弃，直接结束本轮"""
-    from app.dialogue.action_store import clear_pending, get_pending
+    from app.dialogue.action_store import pop_pending
 
     session_id = state.get("session_id", "")
     messages = state.get("messages", [])
@@ -121,7 +121,7 @@ async def confirm_action_node(state: AgentState) -> dict:
         return {}
     last = messages[-1]
     text = last.content if hasattr(last, "content") else str(last)
-    pending = get_pending(session_id)
+    pending = pop_pending(session_id)   # 原子取出：并发重复"确认"只有一个能拿到
     if not pending:
         # 没有待确认操作时，若用户只是说了“确认/好的”等确认词，礼貌说明并结束，避免被其他Agent误答
         if _is_confirm(text):
@@ -131,14 +131,12 @@ async def confirm_action_node(state: AgentState) -> dict:
             }
         return {}
     if _is_cancel(text):
-        clear_pending(session_id)
         return {
             "messages": [AIMessage(content="好的，已取消刚才的操作，您可以继续咨询其他问题。")],
             "current_agent": "end",
         }
     if _is_confirm(text):
         result = await _run_pending_action(pending)
-        clear_pending(session_id)
         return {"messages": [AIMessage(content=result)], "current_agent": "end"}
     return {}
 

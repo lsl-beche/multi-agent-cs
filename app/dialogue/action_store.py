@@ -57,6 +57,24 @@ def get_pending(session_id: str) -> dict | None:
         return None
 
 
+def pop_pending(session_id: str) -> dict | None:
+    """原子取出并删除待确认动作（Redis GETDEL）
+
+    修复并发缺陷：旧流程"get_pending → 校验 → clear_pending"存在
+    check-then-act 竞态，同会话并发两条"确认"会重复执行副作用。
+    GETDEL 在 Redis 侧原子完成取出+删除，并发下仅一个请求能拿到。
+    """
+    if not session_id:
+        return None
+    try:
+        raw = get_redis().getdel(_PREFIX + session_id)
+        if not raw:
+            return None
+        return json.loads(raw)
+    except Exception:
+        return None
+
+
 def clear_pending(session_id: str) -> None:
     """清除待确认动作"""
     if not session_id:

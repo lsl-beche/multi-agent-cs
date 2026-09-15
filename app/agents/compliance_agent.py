@@ -51,6 +51,21 @@ class ComplianceAgent(BaseAgent):
           compliance_passed=True   → 回复通过，正常返回用户
           compliance_passed=False  → 回复不合格，workflow 转人工兜底
         """
+        # ── 阶段〇:输入侧 Prompt 注入扫描(与输出侧审核构成双向防线)──
+        # 命中注入特征的输入不可信:不进入 Agent 决策链路,直接转人工
+        from app.agents.injection_guard import looks_like_injection
+        for m in reversed(state.get("messages", [])):
+            if type(m).__name__ == "HumanMessage":
+                if looks_like_injection(getattr(m, "content", "") or ""):
+                    return {
+                        "compliance_passed": False,
+                        "need_human": True,
+                        "messages": [AIMessage(
+                            content="您的请求包含需要人工确认的内容，已为您转接人工客服。"
+                        )],
+                    }
+                break
+
         last_msg = state["messages"][-1] if state.get("messages") else None
         if not last_msg:
             return {"compliance_passed": True}
