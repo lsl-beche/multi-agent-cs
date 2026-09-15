@@ -40,14 +40,16 @@ def main() -> int:
         codes = list(pool.map(hit, range(args.threads)))
 
     success, conflict = codes.count(200), codes.count(409)
-    other = len(codes) - success - conflict
+    limited = codes.count(429)
+    other = len(codes) - success - conflict - limited
 
     final = sess.get(f"{args.base}/api/inventory/{args.sku_id}", timeout=5).json()["data"]["stock"]
 
     print(f"initial={initial}  requests={args.threads}x{args.qty}  "
-          f"success={success}  conflict409={conflict}  other={other}")
+          f"success={success}  conflict409={conflict}  limited429={limited}  other={other}")
     print(f"final={final}  守恒校验: success*qty({success * args.qty}) == initial-final({initial - final})")
 
+    # 429 为限流主动拒绝,未执行扣减,不影响守恒
     passed = (other == 0
               and success * args.qty == initial - final
               and final >= 0)

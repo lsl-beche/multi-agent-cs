@@ -8,11 +8,15 @@ import com.csagent.order.dto.OrderVO;
 import com.csagent.order.entity.Order;
 import com.csagent.order.entity.OrderItem;
 import com.csagent.order.entity.Product;
+import com.csagent.order.entity.OutboxEvent;
 import com.csagent.order.entity.Sku;
 import com.csagent.order.mapper.OrderItemMapper;
 import com.csagent.order.mapper.OrderMapper;
 import com.csagent.order.mapper.ProductMapper;
+import com.csagent.order.mapper.OutboxEventMapper;
 import com.csagent.order.mapper.SkuMapper;
+import com.csagent.order.service.InventoryCache;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +46,9 @@ public class OrderCommandService {
     private final ProductMapper productMapper;
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
+    private final OutboxEventMapper outboxEventMapper;
+    private final InventoryCache inventoryCache;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public OrderVO create(CreateOrderRequest req) {
@@ -88,6 +95,7 @@ public class OrderCommandService {
         item.setTotalPrice(total);
         orderItemMapper.insert(item);
 
+        inventoryCache.evict(req.skuId());   // Cache Aside:写后删缓存
         log.info("订单创建: orderNo={}, sku={}, qty={}, amount={}",
                 order.getOrderNo(), sku.getSkuCode(), req.quantity(), total);
         return OrderVO.from(order, List.of(
@@ -106,6 +114,19 @@ public class OrderCommandService {
                     "支付金额 " + amount + " 与订单应付 " + order.getPayAmount() + " 不一致");
         }
         orderMapper.markPaidIfUnpaid(orderId);
+        // Outbox:支付成功事件与业务同一事务落库,投递器负责最终一致的异步通知
+        try {
+            String payload = objectMapper.writeValueAsString(java.util.Map.of(
+                    "order_no", order.getOrderNo(), "trade_no", tradeNo,
+                    "amount", amount, "source", "java-order-service"));
+            OutboxEvent event = new OutboxEvent();
+            event.setEventType("payment.paid");
+            event.setAggregateNo(order.getOrderNo());
+            event.setPayload(payload);
+            outboxEventMapper.insert(event);
+        } catch (Exception ex) {
+            log.warn("outbox 事件写入失败(不影响支付主流程): {}", ex.getMessage());
+        }
         log.info("订单支付成功: orderNo={}, tradeNo={}", order.getOrderNo(), tradeNo);
         return OrderVO.from(orderMapper.selectById(orderId));
     }

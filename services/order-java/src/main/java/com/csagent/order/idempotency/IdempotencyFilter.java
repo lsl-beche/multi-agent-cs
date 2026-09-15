@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,6 +29,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * - 同键不同参:400 IDEMPOTENCY_MISMATCH(客户端 bug,必须显式暴露)。
  */
 @Component
+@Order(2)
 @RequiredArgsConstructor
 public class IdempotencyFilter extends OncePerRequestFilter {
 

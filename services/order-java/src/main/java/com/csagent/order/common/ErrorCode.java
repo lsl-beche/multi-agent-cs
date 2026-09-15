@@ -17,6 +17,7 @@ public enum ErrorCode {
     PENDING_ACTION_EXPIRED(41001, HttpStatus.GONE, "提案已过期"),
     IDEMPOTENCY_PROCESSING(40905, HttpStatus.CONFLICT, "相同幂等键的请求正在处理中"),
     AMOUNT_MISMATCH(40906, HttpStatus.CONFLICT, "支付金额与订单应付不一致"),
+    RATE_LIMITED(42901, HttpStatus.TOO_MANY_REQUESTS, "请求过于频繁,请稍后重试"),
     IDEMPOTENCY_MISMATCH(40002, HttpStatus.BAD_REQUEST, "幂等键与请求体不匹配"),
     INTERNAL_ERROR(50001, HttpStatus.INTERNAL_SERVER_ERROR, "系统繁忙,请稍后重试");
 

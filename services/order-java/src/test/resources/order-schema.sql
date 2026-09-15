@@ -127,3 +127,18 @@ INSERT INTO orders (order_no, user_id, total_amount, discount_amount, pay_amount
 ('SO20260914000001', 1, 299.00, 0.00, 299.00, 'paid', 'shipped', '尽快发货');
 INSERT INTO order_items (order_id, sku_id, product_name, unit_price, quantity, total_price) VALUES
 (1, 1, '机械键盘 87 键', 299.00, 1, 299.00);
+
+-- 6. 交易 Outbox(本地消息表:支付成功事件同事务落库,定时投递,指数退避)
+CREATE TABLE IF NOT EXISTS outbox_events (
+    id             BIGINT       NOT NULL AUTO_INCREMENT,
+    event_type     VARCHAR(64)  NOT NULL COMMENT 'payment.paid/...',
+    aggregate_no   VARCHAR(64)  NOT NULL COMMENT '业务单号',
+    payload        JSON         NULL,
+    status         VARCHAR(16)  NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING/SENT/FAILED',
+    retry_count    INT          NOT NULL DEFAULT 0,
+    next_retry_at  DATETIME     NULL,
+    created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    sent_at        DATETIME     NULL,
+    PRIMARY KEY (id),
+    KEY idx_status_retry (status, next_retry_at)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '交易 Outbox';

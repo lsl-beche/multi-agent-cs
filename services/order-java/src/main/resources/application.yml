@@ -30,7 +30,14 @@ mybatis-plus:
     banner: false
 
 app:
-  debug-enabled: false  # 对拍演示接口开关,演示时以 -Dapp.debug-enabled=true 临时开启
+  debug-enabled: false
+  outbox:
+    webhook-url: "${OUTBOX_WEBHOOK_URL:}"   # 空=日志消费者;可指向 CSagent 事件入口
+  rate-limit:
+    enabled: true
+    deduct-limit: 15      # 每 window-seconds
+    order-limit: 5
+    window-seconds: 10  # 对拍演示接口开关,演示时以 -Dapp.debug-enabled=true 临时开启
 
 logging:
   level:
