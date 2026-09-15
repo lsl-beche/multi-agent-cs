@@ -124,6 +124,11 @@ Java 交易层(services/order-java,Spring Boot 3)
 交易写链路独立成 Java 服务的原因:强一致与事务工具生态;智能层与交易层的
 集成契约见 `services/order-java/README.md`(含对拍测试与压测证据)。
 
+**订单域已归一**:订单/库存/交易数据以 Java 服务(MySQL)为唯一事实源。
+设置 `ORDER_SERVICE_URL` 后,商城下单、订单查询工具、支付回调状态变更、
+客服取消订单执行全部经 Java API;PostgreSQL 只保留对话/知识库/合规等
+智能层自有域。未设置该变量时回退本地旧路径(兼容模式)。
+
 启动与测试:
 ```bash
 cd services/order-java

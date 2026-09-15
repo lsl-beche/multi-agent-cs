@@ -17,4 +17,10 @@ public interface OrderMapper extends BaseMapper<Order> {
     /** 对拍专用:无条件 +version,把"副作用被执行了几次"变成可观测计数。生产代码禁止使用。 */
     @Update("UPDATE orders SET version = version + 1 WHERE id = #{orderId}")
     int incrementVersion(@Param("orderId") long orderId);
+
+    /** 标记支付成功:仅 unpaid 可迁移,回调重放天然幂等(affected 0 = 已处理)。 */
+    @Update("UPDATE orders SET pay_status = 'paid', paid_at = NOW(), "
+            + "order_status = IF(order_status = 'pending', 'confirmed', order_status), version = version + 1 "
+            + "WHERE id = #{orderId} AND pay_status = 'unpaid'")
+    int markPaidIfUnpaid(@Param("orderId") long orderId);
 }

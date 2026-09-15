@@ -86,6 +86,13 @@ async def channel_callback(channel: str, request: Request):
             return JSONResponse({"code": 400, "message": "unknown channel"}, status_code=400)
 
         out_no, trade_no = result["out_trade_no"], result["trade_no"]
+
+        from app.integrations.order_java import java_enabled, mark_paid_via_java
+        if java_enabled() and result.get("trade_state") in ("SUCCESS", "TRADE_SUCCESS", "TRADE_FINISHED", "success"):
+            # 订单域归一:状态变更经 Java API(服务端再次校验金额,双层资损防护)
+            mark_paid_via_java(out_no, trade_no, float(result.get("amount", 0)))
+            return JSONResponse({"code": "SUCCESS", "message": "ok"}, status_code=200)
+
         order, payment = _find(db, out_no)
         if not order or not payment:
             return JSONResponse({"code": 404, "message": "order not found"}, status_code=404)

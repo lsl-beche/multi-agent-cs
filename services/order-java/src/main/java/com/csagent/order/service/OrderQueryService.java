@@ -7,8 +7,11 @@ import com.csagent.order.common.exception.BusinessException;
 import com.csagent.order.common.ErrorCode;
 import com.csagent.order.dto.OrderVO;
 import com.csagent.order.entity.Order;
+import com.csagent.order.entity.OrderItem;
+import com.csagent.order.mapper.OrderItemMapper;
 import com.csagent.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -20,13 +23,20 @@ import org.springframework.util.StringUtils;
 public class OrderQueryService {
 
     private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
 
     public OrderVO getById(long id) {
         Order order = orderMapper.selectById(id);
         if (order == null) {
             throw new BusinessException(ErrorCode.ORDER_NOT_FOUND);
         }
-        return OrderVO.from(order);
+        List<OrderVO.ItemVO> items = orderItemMapper.selectList(
+                        new LambdaQueryWrapper<OrderItem>().eq(OrderItem::getOrderId, id))
+                .stream()
+                .map(i -> new OrderVO.ItemVO(i.getProductName(), i.getUnitPrice(),
+                        i.getQuantity(), i.getTotalPrice()))
+                .toList();
+        return OrderVO.from(order, items);
     }
 
     /** 按业务单号查询:供 Python 智能层(单号字符串)换算本服务数字主键。 */

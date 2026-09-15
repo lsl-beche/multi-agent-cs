@@ -41,6 +41,10 @@ def _forbidden() -> str:
 @tool
 def query_order(order_id: str, user_id: str = "") -> str:
     """订单状态查询：根据订单号查询订单状态、金额、收货信息。参数 order_id 为订单号。"""
+    from app.integrations.order_java import java_enabled, order_status_json
+    if java_enabled():
+        # 订单域归一:交易数据以 Java 为唯一事实源,查询经 API
+        return order_status_json(order_id, user_id)
     db = SessionLocal()
     try:
         order = _find_order(db, order_id)
@@ -56,6 +60,9 @@ def query_order(order_id: str, user_id: str = "") -> str:
 @tool
 def get_order_detail(order_id: str, user_id: str = "") -> str:
     """订单详情查询：返回订单的商品明细、金额、支付流水、物流单与操作日志。参数 order_id 为订单号。"""
+    from app.integrations.order_java import java_enabled, order_detail_json
+    if java_enabled():
+        return order_detail_json(order_id, user_id)
     db = SessionLocal()
     try:
         order = _find_order(db, order_id)
@@ -71,6 +78,9 @@ def get_order_detail(order_id: str, user_id: str = "") -> str:
 @tool
 def get_payment_status(order_id: str, user_id: str = "") -> str:
     """支付状态查询：根据订单号查询支付流水与支付状态（待支付/已支付/退款中）。参数 order_id 为订单号。"""
+    from app.integrations.order_java import java_enabled, order_status_json
+    if java_enabled():
+        return order_status_json(order_id, user_id)
     db = SessionLocal()
     try:
         order = _find_order(db, order_id)

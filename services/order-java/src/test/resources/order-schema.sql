@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 -- ============================================================
 -- CSagent 订单服务(Java)表结构 v0.1
 -- 从 CSagent app/models/tables.py 平移,MySQL 8 / InnoDB / utf8mb4
@@ -61,6 +63,19 @@ CREATE TABLE IF NOT EXISTS orders (
     KEY idx_order_status (order_status)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '订单主表';
 
+-- 3.5 订单商品行(创建订单时快照)
+CREATE TABLE IF NOT EXISTS order_items (
+    id           BIGINT        NOT NULL AUTO_INCREMENT,
+    order_id     BIGINT        NOT NULL,
+    sku_id       BIGINT        NOT NULL,
+    product_name VARCHAR(256)  NOT NULL,
+    unit_price   DECIMAL(10,2) NOT NULL,
+    quantity     INT           NOT NULL,
+    total_price  DECIMAL(10,2) NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_order (order_id)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '订单商品行';
+
 -- 4. 待确认提案(新增,本次方案核心)
 -- 对应 Python 侧 Redis action_store 的 DB 化:原子状态迁移 + 惰性过期
 CREATE TABLE IF NOT EXISTS pending_actions (
@@ -110,3 +125,5 @@ INSERT INTO skus (sku_code, product_id, spec_info, price, stock) VALUES
 INSERT INTO orders (order_no, user_id, total_amount, discount_amount, pay_amount,
                     pay_status, order_status, buyer_remark) VALUES
 ('SO20260914000001', 1, 299.00, 0.00, 299.00, 'paid', 'shipped', '尽快发货');
+INSERT INTO order_items (order_id, sku_id, product_name, unit_price, quantity, total_price) VALUES
+(1, 1, '机械键盘 87 键', 299.00, 1, 299.00);

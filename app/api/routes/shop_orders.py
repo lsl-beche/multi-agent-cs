@@ -34,6 +34,16 @@ async def create_order(body: CreateOrderBody, request: Request, db=Depends(get_d
     risk = await risk_evaluate_async("order", {"user_id": uid, "ip": request.client.host if request.client else None})
     if risk["action"] == "block":
         raise HTTPException(403, detail="下单行为异常，请联系客服核实")
+    from app.integrations.order_java import java_write_enabled
+    if java_write_enabled():
+        # 订单域归一:交易数据归 Java,经 API 下单(购物车多品拆单,见 Java README)
+        from app.integrations.order_java import create_order as java_create_order
+        orders = []
+        for item in body.items:
+            orders.append(java_create_order(
+                item.sku_id, item.quantity, str(uid), body.remark or ""))
+        return {"code": 0, "data": {"orders": orders}, "message": "下单成功"}
+
     try:
         result = await OrderService.create_order_async(
             db,

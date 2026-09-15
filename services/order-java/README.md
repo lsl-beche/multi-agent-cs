@@ -24,10 +24,31 @@ CSagent 订单写链路的 Spring Boot 重写:**交易链路用 Java、智能层
 | 20 并发扣减(库存10) | 恰好 10 成功 / 10×409 / 终态 0,零超卖 |
 | 500 笔压测(20 线程) | 全部成功,吞吐 ≈43 req/s,守恒 PASS |
 | 对拍:20 并发确认 | 原子版副作用恰好 1 次;legacy(复刻 Python 缺陷)20 次 |
-| 集成测试(Testcontainers/Compose MySQL) | 13/13 PASS |
+| 订单全生命周期(创建→支付→取消) | 集成测试 5 用例 PASS |
+| 支付标记金额校验 | 不一致 40906 拒绝,重放幂等 |
+| 集成测试(Testcontainers/Compose MySQL) | **18/18 PASS** |
 | 幂等 HTTP | 回放字节一致 / 键体不匹配 40002 / 失败释放键 |
 
 > 吞吐说明:43 req/s 的瓶颈是热点单行行锁串行化——强一致场景的正确代价;高并发秒杀需引入 Redis 预扣减/削峰,以一致性换吞吐(当前业务量不需要)。
+
+## 订单域归一(数据边界)
+
+本服务是**订单/库存/交易域数据的唯一事实源**(MySQL);Python 智能层的
+下单、查询、支付状态变更一律经本服务 API,不再直写自身数据库的交易表。
+
+| API | 说明 |
+|---|---|
+| `POST /api/orders` | 创建订单(原子扣减+商品行快照,幂等键覆盖) |
+| `POST /api/orders/{id}/paid` | 支付成功标记(金额强校验,重放幂等) |
+| `GET /api/orders/by-no/{orderNo}` | 业务单号 → 数字主键换算 |
+| `GET /api/orders/{id}` / `?userId=` | 详情(含 items)/ 分页 |
+| `POST /api/inventory/{skuId}/deduct` | 原子扣减 |
+| `POST /api/orders/{id}/cancel-proposal` + `/pending-actions/{id}/confirm` | 取消:提案→确认→执行 |
+
+Python 侧开启方式:设置 `ORDER_SERVICE_URL`(如 http://localhost:8081),
+生效范围:商城下单 / 订单查询工具 / 支付回调状态变更 / 客服取消订单执行。
+已知限制:购物车多品下单为拆单(每品一单),批量原子扣减在 Phase 2;
+支付渠道验签仍在 Python 侧(验签通过后状态变更走本服务,金额双重校验)。
 
 ## 快速开始
 
