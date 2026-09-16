@@ -129,6 +129,8 @@ Java 交易层(services/order-java,Spring Boot 3)
 客服取消订单执行全部经 Java API;PostgreSQL 只保留对话/知识库/合规等
 智能层自有域。未设置该变量时回退本地旧路径(兼容模式)。
 
+> **环境说明**:支付对接为微信/支付宝**沙箱环境**(验签逻辑 RSA2048/AES-GCM/RSA2 与生产一致,商户密钥为沙箱配置);物流为模拟网关;数据为演示种子数据。本项目为个人作品集,不含真实生产数据。
+
 启动与测试:
 ```bash
 cd services/order-java
