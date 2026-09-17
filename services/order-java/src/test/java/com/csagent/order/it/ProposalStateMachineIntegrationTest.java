@@ -100,6 +100,20 @@ class ProposalStateMachineIntegrationTest extends com.csagent.order.support.Inte
     }
 
     @Test
+    void confirm_twice_second_conflict_side_effect_once() {
+        long orderId = insertOrder("SO-IT-A5");
+        long actionId = insertProposal(orderId, "it-a5", "INTERVAL 10 MINUTE");
+
+        proposalService.confirm(actionId);
+        assertThatThrownBy(() -> proposalService.confirm(actionId))
+                .isInstanceOfSatisfying(BusinessException.class, ex ->
+                        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.PENDING_ACTION_CONFLICT));
+        // 副作用恰好一次:version 仅 +1(初始 1)
+        assertThat(jdbc.queryForObject("SELECT version FROM orders WHERE id = ?",
+                Integer.class, orderId)).isEqualTo(2);
+    }
+
+    @Test
     void concurrent_confirm_exactlyOnce() throws Exception {
         long orderId = insertOrder("SO-IT-A4");
         long actionId = insertProposal(orderId, "it-a4", "INTERVAL 10 MINUTE");

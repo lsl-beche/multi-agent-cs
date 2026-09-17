@@ -44,6 +44,19 @@ class InventoryDeductIntegrationTest extends com.csagent.order.support.Integrati
     }
 
     @Test
+    void deduct_disabled_sku_reported_insufficient() {
+        // 停用 SKU 存在但不可售:语义归为库存不足(而非不存在),防御性区分
+        jdbc.update("UPDATE skus SET stock = 10, status = 'inactive' WHERE id = 1");
+        try {
+            assertThatThrownBy(() -> inventoryService.deduct(1L, 1))
+                    .isInstanceOfSatisfying(BusinessException.class, ex ->
+                            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.INSUFFICIENT_STOCK));
+        } finally {
+            jdbc.update("UPDATE skus SET status = 'active' WHERE id = 1");
+        }
+    }
+
+    @Test
     void deduct_skuNotFound() {
         assertThatThrownBy(() -> inventoryService.deduct(99999L, 1))
                 .isInstanceOfSatisfying(BusinessException.class, ex ->

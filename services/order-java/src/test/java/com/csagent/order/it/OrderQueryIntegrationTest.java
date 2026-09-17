@@ -32,6 +32,14 @@ class OrderQueryIntegrationTest extends com.csagent.order.support.IntegrationTes
     }
 
     @Test
+    void byNo_found_and_notFound() {
+        assertThat(orderQueryService.getIdByOrderNo("SO20260914000001")).isEqualTo(1L);
+        assertThatThrownBy(() -> orderQueryService.getIdByOrderNo("SO-NOPE"))
+                .isInstanceOfSatisfying(BusinessException.class, ex ->
+                        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    @Test
     void page_byUser() {
         PageResult<OrderVO> page = orderQueryService.page(1L, null, null, 1, 10);
         assertThat(page.total()).isGreaterThanOrEqualTo(1);

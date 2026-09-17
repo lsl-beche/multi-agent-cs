@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,6 +27,9 @@ class OutboxIntegrationTest extends IntegrationTestBase {
 
     @Autowired
     OutboxDispatcher dispatcher;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    com.csagent.order.mapper.OutboxEventMapper outboxEventMapper;
 
     @Autowired
     JdbcTemplate jdbc;
@@ -74,6 +78,28 @@ class OutboxIntegrationTest extends IntegrationTestBase {
                 "SELECT COUNT(*) FROM outbox_events WHERE aggregate_no IN (" + inClause() + ") "
                         + "AND status = 'SENT'", Integer.class);
         assertThat(sent).isEqualTo(2);
+    }
+
+    @Test
+    void failed_backoff_schedules_retry() {
+        OrderVO order = createAndPay();
+        long orderId = jdbc.queryForObject(
+                "SELECT id FROM orders WHERE order_no = ?", Long.class, order.orderNo());
+
+        // 模拟投递失败:置 EXECUTING 后标记失败,断言指数退避字段回写
+        jdbc.update("UPDATE outbox_events SET status = 'EXECUTING' WHERE aggregate_no = ?", order.orderNo());
+        Long eventId = jdbc.queryForObject(
+                "SELECT id FROM outbox_events WHERE aggregate_no = ? AND status = 'EXECUTING'",
+                Long.class, order.orderNo());
+        assertThat(eventId).isNotNull();
+
+        outboxEventMapper.markFailedWithBackoff(eventId);
+
+        Map<String, Object> row = jdbc.queryForMap(
+                "SELECT status, retry_count, next_retry_at FROM outbox_events WHERE id = ?", eventId);
+        assertThat(row.get("status")).isEqualTo("FAILED");
+        assertThat(row.get("retry_count")).isEqualTo(1);
+        assertThat(row.get("next_retry_at")).isNotNull();
     }
 
     @Test
