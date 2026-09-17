@@ -1,0 +1,154 @@
+E:\workspace\CSagent\app\knowledge\embedding.py:38: LangChainDeprecationWarning: The class `HuggingFaceBgeEmbeddings` was deprecated in LangChain 0.2.2 and will be removed in 1.0. An updated version of the class exists in the `langchain-huggingface package and should be used instead. To use it run `pip install -U `langchain-huggingface` and import as `from `langchain_huggingface import HuggingFaceEmbeddings``.
+  _embeddings = HuggingFaceBgeEmbeddings(
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]Loading weights: 100%|██████████| 391/391 [00:00<00:00, 5584.92it/s]
+[32m2026-09-18 00:00:16.601[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 442ms (embed=220ms), query_order(0.586)[0m
+[32m2026-09-18 00:00:16.810[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 416ms (embed=208ms), query_order(0.590)[0m
+[32m2026-09-18 00:00:17.019[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 418ms (embed=209ms), query_order(0.681)[0m
+[32m2026-09-18 00:00:17.232[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 426ms (embed=213ms), query_order(0.715)[0m
+[32m2026-09-18 00:00:17.450[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 435ms (embed=218ms), query_order(0.568)[0m
+[32m2026-09-18 00:00:17.650[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 399ms (embed=199ms), query_order(0.761)[0m
+[32m2026-09-18 00:00:17.860[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 421ms (embed=210ms), track_logistics(0.575)[0m
+[32m2026-09-18 00:00:18.073[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 426ms (embed=213ms), exchange_goods(0.741)[0m
+[32m2026-09-18 00:00:18.279[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 411ms (embed=205ms), exchange_goods(0.514)[0m
+[32m2026-09-18 00:00:18.498[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 437ms (embed=218ms), exchange_goods(0.630)[0m
+[32m2026-09-18 00:00:18.699[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 401ms (embed=201ms), exchange_goods(0.510)[0m
+[32m2026-09-18 00:00:18.913[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.285 -> fallback to keywords[0m
+[32m2026-09-18 00:00:18.913[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:19.128[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 429ms (embed=215ms), product_consult(0.622)[0m
+[32m2026-09-18 00:00:19.344[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.313 -> fallback to keywords[0m
+[32m2026-09-18 00:00:19.344[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:19.560[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.289 -> fallback to keywords[0m
+[32m2026-09-18 00:00:19.560[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:19.765[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.373 -> fallback to keywords[0m
+[32m2026-09-18 00:00:19.765[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:19.981[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.405 -> fallback to keywords[0m
+[32m2026-09-18 00:00:19.981[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:20.200[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 437ms (embed=219ms), price_inquiry(0.604)[0m
+[32m2026-09-18 00:00:20.394[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.459 -> fallback to keywords[0m
+[32m2026-09-18 00:00:20.394[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:20.597[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 405ms (embed=202ms), price_inquiry(0.510)[0m
+[32m2026-09-18 00:00:20.801[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 409ms (embed=204ms), promotion_consult(0.637)[0m
+[32m2026-09-18 00:00:21.002[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.436 -> fallback to keywords[0m
+[32m2026-09-18 00:00:21.002[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:21.218[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 431ms (embed=215ms), payment_issue(0.711)[0m
+[32m2026-09-18 00:00:21.442[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 447ms (embed=224ms), payment_issue(0.521)[0m
+[32m2026-09-18 00:00:21.672[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.423 -> fallback to keywords[0m
+[32m2026-09-18 00:00:21.672[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:21.893[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.497 -> fallback to keywords[0m
+[32m2026-09-18 00:00:21.893[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, payment_issue(0.75)[0m
+[32m2026-09-18 00:00:22.108[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 430ms (embed=215ms), payment_issue(0.554)[0m
+[32m2026-09-18 00:00:22.347[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 478ms (embed=239ms), payment_issue(0.534)[0m
+[32m2026-09-18 00:00:22.555[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 414ms (embed=207ms), return_goods(0.502)[0m
+[32m2026-09-18 00:00:22.751[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.480 -> fallback to keywords[0m
+[32m2026-09-18 00:00:22.752[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, payment_issue(0.75)[0m
+[32m2026-09-18 00:00:22.971[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.427 -> fallback to keywords[0m
+[32m2026-09-18 00:00:22.972[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:23.180[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 416ms (embed=208ms), human_service(0.630)[0m
+[32m2026-09-18 00:00:23.394[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 428ms (embed=214ms), complaint(0.682)[0m
+[32m2026-09-18 00:00:23.623[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 458ms (embed=229ms), complaint(0.735)[0m
+[32m2026-09-18 00:00:23.842[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 437ms (embed=219ms), complaint(0.606)[0m
+[32m2026-09-18 00:00:24.064[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 444ms (embed=222ms), complaint(0.618)[0m
+[32m2026-09-18 00:00:24.296[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 463ms (embed=231ms), complaint(0.565)[0m
+[32m2026-09-18 00:00:24.510[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.353 -> fallback to keywords[0m
+[32m2026-09-18 00:00:24.510[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:24.721[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 422ms (embed=211ms), human_service(0.624)[0m
+[32m2026-09-18 00:00:24.928[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.350 -> fallback to keywords[0m
+[32m2026-09-18 00:00:24.929[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:25.132[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 406ms (embed=203ms), human_service(0.669)[0m
+[32m2026-09-18 00:00:25.328[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 392ms (embed=196ms), chitchat(0.518)[0m
+[32m2026-09-18 00:00:25.517[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.429 -> fallback to keywords[0m
+[32m2026-09-18 00:00:25.517[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:25.711[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.370 -> fallback to keywords[0m
+[32m2026-09-18 00:00:25.711[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:25.911[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m190[0m - [34m[1m[intent] ML: 400ms (embed=200ms), chitchat(0.525)[0m
+[32m2026-09-18 00:00:26.107[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.473 -> fallback to keywords[0m
+[32m2026-09-18 00:00:26.108[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, chitchat(0.75)[0m
+[32m2026-09-18 00:00:26.328[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.418 -> fallback to keywords[0m
+[32m2026-09-18 00:00:26.328[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:26.559[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.387 -> fallback to keywords[0m
+[32m2026-09-18 00:00:26.559[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:26.791[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.345 -> fallback to keywords[0m
+[32m2026-09-18 00:00:26.792[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:26.994[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.317 -> fallback to keywords[0m
+[32m2026-09-18 00:00:26.994[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:27.242[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.283 -> fallback to keywords[0m
+[32m2026-09-18 00:00:27.242[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:27.481[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.303 -> fallback to keywords[0m
+[32m2026-09-18 00:00:27.481[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:27.745[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.251 -> fallback to keywords[0m
+[32m2026-09-18 00:00:27.745[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:27.974[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.312 -> fallback to keywords[0m
+[32m2026-09-18 00:00:27.974[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:28.211[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.346 -> fallback to keywords[0m
+[32m2026-09-18 00:00:28.211[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:28.473[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.409 -> fallback to keywords[0m
+[32m2026-09-18 00:00:28.473[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:28.724[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.295 -> fallback to keywords[0m
+[32m2026-09-18 00:00:28.724[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:28.987[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.416 -> fallback to keywords[0m
+[32m2026-09-18 00:00:28.987[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:29.231[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.266 -> fallback to keywords[0m
+[32m2026-09-18 00:00:29.232[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+[32m2026-09-18 00:00:29.485[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m193[0m - [34m[1m[intent] ML low_conf 0.349 -> fallback to keywords[0m
+[32m2026-09-18 00:00:29.485[0m | [34m[1mDEBUG   [0m | [36mapp.dialogue.intent[0m:[36mclassify[0m:[36m200[0m - [34m[1m[intent] keyword: 0ms, product_consult(0.50)[0m
+评测集 86 条,分类器就绪,开始...
+
+  进度 20/86
+  进度 40/86
+  进度 60/86
+  进度 80/86
+
+==== 意图识别评测报告 ====
+Accuracy(非 OOS): 54/72 = 75.0%
+OOS 拒识率:       0/14 = 0.0%
+单条延迟:         均值 152ms | P50 207ms | P95 251ms
+
+分意图 Recall:
+  ✗ app_usage            0/6
+  ✗ chitchat             3/6
+  ✓ complaint            6/6
+  ✓ exchange_goods       6/6
+  ✗ human_service        4/6
+  ✗ payment_issue        5/6
+  ✗ price_inquiry        3/6
+  ✓ product_consult      6/6
+  ✗ promotion_consult    4/6
+  ✓ query_order          6/6
+  ✗ return_goods         5/6
+  ✓ track_logistics      6/6
+
+Badcase:
+  [误判] '退款什么时候到账' 期望 return_goods 实际 track_logistics (0.90)
+  [误判] '会员价是多少' 期望 price_inquiry 实际 promotion_consult (0.90)
+  [误判] '有没有活动价' 期望 price_inquiry 实际 promotion_consult (0.90)
+  [误判] '原价是多少' 期望 price_inquiry 实际 product_consult (0.50)
+  [误判] '新人有礼包吗' 期望 promotion_consult 实际 product_consult (0.50)
+  [误判] '优惠码怎么使用' 期望 promotion_consult 实际 app_usage (0.90)
+  [误判] '为什么支付的时候提示风险' 期望 payment_issue 实际 product_consult (0.50)
+  [误判] '怎么修改收货地址' 期望 app_usage 实际 query_order (0.90)
+  [误判] '怎么注销我的账号' 期望 app_usage 实际 return_goods (0.50)
+  [误判] 'app 怎么开发票' 期望 app_usage 实际 payment_issue (0.75)
+  [误判] '怎么查我的会员等级' 期望 app_usage 实际 promotion_consult (0.90)
+  [误判] '免密支付在哪里设置' 期望 app_usage 实际 product_consult (0.50)
+  [误判] '怎么联系在线客服' 期望 app_usage 实际 human_service (0.63)
+  [误判] '让真人来跟我谈' 期望 human_service 实际 product_consult (0.50)
+  [误判] '把你们主管叫来' 期望 human_service 实际 product_consult (0.50)
+  [误判] '在吗' 期望 chitchat 实际 product_consult (0.50)
+  [误判] '你会讲笑话吗' 期望 chitchat 实际 product_consult (0.50)
+  [误判] '今天天气真不错' 期望 chitchat 实际 product_consult (0.50)
+  [OOS 未拒识] '今天股市行情怎么样' -> product_consult (0.50)
+  [OOS 未拒识] '帮我写一首关于秋天的诗' -> product_consult (0.50)
+  [OOS 未拒识] '1 加 1 等于几' -> product_consult (0.50)
+  [OOS 未拒识] '推荐一部好看的电影' -> product_consult (0.50)
+  [OOS 未拒识] '比特币现在多少钱一枚' -> price_inquiry (0.90)
+  [OOS 未拒识] '明天北京会下雨吗' -> product_consult (0.50)
+  [OOS 未拒识] '奥巴马现在在做什么' -> product_consult (0.50)
+  [OOS 未拒识] '怎么煮红烧肉' -> product_consult (0.50)
+  [OOS 未拒识] '宇宙有多大' -> product_consult (0.50)
+  [OOS 未拒识] '帮我订一张去上海的高铁票' -> product_consult (0.50)
+  [OOS 未拒识] '最近的足球比赛结果' -> product_consult (0.50)
+  [OOS 未拒识] '帮我算一下房贷利率' -> product_consult (0.50)
+  [OOS 未拒识] '周杰伦的新专辑' -> product_consult (0.50)
+  [OOS 未拒识] '怎么学英语比较快' -> product_consult (0.50)
+
+结论: Accuracy 75.0% | OOS 拒识 0.0%
