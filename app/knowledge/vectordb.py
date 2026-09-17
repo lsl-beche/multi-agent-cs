@@ -10,12 +10,24 @@
 cs_knowledge —— 知识库 FAQ（metadata: category/question/version）
 cs_memory    —— 对话向量记忆（vector_memory.py 独立维护，不在此模块）
 """
+import hashlib
+
 from langchain_core.vectorstores import VectorStore
 
 from app.config.settings import settings
 from app.knowledge.embedding import get_embeddings
 
 COLLECTION_NAME = "cs_knowledge"
+
+
+def doc_id_for(question: str, answer: str) -> str:
+    """FAQ 条目的稳定内容寻址 id（评测金标与入库共用同一算法）。
+
+    canonical 文本必须与 ingest_knowledge.py 入库时的拼装完全一致，
+    否则 gold_id 与库中 source_id 对不上。
+    """
+    canon = f"问题：{question}\n答案：{answer}"
+    return "faq-" + hashlib.sha1(canon.encode("utf-8")).hexdigest()[:16]
 
 _vectorstore: VectorStore | None = None
 

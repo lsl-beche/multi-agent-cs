@@ -20,7 +20,7 @@ import chromadb
 from app.config.settings import settings
 from app.knowledge.pipeline.cleaner import clean_all
 from app.knowledge.pipeline.collector import collect_all
-from app.knowledge.vectordb import COLLECTION_NAME, get_vectorstore
+from app.knowledge.vectordb import COLLECTION_NAME, doc_id_for, get_vectorstore
 
 
 def reset_collection() -> None:
@@ -53,12 +53,14 @@ def main() -> None:
         reset_collection()  # 必须在 get_vectorstore() 之前执行，否则单例缓存旧集合
     vs = get_vectorstore()
     texts = [f"问题：{p['question']}\n答案：{p['answer']}" for p in pairs]
+    ids = [doc_id_for(p["question"], p["answer"]) for p in pairs]
     metadatas = [{
+        "source_id": sid,
         "category": p.get("category", "general"),
         "question": p["question"],
         "version": args.version,
-    } for p in pairs]
-    vs.add_texts(texts, metadatas=metadatas)
+    } for p, sid in zip(pairs, ids)]
+    vs.add_texts(texts, metadatas=metadatas, ids=ids)
     print(f"入库完成，共 {len(texts)} 条")
 
 

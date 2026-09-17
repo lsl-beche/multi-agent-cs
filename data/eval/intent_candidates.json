@@ -1,0 +1,1658 @@
+[
+  {
+    "id": "int-0001",
+    "message": "我的订单现在啥状态了",
+    "candidate_intent": "query_order",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0002",
+    "message": "帮我看下昨天买的那单发货没",
+    "candidate_intent": "query_order",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0003",
+    "message": "订单编号怎么查",
+    "candidate_intent": "query_order",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0004",
+    "message": "我下的单子还在待付款吗",
+    "candidate_intent": "query_order",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0005",
+    "message": "我前几天下的单现在到哪一步了",
+    "candidate_intent": "query_order",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0006",
+    "message": "查一下我这笔订单详情",
+    "candidate_intent": "query_order",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0007",
+    "message": "东西到哪了",
+    "candidate_intent": "track_logistics",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0008",
+    "message": "快递单号能给我下吗",
+    "candidate_intent": "track_logistics",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0009",
+    "message": "一般几天能到",
+    "candidate_intent": "track_logistics",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0010",
+    "message": "我那个包裹现在在哪个城市",
+    "candidate_intent": "track_logistics",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0011",
+    "message": "物流一直不更新是咋回事",
+    "candidate_intent": "track_logistics",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0012",
+    "message": "今天下单明天能收到吗",
+    "candidate_intent": "track_logistics",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0013",
+    "message": "这个我想退了",
+    "candidate_intent": "return_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0014",
+    "message": "怎么申请退款啊",
+    "candidate_intent": "return_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0015",
+    "message": "七天无理由怎么弄",
+    "candidate_intent": "return_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0016",
+    "message": "退款多久到账",
+    "candidate_intent": "return_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0017",
+    "message": "买回来不喜欢能退吗",
+    "candidate_intent": "return_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0018",
+    "message": "退货的运费谁出",
+    "candidate_intent": "return_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0019",
+    "message": "能换一款吗",
+    "candidate_intent": "exchange_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0020",
+    "message": "尺码不合适想换一件",
+    "candidate_intent": "exchange_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0021",
+    "message": "发错货了帮我换下",
+    "candidate_intent": "exchange_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0022",
+    "message": "这个我想换个别的口味",
+    "candidate_intent": "exchange_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0023",
+    "message": "收到的跟我买的不一样，能换吗",
+    "candidate_intent": "exchange_goods",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0024",
+    "message": "有没有不上火的茶推荐",
+    "candidate_intent": "product_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0025",
+    "message": "龙井怎么泡比较好",
+    "candidate_intent": "product_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0026",
+    "message": "这个茶怎么保存不容易坏",
+    "candidate_intent": "product_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0027",
+    "message": "送礼选哪款比较有面子",
+    "candidate_intent": "product_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0028",
+    "message": "生普和熟普有啥区别",
+    "candidate_intent": "product_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0029",
+    "message": "这款是明前茶吗",
+    "candidate_intent": "product_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0030",
+    "message": "这个多少钱一斤",
+    "candidate_intent": "price_inquiry",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0031",
+    "message": "明前龙井什么价位",
+    "candidate_intent": "price_inquiry",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0032",
+    "message": "会不会太贵了",
+    "candidate_intent": "price_inquiry",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0033",
+    "message": "有没有性价比高的口粮茶",
+    "candidate_intent": "price_inquiry",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0034",
+    "message": "半斤装的要多少米",
+    "candidate_intent": "price_inquiry",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0035",
+    "message": "你们家茶叶大概什么价格带",
+    "candidate_intent": "price_inquiry",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0036",
+    "message": "现在有什么优惠活动吗",
+    "candidate_intent": "promotion_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0037",
+    "message": "有没有满减可以用",
+    "candidate_intent": "promotion_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0038",
+    "message": "会员积分怎么算的",
+    "candidate_intent": "promotion_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0039",
+    "message": "能不能给我张优惠券",
+    "candidate_intent": "promotion_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0040",
+    "message": "新用户有福利吗",
+    "candidate_intent": "promotion_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0041",
+    "message": "双十一有没有折扣",
+    "candidate_intent": "promotion_consult",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0042",
+    "message": "我付款失败了是怎么回事",
+    "candidate_intent": "payment_issue",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0043",
+    "message": "钱扣了但订单没生成",
+    "candidate_intent": "payment_issue",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0044",
+    "message": "能开发票吗怎么开",
+    "candidate_intent": "payment_issue",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0045",
+    "message": "支持花呗分期吗",
+    "candidate_intent": "payment_issue",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0046",
+    "message": "重复扣款了能退一笔吗",
+    "candidate_intent": "payment_issue",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0047",
+    "message": "支付方式能不能换一种",
+    "candidate_intent": "payment_issue",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0048",
+    "message": "app一打开就闪退",
+    "candidate_intent": "app_usage",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0049",
+    "message": "登录验证码一直收不到",
+    "candidate_intent": "app_usage",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0050",
+    "message": "这个页面打不开",
+    "candidate_intent": "app_usage",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0051",
+    "message": "怎么找不到我的优惠券入口",
+    "candidate_intent": "app_usage",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0052",
+    "message": "加载半天刷不出来",
+    "candidate_intent": "app_usage",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0053",
+    "message": "APP提示报错怎么办",
+    "candidate_intent": "app_usage",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0054",
+    "message": "我要投诉你们的客服",
+    "candidate_intent": "complaint",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0055",
+    "message": "这茶质量太差了",
+    "candidate_intent": "complaint",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0056",
+    "message": "包装破损严重，太不满意了",
+    "candidate_intent": "complaint",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0057",
+    "message": "再不处理我就去12315了",
+    "candidate_intent": "complaint",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0058",
+    "message": "给我发的货以次充好，我要投诉",
+    "candidate_intent": "complaint",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0059",
+    "message": "你们这服务我要给差评",
+    "candidate_intent": "complaint",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0060",
+    "message": "我要转人工",
+    "candidate_intent": "human_service",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0061",
+    "message": "别机器人了给我找个人",
+    "candidate_intent": "human_service",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0062",
+    "message": "有真人客服吗",
+    "candidate_intent": "human_service",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0063",
+    "message": "帮我接个人工",
+    "candidate_intent": "human_service",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0064",
+    "message": "我不想跟机器说，转人工",
+    "candidate_intent": "human_service",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "test"
+  },
+  {
+    "id": "int-0065",
+    "message": "直接把电话给我，找真人",
+    "candidate_intent": "human_service",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0066",
+    "message": "你好啊",
+    "candidate_intent": "chitchat",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0067",
+    "message": "谢谢啦",
+    "candidate_intent": "chitchat",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0068",
+    "message": "再见",
+    "candidate_intent": "chitchat",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0069",
+    "message": "你是真人还是机器人",
+    "candidate_intent": "chitchat",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0070",
+    "message": "你叫什么名字",
+    "candidate_intent": "chitchat",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0071",
+    "message": "今天天气不错哈",
+    "candidate_intent": "chitchat",
+    "source": "seed",
+    "needs_review": 0,
+    "split": "dev"
+  },
+  {
+    "id": "int-0072",
+    "message": "陈茶转化需要通风吗",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0073",
+    "message": "凤凰单丛的鸭屎香是什么味道",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0074",
+    "message": "什么是茶水分离",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0075",
+    "message": "紧压茶怎么撬开不伤手",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0076",
+    "message": "盖碗和紫砂壶泡茶有什么区别",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0077",
+    "message": "抹茶和绿茶粉有什么区别",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0078",
+    "message": "登录失败是什么原因",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0079",
+    "message": "茶饼、沱茶、砖茶有什么区别",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0080",
+    "message": "黑茶怎么泡才好喝",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0081",
+    "message": "玻璃杯泡绿茶要不要盖盖子",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0082",
+    "message": "下单后多久发货",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0083",
+    "message": "怎么判断茶叶新不新鲜",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0084",
+    "message": "南方和北方存茶有什么区别",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0085",
+    "message": "食品的保质期和新鲜度如何保证",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0086",
+    "message": "扣款了但订单显示未支付怎么办",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0087",
+    "message": "买普洱茶是买新茶还是买老茶",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0088",
+    "message": "你们的茶叶产地在哪里，有产地证明吗",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0089",
+    "message": "运费是怎么计算的",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0090",
+    "message": "泡茶时茶叶和水的比例是多少",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0091",
+    "message": "不同的人每天喝多少茶比较合适",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0092",
+    "message": "对商品不满意怎么给差评",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0093",
+    "message": "老白茶和新白茶有什么区别",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0094",
+    "message": "售后申请的有效期是多久",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0095",
+    "message": "普洱生茶怎么判断已经转化到位了",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0096",
+    "message": "支持哪些支付方式",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0097",
+    "message": "人工客服的工作时间是几点",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0098",
+    "message": "退货的具体流程是什么",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0099",
+    "message": "口粮茶怎么选性价比最高",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0100",
+    "message": "喝茶时为什么说头泡醒、二泡香、三泡四泡是精华",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0101",
+    "message": "东方美人茶是什么茶",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0102",
+    "message": "泡绿茶一般用多少度的水合适",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0103",
+    "message": "快递员代签收出问题怎么办",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0104",
+    "message": "送领导客户选什么茶",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0105",
+    "message": "端午送礼选什么茶",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0106",
+    "message": "谢师宴送什么茶",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0107",
+    "message": "玻璃罐能用来存茶吗",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0108",
+    "message": "泡茶每一泡要等多久",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0109",
+    "message": "正山小种为什么有松烟香",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0110",
+    "message": "心跳快的人能喝茶吗",
+    "candidate_intent": "product_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0111",
+    "message": "支付成功但订单状态没变怎么办",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0112",
+    "message": "支持分期付款吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0113",
+    "message": "买的多会有大件运费优惠吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0114",
+    "message": "下单后未付款，订单会保留多久",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0115",
+    "message": "物流好几天不更新怎么办",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0116",
+    "message": "茶叶需要冷链运输吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0117",
+    "message": "下单后想换商品或规格怎么办",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0118",
+    "message": "快递丢件了怎么赔偿",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0119",
+    "message": "你们店铺支持货到付款吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0120",
+    "message": "茶叶可以带上飞机吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0121",
+    "message": "拒收包裹后多久退款",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0122",
+    "message": "双十一有什么活动",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0123",
+    "message": "支持企业对公转账吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0124",
+    "message": "买茶叶会送赠品吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0125",
+    "message": "买茶饼需要整提下单吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0126",
+    "message": "一般发什么快递",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0127",
+    "message": "一个订单的商品可以分开发货吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0128",
+    "message": "怎么查询我的订单状态",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0129",
+    "message": "大促期间物流会慢吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0130",
+    "message": "你们的包装密实吗，快递中会不会压碎",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0131",
+    "message": "下单后发现运费算错了怎么办",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0132",
+    "message": "满减活动的规则是什么",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0133",
+    "message": "重复扣款了怎么处理",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0134",
+    "message": "显示派送中但一直没收到",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0135",
+    "message": "下单时优惠券没有生效怎么办",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0136",
+    "message": "会员有哪些折扣",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0137",
+    "message": "订单里的优惠明细在哪里看",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0138",
+    "message": "可以指定物流公司吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0139",
+    "message": "满多少钱包邮",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0140",
+    "message": "支付时需要输入密码安全吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0141",
+    "message": "商城支持哪些支付方式",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0142",
+    "message": "发货后想改收货地址怎么办",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0143",
+    "message": "店铺发什么快递，可以指定快递吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0144",
+    "message": "消费积分有什么用",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0145",
+    "message": "下单后还能修改收货地址吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0146",
+    "message": "下单后能修改收货地址吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0147",
+    "message": "物流信息好几天没有更新怎么办",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0148",
+    "message": "一个订单里的商品可以分开发货吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0149",
+    "message": "新用户有什么优惠",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0150",
+    "message": "怎么删除订单记录",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0151",
+    "message": "不小心重复下单了怎么办",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0152",
+    "message": "会员生日有福利吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0153",
+    "message": "退款是原路返回吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0154",
+    "message": "支持拼团购买吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0155",
+    "message": "下单后想更换商品颜色或尺码怎么办",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0156",
+    "message": "满减活动是怎么算的",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0157",
+    "message": "支持海外发货吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0158",
+    "message": "分享商品能获得奖励吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0159",
+    "message": "支持到店自提吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0160",
+    "message": "物流显示异常件是什么意思",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0161",
+    "message": "秒杀活动怎么参与",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0162",
+    "message": "快递一般几天能到",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0163",
+    "message": "下单后没有收到确认通知怎么办",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0164",
+    "message": "单笔支付有金额上限吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0165",
+    "message": "订单被自动关闭是怎么回事",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0166",
+    "message": "待付款、待发货、已发货是什么意思",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0167",
+    "message": "满多少金额包邮",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0168",
+    "message": "支付时提示失败怎么办",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0169",
+    "message": "签收快递时需要注意什么",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0170",
+    "message": "支付环节页面卡住怎么办",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0171",
+    "message": "下单时优惠券没有抵扣成功怎么办",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0172",
+    "message": "订单金额和计算不一致怎么办",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0173",
+    "message": "会员有什么优惠",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0174",
+    "message": "怎么查看我的订单状态",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0175",
+    "message": "支付失败是怎么回事",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0176",
+    "message": "活动价还能叠加优惠券吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0177",
+    "message": "预售商品什么时候发货",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0178",
+    "message": "可以开发票吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0179",
+    "message": "刚买完就降价了，有价格保护吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0180",
+    "message": "收货人电话写错了怎么办",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0181",
+    "message": "支持境外信用卡支付吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0182",
+    "message": "购买茶叶可以开发票吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0183",
+    "message": "怎么提前知道活动信息",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0184",
+    "message": "支付时重复扣款了怎么办",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0185",
+    "message": "大促期间发货慢怎么办",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0186",
+    "message": "偏远地区能发货吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0187",
+    "message": "退货后优惠券会退回吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0188",
+    "message": "如何取消订单",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0189",
+    "message": "订单完成后在哪里评价",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0190",
+    "message": "节假日期间发货有影响吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0191",
+    "message": "有价格保护吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0192",
+    "message": "可以货到付款吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0193",
+    "message": "优惠券怎么使用，有什么限制",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0194",
+    "message": "优惠券在哪里领取",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0195",
+    "message": "乡镇地区能送货上门吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0196",
+    "message": "多个订单可以合并发货吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0197",
+    "message": "优惠券可以叠加使用吗",
+    "candidate_intent": "promotion_consult",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0198",
+    "message": "茶叶可以寄顺丰次日达吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0199",
+    "message": "包裹破损怎么理赔",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0200",
+    "message": "订单状态都有哪些含义",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0201",
+    "message": "订单提交后还能修改备注吗",
+    "candidate_intent": "query_order",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0202",
+    "message": "可以指定快递公司吗",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0203",
+    "message": "可以使用花呗或白条支付吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0204",
+    "message": "待付款订单怎么支付",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  },
+  {
+    "id": "int-0205",
+    "message": "支持分期付款吗，有手续费吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0206",
+    "message": "怎么查我的快递到哪了",
+    "candidate_intent": "track_logistics",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "dev"
+  },
+  {
+    "id": "int-0207",
+    "message": "可以用优惠券抵扣后再开发票吗",
+    "candidate_intent": "payment_issue",
+    "source": "faq_category",
+    "needs_review": 1,
+    "split": "test"
+  }
+]

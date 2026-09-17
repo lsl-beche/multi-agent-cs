@@ -8,7 +8,7 @@
 演进：生产级接入 Kafka（商品/价格变更事件流）异步消费，
 并配合 ingest_knowledge.py 的 --version 做知识灰度发布。
 """
-from app.knowledge.vectordb import get_vectorstore
+from app.knowledge.vectordb import doc_id_for, get_vectorstore
 
 
 class KnowledgeUpdater:
@@ -22,16 +22,20 @@ class KnowledgeUpdater:
         vs = get_vectorstore()
         texts: list[str] = []
         metadatas: list[dict] = []
+        ids: list[str] = []
         for it in items:
             self.delete_by_question(it["question"])
+            sid = doc_id_for(it["question"], it["answer"])
             texts.append(f"问题：{it['question']}\n答案：{it['answer']}")
             metadatas.append({
+                "source_id": sid,
                 "category": it.get("category", "general"),
                 "question": it["question"],
                 "version": version,
             })
+            ids.append(sid)
         if texts:
-            vs.add_texts(texts, metadatas=metadatas)
+            vs.add_texts(texts, metadatas=metadatas, ids=ids)
         return len(texts)
 
     def delete_by_question(self, question: str) -> int:

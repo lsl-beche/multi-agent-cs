@@ -205,6 +205,21 @@ async def fallback_reply(message: str) -> dict:
     intent = result.name
     answer = FALLBACK_REPLIES.get(intent, FALLBACK_REPLIES["product_consult"])
     need_human = intent in ("complaint", "human_service")
+    # LLM 不可用时的知识兜底:知识/商品类问题直接检索知识库拼接参考(无 LLM 调用)
+    if intent in ("knowledge", "product_consult"):
+        try:
+            from app.knowledge.retriever import KnowledgeRetriever
+            docs = KnowledgeRetriever(top_k=2).retrieve(message)
+            parts = []
+            for d in docs or []:
+                content = getattr(d, "page_content", None) or (d[0] if isinstance(d, tuple) else "")
+                if content:
+                    parts.append(str(content)[:300])
+            if parts:
+                answer = ("AI 助手暂时不可用，以下为知识库检索参考：" + chr(10)
+                        + chr(10).join(parts))
+        except Exception:
+            pass   # 检索失败保持固定话术
     perf_logger.info(f"[_fallback_reply] classify={(time.perf_counter() - t0) * 1000:.0f}ms intent={intent}")
     return {"answer": answer, "intent": intent, "need_human": need_human}
 
@@ -213,6 +228,12 @@ async def run_agent(session_id: str, user_id: str, message: str) -> dict:
     t_start = time.perf_counter()
     from app.agents.trace import trace_store
     trace_id = trace_store.start(session_id, user_id, message)
+    # 输入侧注入扫描前移:必须在语义缓存/LLM/降级所有路径之前(否则命中缓存会绕过防线)
+    from app.agents.injection_guard import looks_like_injection
+    if looks_like_injection(message):
+        trace_store.finish(trace_id, need_human=True, answer="[注入拦截] 转人工", status="fallback")
+        return {"answer": "您的请求包含需要人工确认的内容，已为您转接人工客服。",
+                "intent": "", "need_human": True}
     cached = get_cached_answer(message)
     if cached is not None:
         trace_store.finish(trace_id, answer="[语义缓存命中]", status="cached")
@@ -294,6 +315,13 @@ async def stream_agent(session_id: str, user_id: str, message: str):
     from app.agents.trace import trace_store
 
     trace_id = trace_store.start(session_id, user_id, message)
+    from app.agents.injection_guard import looks_like_injection
+    if looks_like_injection(message):
+        fallback = "您的请求包含需要人工确认的内容，已为您转接人工客服。"
+        trace_store.finish(trace_id, need_human=True, answer="[注入拦截] 转人工", status="fallback")
+        yield ("chunk", fallback)
+        yield ("done", fallback)
+        return
     try:
         from app.core.quota import allowed_async, consume_async
         quota_ok, _, quota_limit = await allowed_async(user_id)

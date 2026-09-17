@@ -25,11 +25,14 @@ perf_logger = logger.bind(name="perf")
 
 
 class KnowledgeRetriever:
-    def __init__(self, top_k: int = 5, score_threshold: float | None = None) -> None:
+    def __init__(self, top_k: int = 5, score_threshold: float | None = None,
+                 use_hybrid: bool = True, use_rerank: bool = True) -> None:
         self.top_k = top_k
         self.score_threshold = score_threshold
+        self.use_hybrid = use_hybrid
+        self.use_rerank = use_rerank
         self.vs = get_vectorstore()
-        self._corpus: list[str] | None = None
+        self._corpus: list[tuple[str, str]] | None = None
         self._corpus_version: str = ""
         self._reranker = None
         self._rerank_ready = False
@@ -38,7 +41,7 @@ class KnowledgeRetriever:
     def _init_reranker(self) -> None:
         """初始化 CrossEncoder 重排序模型（可选，不可用时降级）"""
         rerank_model = getattr(settings, "rerank_model", None)
-        if not rerank_model:
+        if not rerank_model or not self.use_rerank:
             return
         try:
             from sentence_transformers import CrossEncoder
@@ -50,8 +53,8 @@ class KnowledgeRetriever:
         except Exception:
             self._rerank_ready = False
 
-    def _load_corpus(self) -> list[str]:
-        """加载语料全文（词法召回用），按知识版本缓存
+    def _load_corpus(self) -> list[tuple[str, str]]:
+        """加载语料全文 (content, source_id)，词法召回用，按知识版本缓存
 
         knowledge_version != "latest" 时按 metadata.version 过滤，
         支撑知识灰度发布（先小流量验证新版本再全量切换）。
@@ -62,8 +65,17 @@ class KnowledgeRetriever:
         try:
             col = self.vs._collection
             where = None if version == "latest" else {"version": version}
-            data = col.get(include=["documents"], where=where) if where else col.get(include=["documents"])
-            self._corpus = list(data.get("documents") or [])
+            inc = ["documents", "metadatas"]
+            data = col.get(include=inc, where=where) if where else col.get(include=inc)
+            contents = data.get("documents") or []
+            metas = data.get("metadatas") or []
+            ids = data.get("ids") or []
+            corpus: list[tuple[str, str]] = []
+            for i, content in enumerate(contents):
+                meta = metas[i] if i < len(metas) and isinstance(metas[i], dict) else {}
+                sid = meta.get("source_id") or (ids[i] if i < len(ids) else "")
+                corpus.append((content, sid))
+            self._corpus = corpus
             self._corpus_version = version
         except Exception:
             self._corpus = []
@@ -88,9 +100,12 @@ class KnowledgeRetriever:
         # 2) 词法召回 + RRF 融合（统一文档空间：向量命中 + 语料补全）
         t0 = time.perf_counter()
         corpus = self._load_corpus()
-        if corpus:
+        if corpus and self.use_hybrid:
             seen = {d.page_content for d in docs}
-            unified = list(docs) + [Document(page_content=c, metadata={}) for c in corpus if c not in seen]
+            unified = list(docs) + [
+                Document(page_content=c, metadata={"source_id": sid})
+                for c, sid in corpus if c not in seen
+            ]
             contents = [d.page_content for d in unified]
             content_to_idx = {c: i for i, c in enumerate(contents)}
             vec_rank = {content_to_idx[d.page_content]: r for r, d in enumerate(docs)}
@@ -103,7 +118,7 @@ class KnowledgeRetriever:
 
         # 3) CrossEncoder 精排（可选）
         t_rerank = 0
-        if self._rerank_ready and self._reranker is not None and len(docs) > self.top_k:
+        if self.use_rerank and self._rerank_ready and self._reranker is not None and len(docs) > self.top_k:
             try:
                 t0 = time.perf_counter()
                 pairs = [[query, doc.page_content] for doc in docs]
